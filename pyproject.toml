@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "independent-gepa-repro"
+version = "0.1.0"
+description = "Independent-GEPA under a matched prompt-team evaluation protocol"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "PyYAML>=6.0",
+  "openai>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

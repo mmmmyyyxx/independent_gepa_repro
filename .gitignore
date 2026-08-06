@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+dist/
+build/
+*.egg-info/
+
+# Private experiment inputs and outputs.
+data/private_bundles/
+runs/
+cache/
+*.cache.json
+
+# Public reports are allowed only after sanitization.
+reports/private/
+
+# Local credentials and environment overrides.
+.env
+.env.*
+!.env.example

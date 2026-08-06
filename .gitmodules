@@ -1,0 +1,3 @@
+[submodule "vendor/gepa"]
+	path = vendor/gepa
+	url = https://github.com/gepa-ai/gepa.git

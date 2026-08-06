@@ -71,8 +71,13 @@ class MemberEvaluator:
             response, cache_hit = self.provider.complete("task", messages)
         except OperationalFailure:
             raise
-        parsed = self.parser.parse(response.text, finish_reason=response.finish_reason)
-        correct = bool(parsed.valid and parsed.parsed_option == example.gold_answer)
+        parsed = self.parser.parse(
+            response.text,
+            option_labels=example.resolved_option_labels,
+            gold_answer=example.gold_answer,
+            finish_reason=response.finish_reason,
+        )
+        correct = bool(parsed.correct)
         return MemberEvaluation(
             example_id=example.example_id,
             raw_response=response.text,

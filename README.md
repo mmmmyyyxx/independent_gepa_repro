@@ -47,17 +47,36 @@ statistics, accounting, and audit status.
 ## Frozen-bundle export contract
 
 `export_comparison_bundle.py` takes a data-only JSON specification. The spec
-names five prompt files, three split sources, model/parser/budget contract JSON
-files, opaque source and reference-result identities, and the experiment seed.
+names five ordered prompt sources (text files or slots in a JSON array), three
+split sources, model/parser/budget contracts, opaque source and reference-result
+identities, and the experiment seed.
 Split sources may already be canonical JSONL or may explicitly declare CSV
 field mappings. For the source project's BBH files, the CSV entry must declare
 `question_options_format: "bbh_embedded_options"`; the exporter then separates
 the `Options:` block without importing any source-project Python.
 
-The output validator checks all contract and data file hashes, ordered example
-IDs and their hashes, member/prompt mapping, disjointness, exact formal split
-sizes, model and parser identities, voting and tie rules, budget allocation,
-and a canonical overall identity hash.
+The v2 exporter normalizes LF, CRLF, and CR inside CSV fields before parsing
+the BBH `Options:` block, while preserving each raw source-file SHA-256 as
+provenance. Every canonical example freezes its own contiguous
+`option_labels`, so three-option and four-option questions can coexist without
+weakening answer-domain checks.
+
+The source-aligned parser requires exactly one standalone `FINAL_ANSWER` line.
+Duplicate lines are invalid even when they contain the same answer, and frozen
+golden fixtures check parsed option, validity, correctness, and the original
+`task_parser_v1` failure type.
+
+The model contract separates the shared task-model transport, reference
+Teacher/Critic/Student metadata, and the native Independent-GEPA reflection
+configuration. The budget contract likewise separates an audited Pilot budget
+from the not-yet-frozen Formal budget. Bundle integrity and Pilot readiness can
+therefore pass while Formal readiness remains an explicit HOLD.
+
+The output validator checks all contract and data file hashes, frozen raw-source
+provenance fields, ordered example IDs and hashes, member/prompt mapping,
+disjointness, exact split sizes, model and parser identities, initial-metric
+availability, voting and tie rules, stage-specific budget availability, and a
+canonical overall identity hash.
 
 ## Fixed GEPA adapter
 

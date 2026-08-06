@@ -248,10 +248,19 @@ class IndependentRunner:
         provider_factory: ProviderFactory,
         executor: MemberExecutor,
     ):
-        if config.task_model != bundle.model_contract["task_model"]:
+        task_contract = bundle.model_contract["shared_task_model"]
+        reflection_contract = bundle.model_contract["independent_gepa_reflection_model"]
+        if config.task_model != task_contract["model"]:
             raise ProtocolViolation("config and bundle task model mismatch")
-        if config.reflection_model != bundle.model_contract["reflection_model"]:
+        if config.reflection_model != reflection_contract["model"]:
             raise ProtocolViolation("config and bundle reflection model mismatch")
+        provider = config.raw["provider"]
+        transport_fields = ("temperature", "max_tokens", "timeout_seconds", "max_retries")
+        for name, contract in (("task", task_contract), ("reflection", reflection_contract)):
+            if any(provider[field] != contract[field] for field in transport_fields):
+                raise ProtocolViolation(f"config and bundle {name} transport settings mismatch")
+            if provider["enable_thinking"] is not contract["enable_thinking"]:
+                raise ProtocolViolation(f"config and bundle {name} thinking setting mismatch")
         self.bundle = bundle
         self.config = config
         self.output_root = output_root.resolve()
@@ -329,7 +338,7 @@ class IndependentRunner:
         total_budget = (
             self.config.canary_member_budget * 5
             if self.config.canary_member_budget is not None
-            else self.bundle.total_budget
+            else self.bundle.budget_for_stage(self.config.stage)
         )
         budget = BudgetLedger(
             total_budget,
@@ -450,7 +459,11 @@ class IndependentRunner:
 
 def load_validated_inputs(bundle_path: Path, config_path: Path) -> tuple[ValidatedBundle, RunConfig]:
     config = RunConfig.load(config_path)
-    bundle = validate_bundle(bundle_path, require_formal=config.stage in {"formal", "pilot", "offline_fake"})
+    bundle = validate_bundle(
+        bundle_path,
+        require_formal=config.stage in {"formal", "pilot", "offline_fake"},
+        stage=config.stage,
+    )
     StrictAnswerParser(bundle.parser_contract).assert_golden_parity()
     required_seed_evaluations = (
         config.optimization_example_limit

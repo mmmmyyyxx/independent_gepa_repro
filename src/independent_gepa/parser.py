@@ -1,83 +1,116 @@
-"""Strict parser driven entirely by the frozen parser contract."""
+"""Strict option-letter parser driven by the frozen source-parser contract."""
 
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from .protocol import ProtocolViolation
+from .versions import PARSER_CONTRACT_VERSION
 
 
 @dataclass(frozen=True)
 class ParseResult:
     parsed_option: str | None
     valid: bool
-    failure_type: str | None
+    correct: bool | None
+    failure_type: str
 
 
 class StrictAnswerParser:
+    """Reproduce ``task_parser_v1`` without importing the source repository."""
+
+    REQUIRED_FAILURE_TYPES = {
+        "valid": "valid",
+        "missing_final_answer": "missing_final_answer",
+        "multiple_final_answers": "multiple_final_answers",
+        "unparseable_final_answer": "unparseable_final_answer",
+        "out_of_domain_answer": "out_of_domain_answer",
+    }
+
     def __init__(self, contract: Mapping[str, Any]):
         self.contract = dict(contract)
-        legal = contract.get("legal_options")
-        patterns = contract.get("accepted_patterns")
-        if not isinstance(legal, list) or not legal or not all(isinstance(item, str) for item in legal):
-            raise ProtocolViolation("parser contract legal_options must be a non-empty string list")
-        if not isinstance(patterns, list) or not patterns:
-            raise ProtocolViolation("parser contract accepted_patterns must be a non-empty list")
-        self.legal = frozenset(item.upper() for item in legal)
-        self.patterns: list[re.Pattern[str]] = []
-        for row in patterns:
-            if not isinstance(row, dict) or not isinstance(row.get("regex"), str):
-                raise ProtocolViolation("each accepted parser pattern requires a regex")
-            flags = 0
-            for flag in row.get("flags", []):
-                if flag == "IGNORECASE":
-                    flags |= re.IGNORECASE
-                elif flag == "MULTILINE":
-                    flags |= re.MULTILINE
-                else:
-                    raise ProtocolViolation(f"unsupported regex flag: {flag}")
-            try:
-                compiled = re.compile(row["regex"], flags)
-            except re.error as exc:
-                raise ProtocolViolation(f"invalid parser regex: {exc}") from exc
-            if "answer" not in compiled.groupindex:
-                raise ProtocolViolation("accepted parser regex must define named group 'answer'")
-            self.patterns.append(compiled)
-        if contract.get("conflict_policy") != "terminal_invalid":
-            raise ProtocolViolation("only terminal-invalid conflict handling is supported")
-        if contract.get("empty_policy") != "terminal_invalid":
-            raise ProtocolViolation("only terminal-invalid empty handling is supported")
-        truncation = contract.get("truncation_policy")
-        if truncation not in {"terminal_invalid", "parse_if_present"}:
-            raise ProtocolViolation("unsupported truncation policy")
-        self.truncation_policy = str(truncation)
-        reasons = contract.get("truncation_finish_reasons", ["length"])
-        if not isinstance(reasons, list):
-            raise ProtocolViolation("truncation_finish_reasons must be a list")
-        self.truncation_finish_reasons = frozenset(str(item) for item in reasons)
+        if contract.get("schema_version") != PARSER_CONTRACT_VERSION:
+            raise ProtocolViolation("unsupported parser contract schema")
+        if contract.get("source_parser_version") != "task_parser_v1":
+            raise ProtocolViolation("parser contract must identify task_parser_v1")
+        if contract.get("answer_format") != "option_letter":
+            raise ProtocolViolation("parser contract must use option_letter answers")
+        if contract.get("parsed_option_normalization") != "uppercase_option_label":
+            raise ProtocolViolation("parser contract must freeze uppercase option-label normalization")
+        if contract.get("truncation_policy") != "source_parser_ignores_finish_reason":
+            raise ProtocolViolation("parser truncation policy does not match the source parser")
+        raw_failures = contract.get("failure_types")
+        if raw_failures != self.REQUIRED_FAILURE_TYPES:
+            raise ProtocolViolation("parser failure types do not exactly match task_parser_v1")
+        line = contract.get("final_answer_line")
+        if not isinstance(line, Mapping) or not isinstance(line.get("regex"), str):
+            raise ProtocolViolation("parser contract requires a final_answer_line regex")
+        flags = 0
+        raw_flags = line.get("flags")
+        if raw_flags != ["IGNORECASE", "MULTILINE"]:
+            raise ProtocolViolation("parser regex flags must exactly match task_parser_v1")
+        flags |= re.IGNORECASE | re.MULTILINE
+        try:
+            self.final_answer_line = re.compile(str(line["regex"]), flags)
+        except re.error as exc:
+            raise ProtocolViolation(f"invalid parser regex: {exc}") from exc
+        if self.final_answer_line.pattern != r"^\s*FINAL_ANSWER\s*:\s*(.*?)\s*$":
+            raise ProtocolViolation("parser regex does not exactly match task_parser_v1")
 
-    def parse(self, text: str | None, *, finish_reason: str | None = None) -> ParseResult:
-        value = "" if text is None else str(text)
-        if not value.strip():
-            return ParseResult(None, False, "empty_output")
-        if finish_reason in self.truncation_finish_reasons and self.truncation_policy == "terminal_invalid":
-            return ParseResult(None, False, "truncated_output")
-        answers: list[str] = []
-        for pattern in self.patterns:
-            for match in pattern.finditer(value):
-                candidate = match.group("answer").strip().upper()
-                answers.append(candidate)
-        if not answers:
-            return ParseResult(None, False, "no_accepted_answer")
-        legal_answers = [answer for answer in answers if answer in self.legal]
-        if len(legal_answers) != len(answers):
-            return ParseResult(None, False, "illegal_option")
-        unique = set(legal_answers)
-        if len(unique) != 1:
-            return ParseResult(None, False, "conflicting_answers")
-        return ParseResult(next(iter(unique)), True, None)
+    @staticmethod
+    def _labels(option_labels: Sequence[str]) -> tuple[str, ...]:
+        if isinstance(option_labels, (str, bytes)) or not option_labels:
+            raise ProtocolViolation("parser requires per-example option_labels")
+        labels = tuple(str(item).strip().upper() for item in option_labels)
+        expected = tuple(chr(ord("A") + index) for index in range(len(labels)))
+        if labels != expected:
+            raise ProtocolViolation("option_labels must be contiguous uppercase letters")
+        return labels
+
+    @staticmethod
+    def _result(
+        parsed_option: str | None,
+        valid: bool,
+        failure_type: str,
+        gold_answer: str | None,
+    ) -> ParseResult:
+        correct = None
+        if gold_answer is not None:
+            correct = bool(valid and parsed_option == str(gold_answer).strip().upper())
+        return ParseResult(parsed_option, valid, correct, failure_type)
+
+    def parse(
+        self,
+        text: str | None,
+        *,
+        option_labels: Sequence[str],
+        gold_answer: str | None = None,
+        finish_reason: str | None = None,
+    ) -> ParseResult:
+        del finish_reason  # The frozen source parser classifies response text only.
+        labels = self._labels(option_labels)
+        raw = str(text or "")
+        matches = self.final_answer_line.findall(raw)
+        if not matches:
+            return self._result(None, False, "missing_final_answer", gold_answer)
+        if len(matches) != 1:
+            return self._result(None, False, "multiple_final_answers", gold_answer)
+        raw_payload = str(matches[0]).strip()
+        if not raw_payload:
+            return self._result(None, False, "unparseable_final_answer", gold_answer)
+        payload_match = re.fullmatch(
+            r"(?:\(\s*)?([A-Z])(?:\s*\))?",
+            raw_payload,
+            flags=re.IGNORECASE,
+        )
+        if payload_match is None:
+            return self._result(None, False, "out_of_domain_answer", gold_answer)
+        answer = payload_match.group(1).upper()
+        if answer not in labels:
+            return self._result(None, False, "out_of_domain_answer", gold_answer)
+        return self._result(answer, True, "valid", gold_answer)
 
     def assert_golden_parity(self) -> None:
         fixtures = self.contract.get("golden_fixtures")
@@ -86,14 +119,25 @@ class StrictAnswerParser:
         for index, fixture in enumerate(fixtures):
             if not isinstance(fixture, dict) or not isinstance(fixture.get("expected"), dict):
                 raise ProtocolViolation(f"invalid parser fixture at index {index}")
-            actual = self.parse(fixture.get("text"), finish_reason=fixture.get("finish_reason"))
+            actual = self.parse(
+                fixture.get("text"),
+                option_labels=fixture.get("option_labels", ()),
+                gold_answer=fixture.get("gold_answer"),
+                finish_reason=fixture.get("finish_reason"),
+            )
             expected = fixture["expected"]
             expected_tuple = (
                 expected.get("parsed_option"),
                 bool(expected.get("valid")),
+                expected.get("correct"),
                 expected.get("failure_type"),
             )
-            actual_tuple = (actual.parsed_option, actual.valid, actual.failure_type)
+            actual_tuple = (
+                actual.parsed_option,
+                actual.valid,
+                actual.correct,
+                actual.failure_type,
+            )
             if actual_tuple != expected_tuple:
                 raise ProtocolViolation(
                     f"parser parity failure for fixture {fixture.get('name', index)!r}: "

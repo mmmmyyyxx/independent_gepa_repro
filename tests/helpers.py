@@ -19,83 +19,126 @@ from independent_gepa.versions import BUNDLE_VERSION, METHOD_ID
 
 def parser_contract() -> dict[str, Any]:
     return {
-        "version": "strict_answer_parser_contract_v1",
-        "legal_options": ["A", "B", "C"],
-        "accepted_patterns": [
-            {
-                "name": "standalone",
-                "regex": r"^\s*(?P<answer>[A-Za-z])\s*$",
-                "flags": ["IGNORECASE", "MULTILINE"],
-            },
-            {
-                "name": "final_answer",
-                "regex": r"\bfinal\s+answer\s*:\s*(?P<answer>[A-Za-z])\b",
-                "flags": ["IGNORECASE"],
-            },
-        ],
-        "conflict_policy": "terminal_invalid",
-        "empty_policy": "terminal_invalid",
-        "truncation_policy": "terminal_invalid",
-        "truncation_finish_reasons": ["length"],
+        "schema_version": "parser_contract_v2",
+        "source_parser_version": "task_parser_v1",
+        "source_output_contract_version": "task_output_contract_v1",
+        "answer_format": "option_letter",
+        "parsed_option_normalization": "uppercase_option_label",
+        "final_answer_line": {
+            "regex": r"^\s*FINAL_ANSWER\s*:\s*(.*?)\s*$",
+            "flags": ["IGNORECASE", "MULTILINE"],
+        },
+        "truncation_policy": "source_parser_ignores_finish_reason",
+        "failure_types": {
+            "valid": "valid",
+            "missing_final_answer": "missing_final_answer",
+            "multiple_final_answers": "multiple_final_answers",
+            "unparseable_final_answer": "unparseable_final_answer",
+            "out_of_domain_answer": "out_of_domain_answer",
+        },
         "golden_fixtures": [
             {
-                "name": "single",
-                "text": "A",
+                "name": "valid",
+                "text": "Reasoning.\nFINAL_ANSWER: A",
                 "finish_reason": "stop",
-                "expected": {"parsed_option": "A", "valid": True, "failure_type": None},
-            },
-            {
-                "name": "case_space",
-                "text": "  b  ",
-                "finish_reason": "stop",
-                "expected": {"parsed_option": "B", "valid": True, "failure_type": None},
-            },
-            {
-                "name": "explanation_final",
-                "text": "Reasoning here.\nFinal answer: C",
-                "finish_reason": "stop",
-                "expected": {"parsed_option": "C", "valid": True, "failure_type": None},
-            },
-            {
-                "name": "conflict",
-                "text": "Final answer: A\nFinal answer: B",
-                "finish_reason": "stop",
+                "option_labels": ["A", "B", "C"],
+                "gold_answer": "A",
                 "expected": {
-                    "parsed_option": None,
-                    "valid": False,
-                    "failure_type": "conflicting_answers",
+                    "parsed_option": "A",
+                    "valid": True,
+                    "correct": True,
+                    "failure_type": "valid",
                 },
             },
             {
-                "name": "illegal",
-                "text": "Final answer: Z",
+                "name": "case_space_parentheses",
+                "text": "  final_answer : (b)  ",
                 "finish_reason": "stop",
-                "expected": {"parsed_option": None, "valid": False, "failure_type": "illegal_option"},
+                "option_labels": ["A", "B", "C"],
+                "gold_answer": "A",
+                "expected": {
+                    "parsed_option": "B",
+                    "valid": True,
+                    "correct": False,
+                    "failure_type": "valid",
+                },
+            },
+            {
+                "name": "duplicate_same",
+                "text": "FINAL_ANSWER: A\nFINAL_ANSWER: A",
+                "finish_reason": "stop",
+                "option_labels": ["A", "B", "C"],
+                "gold_answer": "A",
+                "expected": {
+                    "parsed_option": None,
+                    "valid": False,
+                    "correct": False,
+                    "failure_type": "multiple_final_answers",
+                },
+            },
+            {
+                "name": "duplicate_different",
+                "text": "FINAL_ANSWER: A\nFINAL_ANSWER: B",
+                "finish_reason": "stop",
+                "option_labels": ["A", "B", "C"],
+                "gold_answer": "A",
+                "expected": {
+                    "parsed_option": None,
+                    "valid": False,
+                    "correct": False,
+                    "failure_type": "multiple_final_answers",
+                },
+            },
+            {
+                "name": "out_of_range",
+                "text": "FINAL_ANSWER: D",
+                "finish_reason": "stop",
+                "option_labels": ["A", "B", "C"],
+                "gold_answer": "A",
+                "expected": {
+                    "parsed_option": None,
+                    "valid": False,
+                    "correct": False,
+                    "failure_type": "out_of_domain_answer",
+                },
             },
             {
                 "name": "empty",
                 "text": "",
                 "finish_reason": "stop",
-                "expected": {"parsed_option": None, "valid": False, "failure_type": "empty_output"},
-            },
-            {
-                "name": "truncated",
-                "text": "Final answer: A",
-                "finish_reason": "length",
+                "option_labels": ["A", "B", "C"],
+                "gold_answer": "A",
                 "expected": {
                     "parsed_option": None,
                     "valid": False,
-                    "failure_type": "truncated_output",
+                    "correct": False,
+                    "failure_type": "missing_final_answer",
                 },
             },
             {
-                "name": "uncertain",
-                "text": "I cannot determine the answer.",
+                "name": "finish_reason_ignored",
+                "text": "FINAL_ANSWER: A",
+                "finish_reason": "length",
+                "option_labels": ["A", "B", "C"],
+                "gold_answer": "A",
+                "expected": {
+                    "parsed_option": "A",
+                    "valid": True,
+                    "correct": True,
+                    "failure_type": "valid",
+                },
+            },
+            {
+                "name": "malformed_payload",
+                "text": "FINAL_ANSWER: A because",
                 "finish_reason": "stop",
+                "option_labels": ["A", "B", "C"],
+                "gold_answer": "A",
                 "expected": {
                     "parsed_option": None,
                     "valid": False,
-                    "failure_type": "no_accepted_answer",
+                    "correct": False,
+                    "failure_type": "out_of_domain_answer",
                 },
             },
         ],
@@ -128,22 +171,44 @@ def make_bundle(
                     "question": f"Question {example_index} [gold={gold}]",
                     "choices": ["alpha", "beta", "gamma"],
                     "gold_answer": gold,
+                    "option_labels": ["A", "B", "C"],
                 }
             )
         write_canonical_jsonl(bundle / "splits" / f"{name}.jsonl", rows)
-    model = {
-        "task_model": "qwen3.7-flash-2026-07-15",
-        "reflection_model": "qwen3.7-flash-2026-07-15",
+    transport = {
+        "model": "qwen3.7-flash-2026-07-15",
         "enable_thinking": False,
         "temperature": 0.0,
         "max_tokens": 128,
         "timeout_seconds": 10.0,
-        "max_retries": 1,
+        "max_retries": 0,
+    }
+    model = {
+        "schema_version": "model_contract_v2",
+        "shared_task_model": {
+            **transport,
+            "parser_version": "task_parser_v1",
+            "output_contract_version": "task_output_contract_v1",
+        },
+        "reference_optimizer": {
+            "model": "qwen3.7-flash-2026-07-15",
+            "roles": {
+                "teacher": {"temperature": 0.4},
+                "critic": {"temperature": 0.0},
+                "student": {"temperature": 0.5},
+            },
+        },
+        "independent_gepa_reflection_model": dict(transport),
     }
     budget = {
-        "logical_task_example_evaluations": total_budget,
+        "schema_version": "budget_reference_v2",
         "allocation_rule": "equal_floor_per_member",
-        "reference_method": {"opaque_id": "reference"},
+        "pilot": {
+            "status": "frozen",
+            "logical_task_example_evaluations": total_budget,
+            "provenance": {"experiment_seed": 46, "opaque_id": "reference-pilot"},
+        },
+        "formal": {"status": "not_frozen"},
     }
     write_canonical_json(bundle / "model_contract.json", model)
     write_canonical_json(bundle / "parser_contract.json", parser_contract())
@@ -181,18 +246,29 @@ def make_bundle(
         "split_sizes": dict(zip(names, sizes, strict=True)),
         "split_hashes": {name: files[f"splits/{name}.jsonl"] for name in names},
         "split_example_id_hashes": example_id_hashes,
-        "task_model": model["task_model"],
-        "reflection_model": model["reflection_model"],
+        "task_model": model["shared_task_model"]["model"],
+        "reflection_model": model["independent_gepa_reflection_model"]["model"],
         "enable_thinking": False,
-        "parser_version": parser_contract()["version"],
+        "parser_version": parser_contract()["source_parser_version"],
         "voting_rule": "plurality",
         "tie_rule": "abstain",
         "source_identity": {"commit": "opaque-source"},
-        "reference_results": {
-            "initial_member_accuracies": {
-                "development": [0.0] * 5,
-                "test": [0.0] * 5,
+        "initial_metrics": {
+            "optimization": {
+                "status": "available",
+                "member_correct": [0] * 5,
+                "team_correct": 0,
+            },
+            "development": {"status": "not_evaluated"},
+            "test": {"status": "not_evaluated"},
+        },
+        "split_source_provenance": {
+            name: {
+                "source_path": f"source/{name}.jsonl",
+                "source_sha256": "0" * 64,
+                "format": "jsonl",
             }
+            for name in names
         },
         "budget_identity": "opaque-budget",
     }

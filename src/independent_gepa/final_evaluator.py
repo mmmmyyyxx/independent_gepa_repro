@@ -173,13 +173,25 @@ class FinalTeamEvaluator:
 def initial_accuracies_from_bundle(
     manifest: Mapping[str, Any], split: SplitName
 ) -> tuple[float, ...]:
-    reference = manifest.get("reference_results")
-    if not isinstance(reference, Mapping):
-        raise ProtocolViolation("bundle lacks reference_results")
-    rows = reference.get("initial_member_accuracies")
-    if not isinstance(rows, Mapping):
-        raise ProtocolViolation("bundle lacks frozen initial_member_accuracies")
-    values = rows.get(split.value)
-    if not isinstance(values, Sequence) or isinstance(values, (str, bytes)) or len(values) != 5:
-        raise ProtocolViolation(f"bundle lacks five initialization accuracies for {split.value}")
-    return tuple(float(value) for value in values)
+    metrics = manifest.get("initial_metrics")
+    if not isinstance(metrics, Mapping):
+        raise ProtocolViolation("bundle lacks initial_metrics")
+    row = metrics.get(split.value)
+    if not isinstance(row, Mapping):
+        raise ProtocolViolation(f"bundle lacks initialization status for {split.value}")
+    if row.get("status") == "not_evaluated":
+        raise ProtocolViolation(
+            f"initial {split.value} metrics were not evaluated; "
+            "evaluate the frozen initial team once before computing gains"
+        )
+    counts = row.get("member_correct")
+    size = manifest.get("split_sizes", {}).get(split.value)
+    if (
+        not isinstance(counts, Sequence)
+        or isinstance(counts, (str, bytes))
+        or len(counts) != 5
+        or not isinstance(size, int)
+        or size <= 0
+    ):
+        raise ProtocolViolation(f"bundle lacks five initialization counts for {split.value}")
+    return tuple(float(value) / size for value in counts)

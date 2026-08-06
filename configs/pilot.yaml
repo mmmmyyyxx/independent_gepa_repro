@@ -1,8 +1,10 @@
 method_id: independent_gepa_protocol_matched_v1
-stage: formal
+stage: pilot
 real_api_allowed: false
 members: 5
-formal_seeds: [44, 45, 46]
+member_ids: [0, 1, 2, 3, 4]
+development_enabled: true
+test_enabled: false
 task_model: qwen3.7-flash-2026-07-15
 reflection_model: qwen3.7-flash-2026-07-15
 provider:

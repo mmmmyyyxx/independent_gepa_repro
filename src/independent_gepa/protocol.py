@@ -31,6 +31,7 @@ class Example:
     question: str
     choices: tuple[str, ...]
     gold_answer: str
+    option_labels: tuple[str, ...] | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     @staticmethod
@@ -45,14 +46,34 @@ class Example:
         normalized_choices = tuple(str(item) for item in choices)
         if not normalized_choices:
             raise ProtocolViolation("example choices must not be empty")
-        known = set(required)
+        expected_labels = tuple(chr(ord("A") + index) for index in range(len(normalized_choices)))
+        raw_labels = raw.get("option_labels")
+        if raw_labels is None:
+            option_labels = expected_labels
+        elif not isinstance(raw_labels, Sequence) or isinstance(raw_labels, (str, bytes)):
+            raise ProtocolViolation("example option_labels must be a sequence of strings")
+        else:
+            option_labels = tuple(str(item).strip().upper() for item in raw_labels)
+        if option_labels != expected_labels:
+            raise ProtocolViolation("example option_labels must be contiguous and match choices")
+        gold_answer = str(raw["gold_answer"]).strip().upper()
+        if gold_answer not in option_labels:
+            raise ProtocolViolation("example gold_answer must be one of its option_labels")
+        known = {*required, "option_labels"}
         return Example(
             example_id=str(raw["example_id"]),
             question=str(raw["question"]),
             choices=normalized_choices,
-            gold_answer=str(raw["gold_answer"]).strip().upper(),
+            gold_answer=gold_answer,
+            option_labels=option_labels,
             metadata={str(key): value for key, value in raw.items() if key not in known},
         )
+
+    @property
+    def resolved_option_labels(self) -> tuple[str, ...]:
+        if self.option_labels is not None:
+            return self.option_labels
+        return tuple(chr(ord("A") + index) for index in range(len(self.choices)))
 
     def to_mapping(self) -> dict[str, Any]:
         return {
@@ -60,13 +81,13 @@ class Example:
             "question": self.question,
             "choices": list(self.choices),
             "gold_answer": self.gold_answer,
+            "option_labels": list(self.resolved_option_labels),
             **dict(self.metadata),
         }
 
     def task_input(self) -> str:
         lines = [self.question.strip()]
-        for index, choice in enumerate(self.choices):
-            label = chr(ord("A") + index)
+        for label, choice in zip(self.resolved_option_labels, self.choices, strict=True):
             lines.append(f"({label}) {choice}")
         return "\n".join(lines)
 

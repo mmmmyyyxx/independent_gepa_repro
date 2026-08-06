@@ -625,3 +625,35 @@ A result may support one of several conclusions:
 Do not claim that Independent-GEPA reproduces the original GEPA paper's benchmark results. The correct name is:
 
 > **Independent-GEPA under a matched prompt-team evaluation protocol**
+
+---
+
+## 19. Repository publishing workflow
+
+Use the same direct-push convention as the sibling
+`multi_agent_diversity` repository:
+
+- branch: `main`;
+- transport: GitHub SSH;
+- this repository remote:
+  `git@github.com:mmmmyyyxx/independent_gepa_repro.git`;
+- reference repository remote:
+  `git@github.com:mmmmyyyxx/multi_agent_diversity.git`.
+
+Publishing is allowed only when the user explicitly requests a commit or
+push. For an authorized direct `main` publication:
+
+1. Confirm `git branch --show-current` is `main` and inspect
+   `git status -sb`, the complete diff, and the configured `origin`.
+2. Run the relevant offline tests, `git diff --check`, and the leakage audit.
+3. Stage only the intended tracked source/configuration/documentation files.
+   Never stage private bundles, prompts, examples, run artifacts, caches,
+   credentials, endpoints, or files outside this repository.
+4. Create one intentional commit without rewriting existing history.
+5. Push with `git push origin main` over SSH. Never force-push unless the user
+   explicitly requests it and the exact remote impact has been audited.
+6. Verify the remote `refs/heads/main` SHA matches local `HEAD`, then report
+   the commit SHA and final `git status -sb`.
+
+Do not open a pull request when the user explicitly requests the established
+direct-to-`main` workflow.

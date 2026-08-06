@@ -31,7 +31,7 @@ class DeterministicFakeTransport:
                 )
             else:
                 answer = chr(ord("A") + hashlib.sha256(user_text.encode("utf-8")).digest()[0] % 3)
-            text = f"Final answer: {answer}"
+            text = f"FINAL_ANSWER: {answer}"
         prompt_tokens = sum(max(1, len(str(message["content"]).split())) for message in messages)
         return ProviderResponse(
             text=text,

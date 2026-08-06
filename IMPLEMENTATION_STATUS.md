@@ -4,8 +4,10 @@ Updated: 2026-08-06
 
 ## Current milestone
 
-Stage-one offline implementation is complete. All required implementation
-paths, fake-model gates, and repository-level offline checks pass.
+Stage-two bundle-protocol compatibility preparation is complete. The real
+Seed46 bundle is exported and passes Pilot/Canary offline preflight under
+Python 3.11. Formal three-seed readiness remains HOLD because its logical
+budget is intentionally not frozen.
 
 ## Verified facts
 
@@ -19,12 +21,21 @@ paths, fake-model gates, and repository-level offline checks pass.
   reflection minibatches, merge controls, `run_dir`, automatic
   `gepa_state.bin` resume, `max_metric_calls`, deterministic seed, and full
   validation evaluation.
-- The shared `D:\myx\grade_one\experiments\comparison_bundles` directory did
-  not exist at task start. Offline tests will use generated synthetic bundles;
-  formal experiment readiness still requires a separately exported and
-  validated frozen bundle.
-- Host Python is 3.13.5; project target remains Python 3.11. Compatibility is
-  tested here, but a Python 3.11 gate remains required before online work.
+- The real Seed46 bundle exists at
+  `D:\myx\grade_one\experiments\comparison_bundles\disambiguation_qa_seed46_v1`
+  with overall hash
+  `eddbdb90cb964b528c8c289d8fb720f21ff2b1c26cd80f5ba884a7a9eafff836`.
+- The `independent_gepa` Conda environment uses Python 3.11.15.
+- Bundle schema v2 preserves raw CSV hashes while normalizing LF/CRLF/CR
+  field newlines into deterministic canonical JSONL.
+- Parser contract v2 reproduces `task_parser_v1`, including per-example
+  option domains, duplicate-final-answer rejection, and source failure types.
+- Initial optimization metrics are frozen at five times 60/75 and team 60/75;
+  development and test are explicitly `not_evaluated`.
+- Shared task-model transport, reference optimizer role metadata, and native
+  GEPA reflection configuration are separate frozen contract sections.
+- The audited Seed46 Pilot logical budget is 1611, allocated as 322 per member
+  with one unused evaluation. Formal budget status is `not_frozen`.
 - The fixed GEPA internal metric counter excludes old/new reflection-minibatch
   task calls. Fair accounting is therefore enforced by the independent
   per-member `BudgetLedger`, atomic batch admission, and a ledger-aware GEPA
@@ -38,11 +49,13 @@ paths, fake-model gates, and repository-level offline checks pass.
 ## Offline gate results
 
 - `python -m compileall -q src scripts tests`: PASS.
-- `python -m pytest -q`: PASS, 40 tests.
+- `python -m pytest -q`: PASS, 48 tests.
 - `python scripts/verify_environment.py`: PASS.
-- Synthetic formal bundle validation (75/50/125): PASS.
-- `python scripts/preflight.py --offline ...`: PASS on the ignored synthetic
-  formal fixture.
+- Real bundle validation (75/50/125): PASS.
+- Real bundle Pilot and Canary offline preflight: PASS.
+- Formal preflight: expected rejection, `formal logical budget is not frozen`.
+- True source export determinism: PASS.
+- Source parser parity: PASS, 12 frozen fixtures.
 - All seven CLI `--help` paths: PASS.
 - `git diff --check`: PASS.
 - Real task-model requests: 0.
@@ -51,15 +64,10 @@ paths, fake-model gates, and repository-level offline checks pass.
 
 ## Remaining before an online canary
 
-- Export the actual seed-46 comparison bundle from a source-approved data-only
-  specification. The required shared bundle directory was absent at task start,
-  and missing fields are not invented.
-- Validate the actual source parser golden fixtures, prompt identities,
-  reference budget, and initial development/test accuracy metadata.
-- Re-run all gates under Python 3.11.
-- Obtain explicit authorization for real API calls and use an external config
-  with both config-level and CLI-level opt-in.
+- Obtain explicit authorization for real API calls.
+- Use an external run config with config-level API opt-in plus the CLI
+  `--allow-real-api` opt-in; committed configs remain API-disabled.
 
-Decision for stage two: **HOLD** until the actual frozen comparison bundle is
-provided/exported and passes validation. No accuracy result or online stage has
-been attempted.
+Decision for Seed46 Canary/Pilot preparation: **GO** after explicit API
+authorization. Decision for Formal three-seed work: **HOLD** until a formal
+logical budget is frozen. No online stage or accuracy evaluation has run.

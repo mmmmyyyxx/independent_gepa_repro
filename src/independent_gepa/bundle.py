@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 from .protocol import Example, ProtocolViolation, SplitName
-from .versions import BUNDLE_VERSION
+from .versions import BUNDLE_VERSION, PARSER_CONTRACT_VERSION
 
 MEMBER_COUNT = 5
 FORMAL_SPLIT_SIZES = {
@@ -112,10 +112,127 @@ class ValidatedBundle:
 
     @property
     def total_budget(self) -> int:
-        return int(self.budget_reference["logical_task_example_evaluations"])
+        return self.budget_for_stage("pilot")
+
+    def budget_for_stage(self, stage: str) -> int:
+        budget_stage = "pilot" if stage == "offline_fake" else stage
+        if budget_stage == "canary":
+            raise ProtocolViolation("canary budget is defined by its run config")
+        row = self.budget_reference.get(budget_stage)
+        if not isinstance(row, Mapping) or row.get("status") != "frozen":
+            raise ProtocolViolation(f"{budget_stage} logical budget is not frozen")
+        value = row.get("logical_task_example_evaluations")
+        if not isinstance(value, int) or value < MEMBER_COUNT:
+            raise ProtocolViolation(f"{budget_stage} logical budget is invalid")
+        return value
 
 
-def validate_bundle(root: Path, *, require_formal: bool = True) -> ValidatedBundle:
+def _validate_model_contract(
+    model_contract: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    *,
+    require_formal: bool,
+) -> None:
+    if model_contract.get("schema_version") != "model_contract_v2":
+        raise ProtocolViolation("unsupported model contract schema")
+    task = model_contract.get("shared_task_model")
+    reference = model_contract.get("reference_optimizer")
+    reflection = model_contract.get("independent_gepa_reflection_model")
+    if not all(isinstance(item, Mapping) for item in (task, reference, reflection)):
+        raise ProtocolViolation("model contract must separate task, reference, and GEPA roles")
+    expected_model = "qwen3.7-flash-2026-07-15"
+    if task.get("model") != manifest.get("task_model"):
+        raise ProtocolViolation("task model identity mismatch")
+    if reflection.get("model") != manifest.get("reflection_model"):
+        raise ProtocolViolation("reflection model identity mismatch")
+    if task.get("enable_thinking") is not False or reflection.get("enable_thinking") is not False:
+        raise ProtocolViolation("task and reflection thinking must be disabled")
+    for name, row in (("shared task", task), ("GEPA reflection", reflection)):
+        required = ("temperature", "max_tokens", "timeout_seconds", "max_retries")
+        if any(field not in row for field in required):
+            raise ProtocolViolation(f"{name} model contract is incomplete")
+        if (
+            int(row["max_tokens"]) <= 0
+            or float(row["timeout_seconds"]) <= 0
+            or int(row["max_retries"]) < 0
+        ):
+            raise ProtocolViolation(f"{name} model contract contains invalid settings")
+    if task.get("parser_version") != manifest.get("parser_version"):
+        raise ProtocolViolation("task model parser identity mismatch")
+    roles = reference.get("roles")
+    if reference.get("model") != expected_model or not isinstance(roles, Mapping):
+        raise ProtocolViolation("reference optimizer metadata is incomplete")
+    if set(roles) != {"teacher", "critic", "student"}:
+        raise ProtocolViolation("reference optimizer roles must be teacher, critic, and student")
+    for role, row in roles.items():
+        if not isinstance(row, Mapping) or not isinstance(row.get("temperature"), (int, float)):
+            raise ProtocolViolation(f"reference optimizer role is incomplete: {role}")
+    if require_formal and (task.get("model") != expected_model or reflection.get("model") != expected_model):
+        raise ProtocolViolation("formal model snapshot mismatch")
+
+
+def _validate_initial_metrics(manifest: Mapping[str, Any]) -> None:
+    metrics = manifest.get("initial_metrics")
+    if not isinstance(metrics, Mapping) or set(metrics) != set(FORMAL_SPLIT_SIZES):
+        raise ProtocolViolation("manifest must define initial_metrics for all three splits")
+    for split, size in FORMAL_SPLIT_SIZES.items():
+        row = metrics.get(split)
+        if not isinstance(row, Mapping) or row.get("status") not in {"available", "not_evaluated"}:
+            raise ProtocolViolation(f"invalid initial metric status for {split}")
+        if row["status"] == "not_evaluated":
+            if set(row) != {"status"}:
+                raise ProtocolViolation(f"not_evaluated metrics must not contain invented values: {split}")
+            continue
+        member_correct = row.get("member_correct")
+        team_correct = row.get("team_correct")
+        if (
+            not isinstance(member_correct, list)
+            or len(member_correct) != MEMBER_COUNT
+            or any(not isinstance(value, int) or value < 0 or value > size for value in member_correct)
+            or not isinstance(team_correct, int)
+            or team_correct < 0
+            or team_correct > size
+        ):
+            raise ProtocolViolation(f"invalid available initial metrics for {split}")
+
+
+def _validate_budget_reference(
+    budget_reference: Mapping[str, Any],
+    *,
+    stage: str | None,
+) -> None:
+    if budget_reference.get("schema_version") != "budget_reference_v2":
+        raise ProtocolViolation("unsupported budget reference schema")
+    if budget_reference.get("allocation_rule") != "equal_floor_per_member":
+        raise ProtocolViolation("unsupported budget allocation rule")
+    pilot = budget_reference.get("pilot")
+    formal = budget_reference.get("formal")
+    if not isinstance(pilot, Mapping) or pilot.get("status") != "frozen":
+        raise ProtocolViolation("pilot logical budget must be frozen")
+    pilot_value = pilot.get("logical_task_example_evaluations")
+    if not isinstance(pilot_value, int) or pilot_value < MEMBER_COUNT:
+        raise ProtocolViolation("pilot logical budget must be a positive integer")
+    provenance = pilot.get("provenance")
+    if not isinstance(provenance, Mapping) or provenance.get("experiment_seed") != 46:
+        raise ProtocolViolation("pilot budget provenance must identify Seed46")
+    if not isinstance(formal, Mapping) or formal.get("status") not in {"frozen", "not_frozen"}:
+        raise ProtocolViolation("formal budget status is invalid")
+    if formal["status"] == "frozen":
+        value = formal.get("logical_task_example_evaluations")
+        if not isinstance(value, int) or value < MEMBER_COUNT:
+            raise ProtocolViolation("frozen formal budget is invalid")
+    elif set(formal) != {"status"}:
+        raise ProtocolViolation("not_frozen formal budget must not contain an invented value")
+    if stage == "formal" and formal.get("status") != "frozen":
+        raise ProtocolViolation("formal logical budget is not frozen")
+
+
+def validate_bundle(
+    root: Path,
+    *,
+    require_formal: bool = True,
+    stage: str | None = None,
+) -> ValidatedBundle:
     root = root.resolve()
     if not root.is_dir():
         raise ProtocolViolation(f"bundle directory does not exist: {root}")
@@ -133,6 +250,8 @@ def validate_bundle(root: Path, *, require_formal: bool = True) -> ValidatedBund
         raise ProtocolViolation(f"unsupported bundle_version: {manifest.get('bundle_version')!r}")
     if manifest.get("task") != "disambiguation_qa":
         raise ProtocolViolation("formal comparison task must be disambiguation_qa")
+    if manifest.get("enable_thinking") is not False:
+        raise ProtocolViolation("bundle enable_thinking must be false")
     if int(manifest.get("member_count", -1)) != MEMBER_COUNT:
         raise ProtocolViolation("bundle must define exactly five members")
     if not isinstance(manifest.get("experiment_seed"), int):
@@ -198,6 +317,12 @@ def validate_bundle(root: Path, *, require_formal: bool = True) -> ValidatedBund
         expected_size = formal_size if require_formal else int(split_sizes.get(name, -1))
         if len(raw_rows) != expected_size or int(split_sizes.get(name, -1)) != expected_size:
             raise ProtocolViolation(f"unexpected {name} split size: {len(raw_rows)}")
+        for row in raw_rows:
+            if "option_labels" not in row:
+                raise ProtocolViolation(
+                    f"{name} example {row.get('example_id', '<unknown>')} "
+                    "must freeze option_labels"
+                )
         examples = tuple(Example.from_mapping(row) for row in raw_rows)
         ids = [example.example_id for example in examples]
         if len(ids) != len(set(ids)):
@@ -217,34 +342,25 @@ def validate_bundle(root: Path, *, require_formal: bool = True) -> ValidatedBund
             raise ProtocolViolation(f"manifest example ID hash mismatch for {name}")
         splits[name] = examples
 
-    if model_contract.get("task_model") != manifest.get("task_model"):
-        raise ProtocolViolation("task model identity mismatch")
-    if model_contract.get("reflection_model") != manifest.get("reflection_model"):
-        raise ProtocolViolation("reflection model identity mismatch")
-    if model_contract.get("enable_thinking") is not False or manifest.get("enable_thinking") is not False:
-        raise ProtocolViolation("enable_thinking must be false")
-    numeric_model_fields = ("temperature", "max_tokens", "timeout_seconds", "max_retries")
-    if any(field not in model_contract for field in numeric_model_fields):
-        raise ProtocolViolation("model contract lacks explicit sampling, token, timeout, or retry settings")
-    if (
-        int(model_contract["max_tokens"]) <= 0
-        or float(model_contract["timeout_seconds"]) <= 0
-        or int(model_contract["max_retries"]) < 0
-    ):
-        raise ProtocolViolation("model contract contains invalid provider settings")
-    if require_formal:
-        expected_model = "qwen3.7-flash-2026-07-15"
-        if model_contract.get("task_model") != expected_model or model_contract.get("reflection_model") != expected_model:
-            raise ProtocolViolation("formal model snapshot mismatch")
+    _validate_model_contract(model_contract, manifest, require_formal=require_formal)
     if manifest.get("voting_rule") != "plurality" or manifest.get("tie_rule") != "abstain":
         raise ProtocolViolation("bundle must use plurality with tie-as-abstain")
-    if parser_contract.get("version") != manifest.get("parser_version"):
+    if parser_contract.get("schema_version") != PARSER_CONTRACT_VERSION:
+        raise ProtocolViolation("parser contract schema mismatch")
+    if parser_contract.get("source_parser_version") != manifest.get("parser_version"):
         raise ProtocolViolation("parser contract version mismatch")
-    logical_budget = budget_reference.get("logical_task_example_evaluations")
-    if not isinstance(logical_budget, int) or logical_budget < MEMBER_COUNT:
-        raise ProtocolViolation("logical task-example budget must be a positive integer")
-    if budget_reference.get("allocation_rule") != "equal_floor_per_member":
-        raise ProtocolViolation("unsupported budget allocation rule")
+    provenance = manifest.get("split_source_provenance")
+    if not isinstance(provenance, Mapping) or set(provenance) != set(FORMAL_SPLIT_SIZES):
+        raise ProtocolViolation("manifest lacks split source provenance")
+    for name, row in provenance.items():
+        if (
+            not isinstance(row, Mapping)
+            or not isinstance(row.get("source_path"), str)
+            or not re.fullmatch(r"[0-9a-f]{64}", str(row.get("source_sha256", "")))
+        ):
+            raise ProtocolViolation(f"invalid split source provenance for {name}")
+    _validate_initial_metrics(manifest)
+    _validate_budget_reference(budget_reference, stage=stage)
 
     overall = compute_overall_hash(manifest, declared_files)
     if hashes.get("overall_bundle_hash") != overall or manifest.get("overall_bundle_hash") != overall:
@@ -293,17 +409,53 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
     split_spec = spec.get("splits")
     if not isinstance(prompts_spec, list) or len(prompts_spec) != MEMBER_COUNT or not isinstance(split_spec, dict):
         raise ProtocolViolation("export spec requires five initial_prompts and three splits")
-    for index, relative in enumerate(prompts_spec):
-        prompt = source_path(str(relative)).read_text(encoding="utf-8")
+    prompt_sources: list[dict[str, Any]] = []
+    for index, entry in enumerate(prompts_spec):
+        if isinstance(entry, str):
+            path = source_path(entry)
+            prompt = path.read_text(encoding="utf-8")
+            source = {"source_path": entry, "source_sha256": sha256_file(path), "format": "text"}
+        elif isinstance(entry, dict) and entry.get("format") == "json_array":
+            relative = str(entry["path"])
+            path = source_path(relative)
+            values = read_json(path)
+            prompt_index = int(entry["index"])
+            if not isinstance(values, list) or not 0 <= prompt_index < len(values):
+                raise ProtocolViolation("prompt JSON array source is invalid")
+            prompt = str(values[prompt_index])
+            source = {
+                "source_path": relative,
+                "source_sha256": sha256_file(path),
+                "format": "json_array",
+                "index": prompt_index,
+            }
+        else:
+            raise ProtocolViolation("initial prompt source must be text or a JSON-array entry")
         target = output / "initialization" / f"agent_{index}.txt"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(prompt, encoding="utf-8", newline="\n")
-    def source_rows(split_entry: Any) -> list[dict[str, Any]]:
+        prompt_sources.append(source)
+
+    def source_rows(split_entry: Any) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         if isinstance(split_entry, str):
-            return read_jsonl(source_path(split_entry))
+            path = source_path(split_entry)
+            rows = read_jsonl(path)
+            for row in rows:
+                choices = row.get("choices")
+                if isinstance(choices, list):
+                    row["option_labels"] = [
+                        chr(ord("A") + index) for index in range(len(choices))
+                    ]
+            return rows, {
+                "source_path": split_entry,
+                "source_sha256": sha256_file(path),
+                "format": "jsonl",
+                "field_newline_normalization": "none",
+            }
         if not isinstance(split_entry, dict):
             raise ProtocolViolation("split export entry must be a path or mapping")
-        path = source_path(str(split_entry["path"]))
+        relative = str(split_entry["path"])
+        path = source_path(relative)
         if split_entry.get("format") != "csv":
             raise ProtocolViolation("mapped split entries currently require format=csv")
         try:
@@ -318,11 +470,12 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
         rows: list[dict[str, Any]] = []
         for source_record in source_records:
             question = str(source_record[question_field])
+            normalized_question = question.replace("\r\n", "\n").replace("\r", "\n")
             if layout == "bbh_embedded_options":
                 marker = "\nOptions:\n"
-                if marker not in question:
+                if marker not in normalized_question:
                     raise ProtocolViolation("BBH question lacks the explicit Options block")
-                stem, option_block = question.rsplit(marker, 1)
+                stem, option_block = normalized_question.rsplit(marker, 1)
                 parsed_choices: list[tuple[str, str]] = []
                 for line in option_block.splitlines():
                     match = re.fullmatch(r"\(([A-Z])\)\s+(.+)", line.strip())
@@ -333,6 +486,7 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
                 if [label for label, _ in parsed_choices] != expected_labels:
                     raise ProtocolViolation("BBH options must be contiguous and stably ordered")
                 choices = [choice for _, choice in parsed_choices]
+                option_labels = [label for label, _ in parsed_choices]
                 question = stem
             else:
                 choices_field = split_entry.get("choices_field")
@@ -345,6 +499,8 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
                 if not isinstance(decoded_choices, list):
                     raise ProtocolViolation("CSV choices_field must contain a JSON list")
                 choices = [str(item) for item in decoded_choices]
+                option_labels = [chr(ord("A") + index) for index in range(len(choices))]
+                question = normalized_question
             raw_gold = str(source_record[gold_field]).strip()
             gold_match = re.fullmatch(r"\(?([A-Za-z])\)?", raw_gold)
             if gold_match is None:
@@ -355,15 +511,30 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
                     "question": question,
                     "choices": choices,
                     "gold_answer": gold_match.group(1).upper(),
+                    "option_labels": option_labels,
                 }
             )
-        return rows
+        return rows, {
+            "source_path": relative,
+            "source_sha256": sha256_file(path),
+            "format": "csv",
+            "field_newline_normalization": "crlf_cr_to_lf",
+        }
 
+    split_source_provenance: dict[str, dict[str, Any]] = {}
     for name in FORMAL_SPLIT_SIZES:
-        rows = source_rows(split_spec[name])
+        rows, split_source_provenance[name] = source_rows(split_spec[name])
         write_canonical_jsonl(output / "splits" / f"{name}.jsonl", rows)
+
+    def contract_value(entry: Any) -> Any:
+        if isinstance(entry, str):
+            return read_json(source_path(entry))
+        if isinstance(entry, dict) and isinstance(entry.get("inline"), dict):
+            return entry["inline"]
+        raise ProtocolViolation("contract source must be a source path or inline object")
+
     for contract_name in ("model_contract", "parser_contract", "budget_reference"):
-        value = read_json(source_path(str(spec[contract_name])))
+        value = contract_value(spec[contract_name])
         write_canonical_json(output / f"{contract_name}.json", value)
 
     file_hashes: dict[str, str] = {}
@@ -382,6 +553,7 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
             "member_id": index,
             "prompt_file": f"initialization/agent_{index}.txt",
             "prompt_hash": prompt_hash((output / "initialization" / f"agent_{index}.txt").read_text(encoding="utf-8")),
+            "source": prompt_sources[index],
         }
         for index in range(MEMBER_COUNT)
     ]
@@ -404,14 +576,15 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
         },
         "split_hashes": {name: file_hashes[f"splits/{name}.jsonl"] for name in FORMAL_SPLIT_SIZES},
         "split_example_id_hashes": example_id_hashes,
-        "task_model": model_contract["task_model"],
-        "reflection_model": model_contract["reflection_model"],
-        "enable_thinking": model_contract["enable_thinking"],
-        "parser_version": read_json(output / "parser_contract.json")["version"],
+        "task_model": model_contract["shared_task_model"]["model"],
+        "reflection_model": model_contract["independent_gepa_reflection_model"]["model"],
+        "enable_thinking": False,
+        "parser_version": read_json(output / "parser_contract.json")["source_parser_version"],
         "voting_rule": "plurality",
         "tie_rule": "abstain",
         "source_identity": spec["source_identity"],
-        "reference_results": spec["reference_results"],
+        "initial_metrics": spec["initial_metrics"],
+        "split_source_provenance": split_source_provenance,
         "budget_identity": spec["budget_identity"],
     }
     overall = compute_overall_hash(manifest, file_hashes)
@@ -426,5 +599,5 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
             "overall_bundle_hash": overall,
         },
     )
-    validate_bundle(output, require_formal=True)
+    validate_bundle(output, require_formal=True, stage="pilot")
     return overall

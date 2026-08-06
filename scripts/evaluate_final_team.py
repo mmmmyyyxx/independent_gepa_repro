@@ -33,7 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     config = RunConfig.load(args.config)
-    bundle = validate_bundle(args.bundle, require_formal=True)
+    bundle = validate_bundle(args.bundle, require_formal=True, stage=config.stage)
     team = json.loads(args.team.read_text(encoding="utf-8"))
     prompts = tuple(team.get("prompts", []))
     if team.get("bundle_hash") != bundle.overall_hash or team.get("frozen") is not True:

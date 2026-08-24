@@ -1,15 +1,16 @@
-method_id: independent_gepa_protocol_matched_v1
-stage: canary
+method_id: independent_gepa_v17_matched_v2
+stage: smoke
 real_api_allowed: false
 members: 1
-experiment_seed: 46
+experiment_seed: 56
 member_ids: [0]
 optimization_example_limit: 5
 development_enabled: false
 test_enabled: false
 logical_evaluation_budget: 20
-task_model: qwen3.7-flash-2026-07-15
-reflection_model: qwen3.7-flash-2026-07-15
+token_budget: 12000
+task_model: qwen3-14b
+reflection_model: qwen3-14b
 provider:
   api_key_env: DASHSCOPE_API_KEY
   base_url_env: DASHSCOPE_BASE_URL
@@ -18,10 +19,11 @@ provider:
   timeout_seconds: 120.0
   max_retries: 3
   enable_thinking: false
+  evaluation_concurrency: 5
 gepa:
   candidate_selection_strategy: pareto
   frontier_type: instance
-  skip_perfect_score: true
+  skip_perfect_score: false
   reflection_minibatch_size: 2
   perfect_score: 1.0
   use_merge: false

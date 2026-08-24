@@ -1,0 +1,1 @@
+{"budget_definition_version":"v17_s4_total_tokens_equal_fifths_calibrated_v1","hard_overshoot_tolerance":0.05,"logical_eval_cap_total_by_seed":{"56":5000,"57":5000,"58":5000},"reference_s4_total_tokens":{"56":526935,"57":493420,"58":620887},"status":"frozen_before_formal_search","stop_reserve_tokens_per_member":{"56":45000,"57":45000,"58":45000}}

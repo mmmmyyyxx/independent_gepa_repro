@@ -151,10 +151,11 @@ def make_bundle(
     sizes: tuple[int, int, int] = (3, 2, 2),
     total_budget: int = 40,
     overlap: bool = False,
+    experiment_seed: int = 56,
 ) -> Path:
     bundle = root / "bundle"
     bundle.mkdir(parents=True)
-    prompts = [f"initial member {index}" for index in range(5)]
+    prompts = ["identical initial prompt"] * 5
     for index, prompt in enumerate(prompts):
         path = bundle / "initialization" / f"agent_{index}.txt"
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -176,7 +177,7 @@ def make_bundle(
             )
         write_canonical_jsonl(bundle / "splits" / f"{name}.jsonl", rows)
     transport = {
-        "model": "qwen3.7-flash-2026-07-15",
+        "model": "qwen3-14b",
         "enable_thinking": False,
         "temperature": 0.0,
         "max_tokens": 128,
@@ -189,9 +190,11 @@ def make_bundle(
             **transport,
             "parser_version": "task_parser_v1",
             "output_contract_version": "task_output_contract_v1",
+            "request_template_version": "decision_procedure_then_mandatory_output_contract_v2",
+            "question_rendering_version": "bbh_options_marker_v1",
         },
         "reference_optimizer": {
-            "model": "qwen3.7-flash-2026-07-15",
+            "model": "qwen3-14b",
             "roles": {
                 "teacher": {"temperature": 0.4},
                 "critic": {"temperature": 0.0},
@@ -201,22 +204,42 @@ def make_bundle(
         "independent_gepa_reflection_model": dict(transport),
     }
     budget = {
-        "schema_version": "budget_reference_v2",
+        "schema_version": "budget_reference_v3",
+        "primary_unit": "total_model_tokens",
         "allocation_rule": "equal_floor_per_member",
-        "pilot": {
+        "formal": {
             "status": "frozen",
-            "logical_task_example_evaluations": total_budget,
-            "provenance": {"experiment_seed": 46, "opaque_id": "reference-pilot"},
+            "reference_arm": "V17_S4",
+            "reference_training_tokens": 100000,
+            "reference_provider_calls": 100,
+            "gepa_logical_eval_cap_total": total_budget,
+            "expected_token_budget": 100000,
+            "hard_overshoot_tolerance": 0.05,
+            "hard_token_limit": 105000,
+            "stop_reserve_tokens_per_member": 1000,
+            "budget_definition_version": "test-v1",
         },
-        "formal": {"status": "not_frozen"},
+    }
+    reference_results = {
+        "schema_version": "v17_reference_results_v1",
+        "experiment_seed": experiment_seed,
+        "arms": {
+            arm: {
+                "validation": {"vote_accuracy": 0.5, "oracle_accuracy": 0.6},
+                "test": {"vote_accuracy": 0.5, "oracle_accuracy": 0.6},
+            }
+            for arm in ("S0", "S1", "S4")
+        },
     }
     write_canonical_json(bundle / "model_contract.json", model)
     write_canonical_json(bundle / "parser_contract.json", parser_contract())
     write_canonical_json(bundle / "budget_reference.json", budget)
+    write_canonical_json(bundle / "reference_results.json", reference_results)
     relative_files = {
         "model_contract.json",
         "parser_contract.json",
         "budget_reference.json",
+        "reference_results.json",
         *(f"initialization/agent_{index}.txt" for index in range(5)),
         *(f"splits/{name}.jsonl" for name in names),
     }
@@ -233,7 +256,7 @@ def make_bundle(
     manifest = {
         "bundle_version": BUNDLE_VERSION,
         "task": "disambiguation_qa",
-        "experiment_seed": 46,
+        "experiment_seed": experiment_seed,
         "member_count": 5,
         "members": [
             {
@@ -252,12 +275,14 @@ def make_bundle(
         "parser_version": parser_contract()["source_parser_version"],
         "voting_rule": "plurality",
         "tie_rule": "abstain",
+        "initialization_mode": "shared_identical",
         "source_identity": {"commit": "opaque-source"},
         "initial_metrics": {
             "optimization": {
                 "status": "available",
                 "member_correct": [0] * 5,
                 "team_correct": 0,
+                "parsed_answer_vector_hash": "0" * 64,
             },
             "development": {"status": "not_evaluated"},
             "test": {"status": "not_evaluated"},
@@ -293,8 +318,8 @@ def write_run_config(path: Path, *, stage: str = "offline_fake", use_merge: bool
         "stage": stage,
         "real_api_allowed": False,
         "members": 5,
-        "task_model": "qwen3.7-flash-2026-07-15",
-        "reflection_model": "qwen3.7-flash-2026-07-15",
+        "task_model": "qwen3-14b",
+        "reflection_model": "qwen3-14b",
         "provider": {
             "api_key_env": "NEVER_USED",
             "base_url_env": "NEVER_USED",

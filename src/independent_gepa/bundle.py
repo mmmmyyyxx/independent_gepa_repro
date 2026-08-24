@@ -12,6 +12,7 @@ from typing import Any, Iterable, Mapping
 
 from .protocol import Example, ProtocolViolation, SplitName
 from .versions import BUNDLE_VERSION, PARSER_CONTRACT_VERSION
+from .versions import TASK_REQUEST_TEMPLATE_VERSION
 
 MEMBER_COUNT = 5
 FORMAL_SPLIT_SIZES = {
@@ -24,6 +25,7 @@ REQUIRED_FILES = (
     "model_contract.json",
     "parser_contract.json",
     "budget_reference.json",
+    "reference_results.json",
     "hashes.json",
 )
 
@@ -102,6 +104,7 @@ class ValidatedBundle:
     model_contract: Mapping[str, Any]
     parser_contract: Mapping[str, Any]
     budget_reference: Mapping[str, Any]
+    reference_results: Mapping[str, Any]
     prompts: tuple[str, ...]
     splits: Mapping[str, tuple[Example, ...]]
     overall_hash: str
@@ -111,20 +114,20 @@ class ValidatedBundle:
         return int(self.manifest["experiment_seed"])
 
     @property
-    def total_budget(self) -> int:
-        return self.budget_for_stage("pilot")
-
-    def budget_for_stage(self, stage: str) -> int:
-        budget_stage = "pilot" if stage == "offline_fake" else stage
-        if budget_stage == "canary":
-            raise ProtocolViolation("canary budget is defined by its run config")
-        row = self.budget_reference.get(budget_stage)
+    def logical_evaluation_cap(self) -> int:
+        row = self.budget_reference.get("formal")
         if not isinstance(row, Mapping) or row.get("status") != "frozen":
-            raise ProtocolViolation(f"{budget_stage} logical budget is not frozen")
-        value = row.get("logical_task_example_evaluations")
+            raise ProtocolViolation("formal token/calibration budget is not frozen")
+        value = row.get("gepa_logical_eval_cap_total")
         if not isinstance(value, int) or value < MEMBER_COUNT:
-            raise ProtocolViolation(f"{budget_stage} logical budget is invalid")
+            raise ProtocolViolation("formal GEPA logical-evaluation cap is invalid")
         return value
+
+    def token_budget(self) -> Mapping[str, int | float | str]:
+        row = self.budget_reference.get("formal")
+        if not isinstance(row, Mapping) or row.get("status") != "frozen":
+            raise ProtocolViolation("formal token/calibration budget is not frozen")
+        return row
 
 
 def _validate_model_contract(
@@ -140,7 +143,7 @@ def _validate_model_contract(
     reflection = model_contract.get("independent_gepa_reflection_model")
     if not all(isinstance(item, Mapping) for item in (task, reference, reflection)):
         raise ProtocolViolation("model contract must separate task, reference, and GEPA roles")
-    expected_model = "qwen3.7-flash-2026-07-15"
+    expected_model = "qwen3-14b"
     if task.get("model") != manifest.get("task_model"):
         raise ProtocolViolation("task model identity mismatch")
     if reflection.get("model") != manifest.get("reflection_model"):
@@ -159,6 +162,10 @@ def _validate_model_contract(
             raise ProtocolViolation(f"{name} model contract contains invalid settings")
     if task.get("parser_version") != manifest.get("parser_version"):
         raise ProtocolViolation("task model parser identity mismatch")
+    if task.get("request_template_version") != TASK_REQUEST_TEMPLATE_VERSION:
+        raise ProtocolViolation("task request-template identity mismatch")
+    if task.get("question_rendering_version") != "bbh_options_marker_v1":
+        raise ProtocolViolation("task question-rendering identity mismatch")
     roles = reference.get("roles")
     if reference.get("model") != expected_model or not isinstance(roles, Mapping):
         raise ProtocolViolation("reference optimizer metadata is incomplete")
@@ -201,30 +208,37 @@ def _validate_budget_reference(
     *,
     stage: str | None,
 ) -> None:
-    if budget_reference.get("schema_version") != "budget_reference_v2":
+    if budget_reference.get("schema_version") != "budget_reference_v3":
         raise ProtocolViolation("unsupported budget reference schema")
+    if budget_reference.get("primary_unit") != "total_model_tokens":
+        raise ProtocolViolation("primary matched budget must be total model tokens")
     if budget_reference.get("allocation_rule") != "equal_floor_per_member":
         raise ProtocolViolation("unsupported budget allocation rule")
-    pilot = budget_reference.get("pilot")
     formal = budget_reference.get("formal")
-    if not isinstance(pilot, Mapping) or pilot.get("status") != "frozen":
-        raise ProtocolViolation("pilot logical budget must be frozen")
-    pilot_value = pilot.get("logical_task_example_evaluations")
-    if not isinstance(pilot_value, int) or pilot_value < MEMBER_COUNT:
-        raise ProtocolViolation("pilot logical budget must be a positive integer")
-    provenance = pilot.get("provenance")
-    if not isinstance(provenance, Mapping) or provenance.get("experiment_seed") != 46:
-        raise ProtocolViolation("pilot budget provenance must identify Seed46")
-    if not isinstance(formal, Mapping) or formal.get("status") not in {"frozen", "not_frozen"}:
+    if not isinstance(formal, Mapping) or formal.get("status") not in {"frozen", "calibration_pending"}:
         raise ProtocolViolation("formal budget status is invalid")
     if formal["status"] == "frozen":
-        value = formal.get("logical_task_example_evaluations")
-        if not isinstance(value, int) or value < MEMBER_COUNT:
-            raise ProtocolViolation("frozen formal budget is invalid")
-    elif set(formal) != {"status"}:
-        raise ProtocolViolation("not_frozen formal budget must not contain an invented value")
+        required_ints = (
+            "reference_training_tokens",
+            "reference_provider_calls",
+            "gepa_logical_eval_cap_total",
+            "expected_token_budget",
+            "hard_token_limit",
+            "stop_reserve_tokens_per_member",
+        )
+        if any(not isinstance(formal.get(key), int) or int(formal[key]) <= 0 for key in required_ints):
+            raise ProtocolViolation("frozen formal budget is incomplete")
+        if formal.get("reference_arm") != "V17_S4":
+            raise ProtocolViolation("formal reference arm must be V17_S4")
+        tolerance = formal.get("hard_overshoot_tolerance")
+        if not isinstance(tolerance, (int, float)) or not 0 <= float(tolerance) <= 0.05:
+            raise ProtocolViolation("hard token overshoot tolerance must be at most five percent")
+        if int(formal["expected_token_budget"]) != int(formal["reference_training_tokens"]):
+            raise ProtocolViolation("expected token budget must equal V17 S4 realized training tokens")
+        if int(formal["hard_token_limit"]) > int(formal["reference_training_tokens"] * 1.05):
+            raise ProtocolViolation("hard token limit exceeds five-percent tolerance")
     if stage == "formal" and formal.get("status") != "frozen":
-        raise ProtocolViolation("formal logical budget is not frozen")
+        raise ProtocolViolation("formal token/calibration budget is not frozen")
 
 
 def validate_bundle(
@@ -243,8 +257,19 @@ def validate_bundle(
     model_contract = read_json(root / "model_contract.json")
     parser_contract = read_json(root / "parser_contract.json")
     budget_reference = read_json(root / "budget_reference.json")
+    reference_results = read_json(root / "reference_results.json")
     hashes = read_json(root / "hashes.json")
-    if not all(isinstance(item, dict) for item in (manifest, model_contract, parser_contract, budget_reference, hashes)):
+    if not all(
+        isinstance(item, dict)
+        for item in (
+            manifest,
+            model_contract,
+            parser_contract,
+            budget_reference,
+            reference_results,
+            hashes,
+        )
+    ):
         raise ProtocolViolation("bundle JSON contracts must be objects")
     if manifest.get("bundle_version") != BUNDLE_VERSION:
         raise ProtocolViolation(f"unsupported bundle_version: {manifest.get('bundle_version')!r}")
@@ -256,8 +281,8 @@ def validate_bundle(
         raise ProtocolViolation("bundle must define exactly five members")
     if not isinstance(manifest.get("experiment_seed"), int):
         raise ProtocolViolation("experiment_seed must be an integer")
-    if require_formal and int(manifest["experiment_seed"]) not in {44, 45, 46}:
-        raise ProtocolViolation("formal experiment seed must be one of 44, 45, or 46")
+    if require_formal and int(manifest["experiment_seed"]) not in {56, 57, 58}:
+        raise ProtocolViolation("formal experiment seed must be one of 56, 57, or 58")
 
     declared_files = hashes.get("files")
     if not isinstance(declared_files, dict) or not declared_files:
@@ -266,6 +291,7 @@ def validate_bundle(
         "model_contract.json",
         "parser_contract.json",
         "budget_reference.json",
+        "reference_results.json",
         *(f"initialization/agent_{index}.txt" for index in range(MEMBER_COUNT)),
         *(f"splits/{name}.jsonl" for name in FORMAL_SPLIT_SIZES),
     }
@@ -297,6 +323,8 @@ def validate_bundle(
             raise ProtocolViolation(f"prompt hash mismatch for member {index}")
         prompts.append(prompt)
         prompt_hashes.append(digest)
+    if len(set(prompt_hashes)) != 1 or manifest.get("initialization_mode") != "shared_identical":
+        raise ProtocolViolation("V17 baseline requires five byte-identical initial prompts")
 
     splits: dict[str, tuple[Example, ...]] = {}
     all_ids: set[str] = set()
@@ -361,6 +389,24 @@ def validate_bundle(
             raise ProtocolViolation(f"invalid split source provenance for {name}")
     _validate_initial_metrics(manifest)
     _validate_budget_reference(budget_reference, stage=stage)
+    if reference_results.get("schema_version") != "v17_reference_results_v1":
+        raise ProtocolViolation("unsupported V17 reference-results schema")
+    if reference_results.get("experiment_seed") != manifest.get("experiment_seed"):
+        raise ProtocolViolation("reference-results seed mismatch")
+    arms = reference_results.get("arms")
+    if not isinstance(arms, Mapping) or set(arms) != {"S0", "S1", "S4"}:
+        raise ProtocolViolation("reference results must freeze S0, S1, and S4")
+    for arm, row in arms.items():
+        if not isinstance(row, Mapping):
+            raise ProtocolViolation(f"invalid reference result for {arm}")
+        for split in ("validation", "test"):
+            metrics = row.get(split)
+            if (
+                not isinstance(metrics, Mapping)
+                or not isinstance(metrics.get("vote_accuracy"), (int, float))
+                or not isinstance(metrics.get("oracle_accuracy"), (int, float))
+            ):
+                raise ProtocolViolation(f"reference result lacks {split} metrics for {arm}")
 
     overall = compute_overall_hash(manifest, declared_files)
     if hashes.get("overall_bundle_hash") != overall or manifest.get("overall_bundle_hash") != overall:
@@ -371,6 +417,7 @@ def validate_bundle(
         model_contract=model_contract,
         parser_contract=parser_contract,
         budget_reference=budget_reference,
+        reference_results=reference_results,
         prompts=tuple(prompts),
         splits=splits,
         overall_hash=overall,
@@ -533,7 +580,12 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
             return entry["inline"]
         raise ProtocolViolation("contract source must be a source path or inline object")
 
-    for contract_name in ("model_contract", "parser_contract", "budget_reference"):
+    for contract_name in (
+        "model_contract",
+        "parser_contract",
+        "budget_reference",
+        "reference_results",
+    ):
         value = contract_value(spec[contract_name])
         write_canonical_json(output / f"{contract_name}.json", value)
 
@@ -543,6 +595,7 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
             "model_contract.json",
             "parser_contract.json",
             "budget_reference.json",
+            "reference_results.json",
             *(f"initialization/agent_{index}.txt" for index in range(MEMBER_COUNT)),
             *(f"splits/{name}.jsonl" for name in FORMAL_SPLIT_SIZES),
         }
@@ -582,6 +635,7 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
         "parser_version": read_json(output / "parser_contract.json")["source_parser_version"],
         "voting_rule": "plurality",
         "tie_rule": "abstain",
+        "initialization_mode": "shared_identical",
         "source_identity": spec["source_identity"],
         "initial_metrics": spec["initial_metrics"],
         "split_source_provenance": split_source_provenance,
@@ -599,5 +653,5 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
             "overall_bundle_hash": overall,
         },
     )
-    validate_bundle(output, require_formal=True, stage="pilot")
+    validate_bundle(output, require_formal=True, stage=None)
     return overall

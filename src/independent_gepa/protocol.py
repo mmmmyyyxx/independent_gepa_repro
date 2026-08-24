@@ -86,7 +86,7 @@ class Example:
         }
 
     def task_input(self) -> str:
-        lines = [self.question.strip()]
+        lines = [self.question.strip(), "Options:"]
         for label, choice in zip(self.resolved_option_labels, self.choices, strict=True):
             lines.append(f"({label}) {choice}")
         return "\n".join(lines)

@@ -43,6 +43,9 @@ def sanitize_member_results(
                 "initial_prompt_hash": str(row["initial_prompt_hash"]),
                 "candidate_count": int(row["candidate_count"]),
                 "logical_evaluations": int(row["logical_evaluations"]),
+                "initial_optimization_accuracy": row.get("initial_optimization_accuracy"),
+                "final_optimization_accuracy": row.get("final_optimization_accuracy"),
+                "termination_reason": str(row.get("termination_reason", "canonical_stop")),
                 "completed": bool(row["completed"]),
             }
         )

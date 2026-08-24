@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Mapping
@@ -17,6 +18,7 @@ class BudgetLedger:
     member_count: int = 5
     consumed_by_member: dict[int, int] = field(default_factory=dict)
     state_paths: Mapping[int, Path] = field(default_factory=dict)
+    _lock: threading.RLock = field(default_factory=threading.RLock, init=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.total_budget < self.member_count or self.member_count <= 0:
@@ -60,20 +62,22 @@ class BudgetLedger:
 
     @property
     def consumed_total(self) -> int:
-        return sum(self.consumed_by_member.values())
+        with self._lock:
+            return sum(self.consumed_by_member.values())
 
     def consume(self, member_id: int, count: int = 1) -> None:
-        if member_id not in self.consumed_by_member:
-            raise ProtocolViolation(f"unknown member_id: {member_id}")
-        if count <= 0:
-            raise ProtocolViolation("logical evaluation count must be positive")
-        proposed = self.consumed_by_member[member_id] + count
-        if proposed > self.member_budget:
-            raise BudgetExceeded(
-                f"member {member_id} budget overrun: proposed={proposed}, limit={self.member_budget}"
-            )
-        self.consumed_by_member[member_id] = proposed
-        self._persist(member_id)
+        with self._lock:
+            if member_id not in self.consumed_by_member:
+                raise ProtocolViolation(f"unknown member_id: {member_id}")
+            if count <= 0:
+                raise ProtocolViolation("logical evaluation count must be positive")
+            proposed = self.consumed_by_member[member_id] + count
+            if proposed > self.member_budget:
+                raise BudgetExceeded(
+                    f"member {member_id} budget overrun: proposed={proposed}, limit={self.member_budget}"
+                )
+            self.consumed_by_member[member_id] = proposed
+            self._persist(member_id)
 
     def _persist(self, member_id: int) -> None:
         path = self.state_paths.get(member_id)
@@ -94,24 +98,27 @@ class BudgetLedger:
         os.replace(temporary, path)
 
     def can_consume(self, member_id: int, count: int) -> bool:
-        if member_id not in self.consumed_by_member or count < 0:
-            return False
-        return self.consumed_by_member[member_id] + count <= self.member_budget
+        with self._lock:
+            if member_id not in self.consumed_by_member or count < 0:
+                return False
+            return self.consumed_by_member[member_id] + count <= self.member_budget
 
     def remaining(self, member_id: int) -> int:
-        if member_id not in self.consumed_by_member:
-            raise ProtocolViolation(f"unknown member_id: {member_id}")
-        return self.member_budget - self.consumed_by_member[member_id]
+        with self._lock:
+            if member_id not in self.consumed_by_member:
+                raise ProtocolViolation(f"unknown member_id: {member_id}")
+            return self.member_budget - self.consumed_by_member[member_id]
 
     def snapshot(self) -> Mapping[str, object]:
-        return {
-            "primary_unit": "logical_task_example_evaluations",
-            "total_reference_budget": self.total_budget,
-            "member_budget": self.member_budget,
-            "allocated_total": self.allocated_total,
-            "unallocated_remainder": self.unallocated_remainder,
-            "consumed_total": self.consumed_total,
-            "consumed_by_member": {
-                str(key): value for key, value in sorted(self.consumed_by_member.items())
-            },
-        }
+        with self._lock:
+            return {
+                "accounting_unit": "logical_task_example_evaluations",
+                "total_cap": self.total_budget,
+                "member_cap": self.member_budget,
+                "allocated_total": self.allocated_total,
+                "unallocated_remainder": self.unallocated_remainder,
+                "consumed_total": sum(self.consumed_by_member.values()),
+                "consumed_by_member": {
+                    str(key): value for key, value in sorted(self.consumed_by_member.items())
+                },
+            }

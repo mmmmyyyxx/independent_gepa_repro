@@ -53,7 +53,7 @@ def test_read_only_spec_export_is_deterministic(tmp_path) -> None:
     source = make_bundle(tmp_path / "source", sizes=(75, 50, 125), total_budget=1000)
     spec = {
         "task": "disambiguation_qa",
-        "experiment_seed": 46,
+        "experiment_seed": 56,
         "initial_prompts": [f"initialization/agent_{index}.txt" for index in range(5)],
         "splits": {
             name: f"splits/{name}.jsonl"
@@ -62,6 +62,7 @@ def test_read_only_spec_export_is_deterministic(tmp_path) -> None:
         "model_contract": "model_contract.json",
         "parser_contract": "parser_contract.json",
         "budget_reference": "budget_reference.json",
+        "reference_results": "reference_results.json",
         "source_identity": {"commit": "opaque-source"},
         "initial_metrics": {
             "optimization": {
@@ -121,7 +122,7 @@ def _write_csv_source(root, newline: str, template_bundle) -> tuple[object, obje
         }
     spec = {
         "task": "disambiguation_qa",
-        "experiment_seed": 46,
+        "experiment_seed": 56,
         "initial_prompts": [
             {"path": "prompts.json", "format": "json_array", "index": index}
             for index in range(5)
@@ -135,6 +136,9 @@ def _write_csv_source(root, newline: str, template_bundle) -> tuple[object, obje
         },
         "budget_reference": {
             "inline": read_json(template_bundle / "budget_reference.json")
+        },
+        "reference_results": {
+            "inline": read_json(template_bundle / "reference_results.json")
         },
         "source_identity": {"commit": "source"},
         "initial_metrics": {
@@ -179,16 +183,15 @@ def test_lf_crlf_and_cr_csv_export_to_identical_canonical_splits(tmp_path) -> No
     assert len({row["prompt_hash"] for row in validated.manifest["members"]}) == 1
 
 
-def test_pilot_budget_available_while_formal_budget_is_not_frozen(tmp_path) -> None:
+def test_formal_token_budget_and_logical_cap_are_frozen(tmp_path) -> None:
     bundle = make_bundle(
         tmp_path,
         sizes=(75, 50, 125),
         total_budget=1611,
     )
-    validated = validate_bundle(bundle, stage="pilot")
-    assert validated.budget_for_stage("pilot") == 1611
-    with pytest.raises(ProtocolViolation, match="formal logical budget is not frozen"):
-        validate_bundle(bundle, stage="formal")
+    validated = validate_bundle(bundle, stage="formal")
+    assert validated.logical_evaluation_cap == 1611
+    assert validated.token_budget()["expected_token_budget"] == 100000
 
 
 def test_model_contract_preserves_reference_role_metadata(tmp_path) -> None:

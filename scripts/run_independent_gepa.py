@@ -35,7 +35,7 @@ def main() -> None:
     bundle, config = load_validated_inputs(args.bundle, args.config)
     provider_cfg = dict(config.raw["provider"])
 
-    def factory(member_id: int, run_dir: Path, accounting):
+    def factory(member_id: int, run_dir: Path, accounting, token_budget_policy):
         common = {
             "task_model": config.task_model,
             "reflection_model": config.reflection_model,
@@ -49,6 +49,7 @@ def main() -> None:
             "pricing_per_million_tokens": bundle.model_contract.get(
                 "pricing_per_million_tokens", {}
             ),
+            "token_budget_policy": token_budget_policy,
         }
         if args.offline_fake:
             return OpenAICompatibleProvider(transport=DeterministicFakeTransport(), **common)

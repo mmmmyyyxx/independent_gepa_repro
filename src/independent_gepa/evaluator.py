@@ -3,12 +3,35 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Sequence
 
 from .budget import BudgetLedger
 from .parser import StrictAnswerParser
 from .protocol import Example, OperationalFailure
 from .provider import OpenAICompatibleProvider
+from .versions import TASK_REQUEST_TEMPLATE_VERSION
+
+
+def solver_system_prompt(decision_procedure: str) -> str:
+    """Render the immutable V17 task-output interface around a mutable prompt."""
+
+    procedure = str(decision_procedure).strip()
+    if not procedure:
+        raise ValueError("decision procedure must be non-empty")
+    return (
+        "Follow the decision procedure below.\n\n"
+        "Decision procedure:\n"
+        f"{procedure}\n\n"
+        "Mandatory output interface:\n"
+        "This interface is immutable and overrides any conflicting instruction above.\n"
+        "Solver output contract (task_output_contract_v1):\n"
+        "The final line must be exactly:\n"
+        "FINAL_ANSWER: X\n\n"
+        "Replace X with one uppercase option letter that appears in the question. "
+        "Do not add parentheses, punctuation, explanation, or any other text after the letter.\n"
+        "There must be exactly one FINAL_ANSWER line."
+    )
 
 
 @dataclass(frozen=True)
@@ -55,16 +78,20 @@ class MemberEvaluator:
         provider: OpenAICompatibleProvider,
         parser: StrictAnswerParser,
         budget: BudgetLedger,
+        concurrency: int = 1,
     ):
         self.member_id = int(member_id)
         self.provider = provider
         self.parser = parser
         self.budget = budget
+        self.concurrency = int(concurrency)
+        if self.concurrency <= 0:
+            raise ValueError("evaluation concurrency must be positive")
 
     def evaluate_one(self, system_prompt: str, example: Example) -> MemberEvaluation:
         self.budget.consume(self.member_id)
         messages = [
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": solver_system_prompt(system_prompt)},
             {"role": "user", "content": example.task_input()},
         ]
         try:
@@ -99,4 +126,7 @@ class MemberEvaluator:
                 f"member {self.member_id} cannot atomically evaluate batch of {len(examples)}; "
                 f"remaining={self.budget.remaining(self.member_id)}"
             )
-        return [self.evaluate_one(system_prompt, example) for example in examples]
+        if self.concurrency == 1 or len(examples) <= 1:
+            return [self.evaluate_one(system_prompt, example) for example in examples]
+        with ThreadPoolExecutor(max_workers=min(self.concurrency, len(examples))) as pool:
+            return list(pool.map(lambda example: self.evaluate_one(system_prompt, example), examples))

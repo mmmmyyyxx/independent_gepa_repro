@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import time
+from datetime import datetime, timezone
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Callable, Mapping, Protocol, Sequence
@@ -18,7 +20,7 @@ from .bundle import ValidatedBundle, prompt_hash, validate_bundle, write_canonic
 from .evaluator import MemberEvaluator
 from .parser import StrictAnswerParser
 from .protocol import ProtocolViolation, SplitAccessController, SplitName
-from .provider import OpenAICompatibleProvider, ProviderAccounting
+from .provider import OpenAICompatibleProvider, ProviderAccounting, TokenBudgetPolicy
 from .versions import CHECKPOINT_VERSION, METHOD_ID
 
 
@@ -69,6 +71,8 @@ class RunConfig:
     member_ids: tuple[int, ...]
     optimization_example_limit: int | None
     canary_member_budget: int | None
+    smoke_token_budget: int | None
+    evaluation_concurrency: int
     gepa: GEPASettings
     raw: Mapping[str, Any]
 
@@ -122,27 +126,37 @@ class RunConfig:
             ),
             canary_member_budget=(
                 int(raw["logical_evaluation_budget"])
-                if stage == "canary" and raw.get("logical_evaluation_budget") is not None
+                if stage in {"canary", "smoke"} and raw.get("logical_evaluation_budget") is not None
                 else None
             ),
+            smoke_token_budget=(
+                int(raw["token_budget"])
+                if stage in {"canary", "smoke"} and raw.get("token_budget") is not None
+                else None
+            ),
+            evaluation_concurrency=int(provider_raw.get("evaluation_concurrency", 1)),
             gepa=GEPASettings.from_mapping(raw.get("gepa", {})),
             raw=raw,
         )
         if config.method_id != METHOD_ID:
             raise ProtocolViolation("run config method identity mismatch")
-        if config.stage not in {"canary", "pilot", "formal", "offline_fake"}:
+        if config.stage not in {"canary", "smoke", "pilot", "formal", "offline_fake"}:
             raise ProtocolViolation("unsupported run stage")
         if config.stage in {"pilot", "formal", "offline_fake"} and config.members != 5:
             raise ProtocolViolation("five members are required outside the member-zero canary")
-        if config.stage == "canary":
+        if config.stage in {"canary", "smoke"}:
             if config.members != 1 or config.member_ids != (0,):
                 raise ProtocolViolation("canary must run member 0 only")
             if config.optimization_example_limit != 5:
                 raise ProtocolViolation("canary must use exactly five optimization examples")
             if config.canary_member_budget is None or config.canary_member_budget < 5:
                 raise ProtocolViolation("canary member logical budget must cover its five seed examples")
+            if config.smoke_token_budget is None or config.smoke_token_budget <= 0:
+                raise ProtocolViolation("smoke/canary token budget must be positive")
         elif config.member_ids != (0, 1, 2, 3, 4):
             raise ProtocolViolation("five-member stages require stable member ordering 0..4")
+        if config.evaluation_concurrency <= 0:
+            raise ProtocolViolation("provider evaluation_concurrency must be positive")
         return config
 
 
@@ -153,6 +167,9 @@ class MemberOptimizationResult:
     best_prompt: str
     candidate_count: int
     logical_evaluations: int
+    initial_optimization_accuracy: float | None = None
+    final_optimization_accuracy: float | None = None
+    termination_reason: str = "canonical_stop"
     completed: bool = True
 
 
@@ -169,6 +186,7 @@ class MemberExecutor(Protocol):
         run_dir: Path,
         gepa_seed: int,
         member_budget: int,
+        token_budget_policy: TokenBudgetPolicy,
     ) -> MemberOptimizationResult: ...
 
 
@@ -187,6 +205,7 @@ class RealGEPAExecutor:
         run_dir: Path,
         gepa_seed: int,
         member_budget: int,
+        token_budget_policy: TokenBudgetPolicy,
     ) -> MemberOptimizationResult:
         gepa = import_vendor_gepa()
         ledger = adapter.evaluator.budget
@@ -198,7 +217,12 @@ class RealGEPAExecutor:
 
         class RemainingLogicalBudgetStopper:
             def __call__(self, _gepa_state: Any) -> bool:
-                return ledger.remaining(member_id) < reserve_cost
+                used_tokens = int(provider.accounting.snapshot()["total_tokens"])
+                return (
+                    ledger.remaining(member_id) < reserve_cost
+                    or used_tokens
+                    >= token_budget_policy.target_tokens - token_budget_policy.stop_reserve_tokens
+                )
 
         result = gepa.optimize(
             seed_candidate={"system_prompt": seed_prompt},
@@ -232,10 +256,68 @@ class RealGEPAExecutor:
             best_prompt=best["system_prompt"],
             candidate_count=result.num_candidates,
             logical_evaluations=ledger.consumed_by_member[member_id] - consumed_before,
+            initial_optimization_accuracy=float(result.val_aggregate_scores[0]),
+            final_optimization_accuracy=float(result.val_aggregate_scores[result.best_idx]),
+            termination_reason=(
+                "token_reserve_stop"
+                if int(provider.accounting.snapshot()["total_tokens"])
+                >= token_budget_policy.target_tokens - token_budget_policy.stop_reserve_tokens
+                else "logical_cap_stop"
+            ),
         )
 
 
-ProviderFactory = Callable[[int, Path, ProviderAccounting], OpenAICompatibleProvider]
+ProviderFactory = Callable[
+    [int, Path, ProviderAccounting, TokenBudgetPolicy], OpenAICompatibleProvider
+]
+
+
+def canonical_provider_identity(checkpoint: Mapping[str, Any]) -> str:
+    payload = json.dumps(dict(checkpoint), sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def derive_gepa_seed(experiment_seed: int, member_id: int) -> int:
+    if experiment_seed not in {56, 57, 58} or member_id not in range(5):
+        raise ProtocolViolation("GEPA seed derivation requires V17 seed and member 0..4")
+    return experiment_seed * 1000 + member_id
+
+
+def aggregate_provider_accounting(
+    accountings: Mapping[int, ProviderAccounting],
+) -> dict[str, Any]:
+    snapshots = [accountings[key].snapshot() for key in sorted(accountings)]
+    roles: dict[str, dict[str, Any]] = {}
+    for role in ("task", "reflection"):
+        rows = [snapshot["roles"][role] for snapshot in snapshots]
+        costs_available = all(row["estimated_cost"] is not None for row in rows)
+        roles[role] = {
+            key: sum(int(row[key]) for row in rows)
+            for key in (
+                "logical_calls",
+                "real_requests",
+                "cache_hits",
+                "prompt_tokens",
+                "completion_tokens",
+                "total_tokens",
+            )
+        }
+        roles[role]["estimated_cost"] = (
+            sum(float(row["estimated_cost"]) for row in rows) if costs_available else None
+        )
+        roles[role]["cost_status"] = "estimated" if costs_available else "unavailable_missing_pricing"
+    all_costs_available = all(row["estimated_cost"] is not None for row in roles.values())
+    return {
+        "roles": roles,
+        "real_requests": sum(int(row["real_requests"]) for row in roles.values()),
+        "total_tokens": sum(int(row["total_tokens"]) for row in roles.values()),
+        "estimated_cost": (
+            sum(float(row["estimated_cost"]) for row in roles.values())
+            if all_costs_available
+            else None
+        ),
+        "cost_status": "estimated" if all_costs_available else "unavailable_missing_bundle_pricing",
+    }
 
 
 class IndependentRunner:
@@ -275,7 +357,7 @@ class IndependentRunner:
             "bundle_hash": self.bundle.overall_hash,
             "experiment_seed": self.bundle.experiment_seed,
             "member_id": member_id,
-            "gepa_seed": self.bundle.experiment_seed * 1000 + member_id,
+            "gepa_seed": derive_gepa_seed(self.bundle.experiment_seed, member_id),
             "initial_prompt_hash": prompt_hash(initial_prompt),
             "member_budget": member_budget,
             "config_hash": stable_config_hash(self.config.raw),
@@ -326,6 +408,17 @@ class IndependentRunner:
             best_prompt=best_prompt,
             candidate_count=candidate_count,
             logical_evaluations=0,
+            initial_optimization_accuracy=(
+                float(row["initial_optimization_accuracy"])
+                if row.get("initial_optimization_accuracy") is not None
+                else None
+            ),
+            final_optimization_accuracy=(
+                float(row["final_optimization_accuracy"])
+                if row.get("final_optimization_accuracy") is not None
+                else None
+            ),
+            termination_reason=str(row.get("termination_reason", "canonical_stop")),
             completed=True,
         )
 
@@ -335,20 +428,36 @@ class IndependentRunner:
         optimization_examples = self.bundle.splits[SplitName.OPTIMIZATION.value]
         if self.config.optimization_example_limit is not None:
             optimization_examples = optimization_examples[: self.config.optimization_example_limit]
-        total_budget = (
+        logical_cap_total = (
             self.config.canary_member_budget * 5
             if self.config.canary_member_budget is not None
-            else self.bundle.budget_for_stage(self.config.stage)
+            else self.bundle.logical_evaluation_cap
         )
         budget = BudgetLedger(
-            total_budget,
+            logical_cap_total,
             member_count=5,
             state_paths={
                 member_id: self.output_root / f"member_{member_id}" / "logical_budget_ledger.json"
                 for member_id in range(5)
             },
         )
-        accounting = ProviderAccounting()
+        if self.config.smoke_token_budget is not None:
+            token_target_total = self.config.smoke_token_budget * 5
+            token_hard_total = int(token_target_total * 1.05)
+            token_reserve_per_member = max(1, self.config.smoke_token_budget // 4)
+        else:
+            frozen_budget = self.bundle.token_budget()
+            token_target_total = int(frozen_budget["expected_token_budget"])
+            token_hard_total = int(frozen_budget["hard_token_limit"])
+            token_reserve_per_member = int(frozen_budget["stop_reserve_tokens_per_member"])
+        token_target_per_member = token_target_total // 5
+        token_hard_per_member = token_hard_total // 5
+        token_policy = TokenBudgetPolicy(
+            target_tokens=token_target_per_member,
+            hard_tokens=token_hard_per_member,
+            stop_reserve_tokens=min(token_reserve_per_member, token_target_per_member - 1),
+        )
+        accountings: dict[int, ProviderAccounting] = {}
         prompts: list[str] = []
         rows: list[dict[str, Any]] = []
         object_ids: set[int] = set()
@@ -361,20 +470,29 @@ class IndependentRunner:
                 raise ProtocolViolation("member run-directory collision")
             run_dirs.add(run_dir)
             checkpoint = self._checkpoint_identity(member_id, initial_prompt, budget.member_budget)
+            checkpoint["token_target"] = token_policy.target_tokens
+            checkpoint["token_hard_limit"] = token_policy.hard_tokens
+            checkpoint["token_stop_reserve"] = token_policy.stop_reserve_tokens
             self._prepare_checkpoint(run_dir, checkpoint)
             consumed_before = budget.consumed_by_member[member_id]
             result = self._load_completed_result(
                 run_dir,
                 member_id=member_id,
-                gepa_seed=self.bundle.experiment_seed * 1000 + member_id,
+                gepa_seed=derive_gepa_seed(self.bundle.experiment_seed, member_id),
             )
             if result is None:
-                provider = self.provider_factory(member_id, run_dir, accounting)
+                accounting = ProviderAccounting(
+                    state_path=run_dir / "provider_accounting.json",
+                    identity=canonical_provider_identity(checkpoint),
+                )
+                accountings[member_id] = accounting
+                provider = self.provider_factory(member_id, run_dir, accounting, token_policy)
                 evaluator = MemberEvaluator(
                     member_id=member_id,
                     provider=provider,
                     parser=StrictAnswerParser(self.bundle.parser_contract),
                     budget=budget,
+                    concurrency=self.config.evaluation_concurrency,
                 )
                 adapter = IndependentGEPAAdapter(member_id, evaluator)
                 for obj in (provider, evaluator, adapter):
@@ -390,8 +508,14 @@ class IndependentRunner:
                     provider=provider,
                     settings=self.config.gepa,
                     run_dir=run_dir,
-                    gepa_seed=self.bundle.experiment_seed * 1000 + member_id,
+                    gepa_seed=derive_gepa_seed(self.bundle.experiment_seed, member_id),
                     member_budget=budget.member_budget,
+                    token_budget_policy=token_policy,
+                )
+            else:
+                accountings[member_id] = ProviderAccounting(
+                    state_path=run_dir / "provider_accounting.json",
+                    identity=canonical_provider_identity(checkpoint),
                 )
             if result.member_id != member_id or result.gepa_seed != checkpoint["gepa_seed"]:
                 raise ProtocolViolation("member executor returned mismatched identity")
@@ -449,11 +573,25 @@ class IndependentRunner:
             prompts=prompts,
             member_rows=rows,
             budget=budget.snapshot(),
-            provider_accounting=accounting.snapshot(),
+            provider_accounting=aggregate_provider_accounting(accountings),
             wall_clock_seconds=time.monotonic() - started,
         )
         summary["stage"] = self.config.stage
         summary["final_team_frozen"] = final_team_frozen
+        summary["completed_at_utc"] = datetime.now(timezone.utc).isoformat()
+        summary["split_access_log"] = list(self.access.accesses)
+        for member in summary["members"]:
+            member_id = int(member["member_id"])
+            member["provider_accounting"] = accountings[member_id].snapshot()
+        summary["token_budget"] = {
+            "primary_unit": "total_model_tokens",
+            "reference_or_smoke_target": token_target_total,
+            "hard_limit": token_hard_total,
+            "member_target": token_policy.target_tokens,
+            "member_hard_limit": token_policy.hard_tokens,
+            "stop_reserve_per_member": token_policy.stop_reserve_tokens,
+            "actual_total_tokens": aggregate_provider_accounting(accountings)["total_tokens"],
+        }
         return tuple(prompts), summary
 
 
@@ -473,7 +611,7 @@ def load_validated_inputs(bundle_path: Path, config_path: Path) -> tuple[Validat
     available_member_budget = (
         config.canary_member_budget
         if config.canary_member_budget is not None
-        else bundle.total_budget // 5
+        else bundle.logical_evaluation_cap // 5
     )
     if available_member_budget < required_seed_evaluations:
         raise ProtocolViolation("member budget cannot cover the mandatory seed-candidate evaluation")

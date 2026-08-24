@@ -55,7 +55,7 @@ field mappings. For the source project's BBH files, the CSV entry must declare
 `question_options_format: "bbh_embedded_options"`; the exporter then separates
 the `Options:` block without importing any source-project Python.
 
-The v2 exporter normalizes LF, CRLF, and CR inside CSV fields before parsing
+The v3 exporter normalizes LF, CRLF, and CR inside CSV fields before parsing
 the BBH `Options:` block, while preserving each raw source-file SHA-256 as
 provenance. Every canonical example freezes its own contiguous
 `option_labels`, so three-option and four-option questions can coexist without
@@ -98,3 +98,22 @@ restored from its identity-checked private result without re-entering GEPA.
 For an interrupted member, the fixed GEPA implementation re-evaluates the seed
 before loading `gepa_state.bin`; those actually performed evaluations are
 counted by the external ledger, as required by the resume budget contract.
+
+## V17 matched protocol
+
+The current protocol targets `qwen3-14b` with thinking disabled, temperature
+zero, 1,800 output tokens, seeds 56/57/58, the frozen 75/50/125 V17 splits,
+shared-identical initialization, and plurality voting with ties counted wrong.
+`scripts/export_v17_comparison_bundles.py` reads the clean sibling repository
+without importing it and freezes one self-contained bundle per seed.
+
+The primary search budget is total task-plus-reflection model tokens. Each
+seed's realized V17 S4 token count is divided equally among the five independent
+members; a calibrated pre-iteration reserve and a 5% hard ceiling prevent an
+accepted overrun. Task and reflection accounting is persisted independently
+for every member.
+
+The August 24 run reached a protocol HOLD at the Seed57 initial-state gate, so
+it does not constitute a three-seed formal comparison. The completed Seed56
+evidence and exact stop reason are published in
+`reports/v17_matched_independent_gepa_20260824`.

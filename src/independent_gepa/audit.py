@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import csv
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -67,11 +68,22 @@ def audit_public_paths(paths: Iterable[Path]) -> tuple[AuditFinding, ...]:
             candidates = [path]
         for candidate in candidates:
             relative = candidate.name
-            if candidate.suffix.lower() not in {".json", ".jsonl"}:
+            suffix = candidate.suffix.lower()
+            if suffix not in {".json", ".jsonl", ".csv", ".md", ".txt"}:
                 findings.append(AuditFinding(relative, "unsupported public artifact file type"))
                 continue
             try:
-                if candidate.suffix.lower() == ".jsonl":
+                if suffix in {".md", ".txt"}:
+                    text = candidate.read_text(encoding="utf-8")
+                    if WINDOWS_ABSOLUTE.search(text) or POSIX_ABSOLUTE.search(text):
+                        findings.append(AuditFinding(relative, "machine-specific absolute path"))
+                    if SECRET_VALUE.search(text):
+                        findings.append(AuditFinding(relative, "credential-like value"))
+                    continue
+                if suffix == ".csv":
+                    with candidate.open("r", encoding="utf-8", newline="") as handle:
+                        value = list(csv.DictReader(handle))
+                elif suffix == ".jsonl":
                     values = [
                         json.loads(line)
                         for line in candidate.read_text(encoding="utf-8").splitlines()
@@ -80,8 +92,8 @@ def audit_public_paths(paths: Iterable[Path]) -> tuple[AuditFinding, ...]:
                     value: Any = values
                 else:
                     value = json.loads(candidate.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError):
-                findings.append(AuditFinding(relative, "invalid public JSON"))
+            except (OSError, json.JSONDecodeError, csv.Error):
+                findings.append(AuditFinding(relative, "invalid public artifact"))
                 continue
             for finding in audit_value(value):
                 findings.append(AuditFinding(f"{relative}:{finding.path}", finding.reason))

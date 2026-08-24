@@ -1,0 +1,4 @@
+seed,reference_s4_tokens,hard_limit,independent_search_tokens,logical_task_evaluations,real_task_requests,reflection_calls,task_prompt_tokens,task_completion_tokens,reflection_prompt_tokens,reflection_completion_tokens,estimated_cost_cny,wall_clock_seconds,status
+56,526935,553281,453789,900,810,25,357079,64284,20627,11799,0.682038,593.83276,COMPLETE
+57,493420,518091,,,,,,,,,,,NOT_STARTED
+58,620887,651931,,,,,,,,,,,NOT_STARTED

@@ -15,8 +15,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--allow-nonformal-size", action="store_true")
     parser.add_argument(
         "--stage",
-        choices=["canary", "pilot", "formal"],
-        default="pilot",
+        choices=["smoke", "pilot", "formal"],
+        default="smoke",
         help="validate readiness for this stage; formal rejects an unfrozen formal budget",
     )
     return parser

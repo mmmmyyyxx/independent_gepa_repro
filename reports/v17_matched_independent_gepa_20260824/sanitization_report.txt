@@ -1,0 +1,3 @@
+PASS
+Public artifacts contain only identities, hashes, aggregate metrics, accounting, and protocol status.
+No prompts, questions, choices, gold labels, raw responses, credentials, endpoints, caches, or absolute paths are included.

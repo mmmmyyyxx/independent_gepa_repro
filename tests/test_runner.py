@@ -32,6 +32,7 @@ class DirectBestExecutor:
         run_dir,
         gepa_seed,
         member_budget,
+        token_budget_policy,
     ):
         return MemberOptimizationResult(
             member_id=member_id,
@@ -43,7 +44,7 @@ class DirectBestExecutor:
 
 
 def _factory(config: RunConfig, transports: list[DeterministicFakeTransport]):
-    def factory(member_id, run_dir, accounting):
+    def factory(member_id, run_dir, accounting, token_budget_policy):
         transport = DeterministicFakeTransport()
         transports.append(transport)
         return OpenAICompatibleProvider(
@@ -56,6 +57,7 @@ def _factory(config: RunConfig, transports: list[DeterministicFakeTransport]):
             max_retries=0,
             cache=ExactRequestCache(run_dir / "exact_request_cache.json"),
             accounting=accounting,
+            token_budget_policy=token_budget_policy,
         )
 
     return factory
@@ -74,7 +76,7 @@ def test_direct_final_composition_and_member_run_isolation(tmp_path) -> None:
         executor=DirectBestExecutor(),
     ).run()
     assert prompts == tuple(
-        f"initial member {index} :: independent-best-{index}" for index in range(5)
+        f"identical initial prompt :: independent-best-{index}" for index in range(5)
     )
     assert len(transports) == 5
     assert len({id(item) for item in transports}) == 5
@@ -141,4 +143,4 @@ def test_fake_five_member_end_to_end_uses_actual_gepa_api(tmp_path) -> None:
     ).run()
     assert resumed_prompts == prompts
     assert resumed_summary["budget"]["consumed_total"] == summary["budget"]["consumed_total"]
-    assert resumed_summary["provider_accounting"]["real_requests"] == 0
+    assert resumed_summary["provider_accounting"] == summary["provider_accounting"]

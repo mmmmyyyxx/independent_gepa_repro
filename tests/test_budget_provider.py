@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+from concurrent.futures import ThreadPoolExecutor
+
 import pytest
 
 from independent_gepa.budget import BudgetLedger
@@ -135,3 +138,23 @@ def test_provider_repr_never_contains_credentials() -> None:
     assert "base_url" not in repr(provider).lower()
     assert provider.accounting.snapshot()["estimated_cost"] is None
     assert provider.accounting.snapshot()["cost_status"] == "unavailable_missing_bundle_pricing"
+
+
+def test_exact_cache_concurrent_atomic_persistence(tmp_path) -> None:
+    path = tmp_path / "runs" / "cache.json"
+    cache = ExactRequestCache(path)
+
+    def write(index: int) -> None:
+        cache.put(
+            {"index": index},
+            ProviderResponse(
+                text=str(index),
+                finish_reason="stop",
+                prompt_tokens=1,
+                completion_tokens=1,
+            ),
+        )
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(write, range(40)))
+    assert len(json.loads(path.read_text(encoding="utf-8"))) == 40

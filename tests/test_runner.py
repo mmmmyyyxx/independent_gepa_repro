@@ -80,6 +80,7 @@ def test_direct_final_composition_and_member_run_isolation(tmp_path) -> None:
     )
     assert len(transports) == 5
     assert len({id(item) for item in transports}) == 5
+    assert summary["wall_clock_basis"] == "persistent_run_start_to_frozen_completion"
     assert [path.name for path in sorted(output.glob("member_*"))] == [
         f"member_{index}" for index in range(5)
     ]

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import hashlib
-import time
 from datetime import datetime, timezone
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -423,7 +422,22 @@ class IndependentRunner:
         )
 
     def run(self) -> tuple[tuple[str, ...], dict[str, Any]]:
-        started = time.monotonic()
+        lifecycle_path = self.output_root / "run_lifecycle_private.json"
+        lifecycle_identity = {
+            "schema_version": "independent_gepa_run_lifecycle_v1",
+            "bundle_hash": self.bundle.overall_hash,
+            "experiment_seed": self.bundle.experiment_seed,
+            "stage": self.config.stage,
+        }
+        if lifecycle_path.exists():
+            lifecycle = json.loads(lifecycle_path.read_text(encoding="utf-8"))
+            if any(lifecycle.get(key) != value for key, value in lifecycle_identity.items()):
+                raise ProtocolViolation("run lifecycle identity mismatch")
+            started_at = datetime.fromisoformat(str(lifecycle["started_at_utc"]))
+        else:
+            started_at = datetime.now(timezone.utc)
+            lifecycle = {**lifecycle_identity, "started_at_utc": started_at.isoformat()}
+            write_private_json(lifecycle_path, lifecycle)
         self.access.access_for_optimization(SplitName.OPTIMIZATION)
         optimization_examples = self.bundle.splits[SplitName.OPTIMIZATION.value]
         if self.config.optimization_example_limit is not None:
@@ -567,6 +581,12 @@ class IndependentRunner:
                     "prompt_hash": hashes[0],
                 },
             )
+        if lifecycle.get("completed_at_utc"):
+            completed_at = datetime.fromisoformat(str(lifecycle["completed_at_utc"]))
+        else:
+            completed_at = datetime.now(timezone.utc)
+            lifecycle["completed_at_utc"] = completed_at.isoformat()
+            write_private_json(lifecycle_path, lifecycle)
         summary = sanitize_member_results(
             bundle_hash=self.bundle.overall_hash,
             experiment_seed=self.bundle.experiment_seed,
@@ -574,11 +594,12 @@ class IndependentRunner:
             member_rows=rows,
             budget=budget.snapshot(),
             provider_accounting=aggregate_provider_accounting(accountings),
-            wall_clock_seconds=time.monotonic() - started,
+            wall_clock_seconds=(completed_at - started_at).total_seconds(),
         )
         summary["stage"] = self.config.stage
         summary["final_team_frozen"] = final_team_frozen
-        summary["completed_at_utc"] = datetime.now(timezone.utc).isoformat()
+        summary["completed_at_utc"] = completed_at.isoformat()
+        summary["wall_clock_basis"] = "persistent_run_start_to_frozen_completion"
         summary["split_access_log"] = list(self.access.accesses)
         for member in summary["members"]:
             member_id = int(member["member_id"])

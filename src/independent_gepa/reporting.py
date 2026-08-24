@@ -268,15 +268,15 @@ def build_v17_report(
     }
     readme = (
         "# V17-Matched Independent-GEPA Results\n\n"
-        f"Independent-GEPA mean Validation VoteAcc: `{mean(row['validation_vote_accuracy'] for row in seed_rows):.6f}`  \n"
-        f"Independent-GEPA mean Frozen-Test VoteAcc: `{mean_test:.6f}`  \n"
-        f"S0 mean Frozen-Test VoteAcc: `{mean(float(bundles[s].reference_results['arms']['S0']['test']['vote_accuracy']) for s in bundles):.6f}`  \n"
-        f"S1 mean Frozen-Test VoteAcc: `{mean(float(bundles[s].reference_results['arms']['S1']['test']['vote_accuracy']) for s in bundles):.6f}`  \n"
-        f"S4 mean Frozen-Test VoteAcc: `{mean(float(bundles[s].reference_results['arms']['S4']['test']['vote_accuracy']) for s in bundles):.6f}`  \n"
-        f"GEPA-S1 mean delta: `{delta_summary['S1']['mean_delta']:.6f}` ({delta_summary['S1']['wins']}/{delta_summary['S1']['ties']}/{delta_summary['S1']['losses']} W/T/L)  \n"
-        f"GEPA-S4 mean delta: `{delta_summary['S4']['mean_delta']:.6f}` ({delta_summary['S4']['wins']}/{delta_summary['S4']['ties']}/{delta_summary['S4']['losses']} W/T/L)  \n"
-        f"Compute ratio GEPA/S4: `{actual_total / reference_total:.6f}`  \n"
-        f"Research decision: `{label}`\n\n"
+        f"- Independent-GEPA mean Validation VoteAcc: `{mean(row['validation_vote_accuracy'] for row in seed_rows):.6f}`\n"
+        f"- Independent-GEPA mean Frozen-Test VoteAcc: `{mean_test:.6f}`\n"
+        f"- S0 mean Frozen-Test VoteAcc: `{mean(float(bundles[s].reference_results['arms']['S0']['test']['vote_accuracy']) for s in bundles):.6f}`\n"
+        f"- S1 mean Frozen-Test VoteAcc: `{mean(float(bundles[s].reference_results['arms']['S1']['test']['vote_accuracy']) for s in bundles):.6f}`\n"
+        f"- S4 mean Frozen-Test VoteAcc: `{mean(float(bundles[s].reference_results['arms']['S4']['test']['vote_accuracy']) for s in bundles):.6f}`\n"
+        f"- GEPA-S1 mean delta: `{delta_summary['S1']['mean_delta']:.6f}` ({delta_summary['S1']['wins']}/{delta_summary['S1']['ties']}/{delta_summary['S1']['losses']} W/T/L)\n"
+        f"- GEPA-S4 mean delta: `{delta_summary['S4']['mean_delta']:.6f}` ({delta_summary['S4']['wins']}/{delta_summary['S4']['ties']}/{delta_summary['S4']['losses']} W/T/L)\n"
+        f"- Compute ratio GEPA/S4: `{actual_total / reference_total:.6f}`\n"
+        f"- Research decision: `{label}`\n\n"
         "The test column is a frozen-split internal comparative evaluation; it is not an untouched held-out claim.\n"
     )
     (output / "README.md").write_text(readme, encoding="utf-8", newline="\n")

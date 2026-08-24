@@ -1,0 +1,4 @@
+seed,validation_vote_accuracy,frozen_test_vote_accuracy,test_oracle_accuracy,mean_test_member_accuracy,minimum_test_member_accuracy,test_invalid_rate,test_oracle_vote_gap,N_positive
+56,0.66,0.68,0.824,0.6880000000000001,0.68,0.0,0.1439999999999999,1
+57,0.66,0.672,0.72,0.6688000000000001,0.656,0.0,0.04799999999999993,0
+58,0.68,0.68,0.856,0.6768000000000001,0.656,0.0,0.17599999999999993,1

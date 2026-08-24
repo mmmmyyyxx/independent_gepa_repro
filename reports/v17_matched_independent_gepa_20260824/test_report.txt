@@ -1,0 +1,1 @@
+Offline and online gate command results are recorded by the task handoff.

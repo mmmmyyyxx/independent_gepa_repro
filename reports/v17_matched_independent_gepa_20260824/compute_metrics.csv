@@ -1,4 +1,4 @@
-seed,reference_s4_tokens,hard_limit,independent_search_tokens,logical_task_evaluations,real_task_requests,reflection_calls,task_prompt_tokens,task_completion_tokens,reflection_prompt_tokens,reflection_completion_tokens,estimated_cost_cny,wall_clock_seconds,status
-56,526935,553281,453789,900,810,25,357079,64284,20627,11799,0.682038,593.83276,COMPLETE
-57,493420,518091,,,,,,,,,,,NOT_STARTED
-58,620887,651931,,,,,,,,,,,NOT_STARTED
+seed,logical_task_evaluations,task_model_calls,reflection_calls,provider_calls,task_prompt_tokens,task_completion_tokens,reflection_prompt_tokens,reflection_completion_tokens,total_tokens,estimated_cost,wall_clock_seconds
+56,900,810,25,835,357079,64284,20627,11799,453789,0.682038,593.8327595000155
+57,927,792,19,811,342559,61548,15753,8717,428577,0.6393719999999999,162.71450190013275
+58,846,783,16,799,345874,59370,14947,8069,428260,0.630577,405.76446340000257

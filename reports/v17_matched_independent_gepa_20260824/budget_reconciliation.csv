@@ -1,0 +1,4 @@
+seed,reference_arm,reference_training_tokens,reference_provider_calls,gepa_total_tokens,gepa_provider_calls,compute_ratio,within_reference_budget,within_hard_tolerance
+56,V17_S4,526935,1793,453789,835,0.8611859147712716,True,True
+57,V17_S4,493420,1790,428577,811,0.8685845729804224,True,True
+58,V17_S4,620887,1869,428260,799,0.6897551406294543,True,True

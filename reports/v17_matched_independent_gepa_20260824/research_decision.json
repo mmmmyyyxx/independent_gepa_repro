@@ -1,0 +1,1 @@
+{"artifact_schema_version":"v17_independent_gepa_research_decision_v1","beats_s4_seed_count":0,"compute_within_matched_budget_all_seeds":true,"decision_label":"CONTINUE_NO_STRONG_BASELINE_PRESSURE","interpretation_scope":"internal research decision; not a statistical-significance claim","mean_frozen_test_vote_accuracy":0.6773333333333333}

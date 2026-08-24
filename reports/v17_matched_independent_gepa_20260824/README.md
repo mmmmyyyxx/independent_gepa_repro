@@ -1,12 +1,13 @@
-# V17-matched Independent-GEPA run (incomplete)
+# V17-Matched Independent-GEPA Results
 
-Status: **HOLD at Seed57 initial-state parity**.
+- Independent-GEPA mean Validation VoteAcc: `0.666667`
+- Independent-GEPA mean Frozen-Test VoteAcc: `0.677333`
+- S0 mean Frozen-Test VoteAcc: `0.682667`
+- S1 mean Frozen-Test VoteAcc: `0.712000`
+- S4 mean Frozen-Test VoteAcc: `0.706667`
+- GEPA-S1 mean delta: `-0.034667` (0/1/2 W/T/L)
+- GEPA-S4 mean delta: `-0.029333` (0/0/3 W/T/L)
+- Compute ratio GEPA/S4: `0.798557`
+- Research decision: `CONTINUE_NO_STRONG_BASELINE_PRESSURE`
 
-The implementation and Seed56 run follow the frozen qwen3-14b V17 contract,
-but this directory is not a completed three-seed formal comparison. Seed56
-finished all five independent searches and its one development/test evaluation.
-Seed57's canonical initial evaluation was 50/75 versus the frozen 51/75, so the
-protocol stopped before any Seed57 search. Seed58 was not accessed.
-
-No conclusion about Independent-GEPA versus S1 or S4 is authorized from this
-incomplete run. See `research_decision.md` for the exact interpretation.
+The test column is a frozen-split internal comparative evaluation; it is not an untouched held-out claim.

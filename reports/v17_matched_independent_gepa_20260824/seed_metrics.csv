@@ -1,4 +1,0 @@
-seed,run_status,development_team_accuracy,test_team_accuracy,test_member_0,test_member_1,test_member_2,test_member_3,test_member_4,test_mean_member,test_min_member,test_oracle_coverage,test_oracle_covered_vote_wrong_count,test_invalid_rate,N_positive
-56,COMPLETE_SINGLE_SEED,0.66,0.68,0.68,0.68,0.68,0.72,0.68,0.688,0.68,0.824,18,0.0,1
-57,HOLD_INITIAL_PARITY,,,,,,,,,,,,,
-58,NOT_RUN,,,,,,,,,,,,,

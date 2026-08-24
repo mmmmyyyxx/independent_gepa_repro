@@ -113,7 +113,9 @@ members; a calibrated pre-iteration reserve and a 5% hard ceiling prevent an
 accepted overrun. Task and reflection accounting is persisted independently
 for every member.
 
-The August 24 run reached a protocol HOLD at the Seed57 initial-state gate, so
-it does not constitute a three-seed formal comparison. The completed Seed56
-evidence and exact stop reason are published in
+The August 24 three-seed formal run is complete. Its approved initial parity
+policy freezes prompt/model/request/data identities and requires all five
+shared-initialized members to agree within the canonical current evaluation;
+historical hosted-model output differences remain diagnostics and are never
+resampled or cherry-picked. Results are published in
 `reports/v17_matched_independent_gepa_20260824`.

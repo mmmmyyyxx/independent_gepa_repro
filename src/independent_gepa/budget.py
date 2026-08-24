@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import threading
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Mapping
@@ -93,9 +94,21 @@ class BudgetLedger:
             "consumed": self.consumed_by_member[member_id],
         }
         payload = json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
-        temporary = path.with_name(f".{path.name}.tmp")
+        temporary = path.with_name(
+            f".{path.name}.{threading.get_ident()}.{time.time_ns()}.tmp"
+        )
         temporary.write_text(payload, encoding="utf-8", newline="\n")
-        os.replace(temporary, path)
+        try:
+            for attempt in range(5):
+                try:
+                    os.replace(temporary, path)
+                    break
+                except PermissionError:
+                    if attempt == 4:
+                        raise
+                    time.sleep(0.02 * (attempt + 1))
+        finally:
+            temporary.unlink(missing_ok=True)
 
     def can_consume(self, member_id: int, count: int) -> bool:
         with self._lock:

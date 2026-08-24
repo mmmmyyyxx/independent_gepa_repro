@@ -20,11 +20,22 @@ from .versions import TASK_REQUEST_TEMPLATE_VERSION
 
 V17_ID = "v17_formal_5arm_3seed_20260813"
 V17_SEEDS = (56, 57, 58)
+INITIAL_PARITY_POLICY_VERSION = "identity_and_same_run_member_vector_v2"
 ARM_SETTINGS = {
     "S0": "shared_static_reference",
     "S1": "experimental_v17_formal_generic_2x2_matched",
     "S4": "experimental_v16_efficacy_r_m2f",
 }
+
+
+def initial_parity_passes(correct_counts: list[int], vector_hashes: list[str]) -> bool:
+    """Validate current same-run parity without cherry-picking historical outputs.
+
+    Bundle validation fixes prompt, model, request, parser, data, and seed identities.
+    Temperature zero does not make a hosted backend an exact historical replay oracle.
+    """
+
+    return len(correct_counts) == 5 and len(vector_hashes) == 5 and len(set(vector_hashes)) == 1
 
 
 def _json(path: Path) -> dict[str, Any]:

@@ -158,3 +158,12 @@ def test_exact_cache_concurrent_atomic_persistence(tmp_path) -> None:
     with ThreadPoolExecutor(max_workers=8) as pool:
         list(pool.map(write, range(40)))
     assert len(json.loads(path.read_text(encoding="utf-8"))) == 40
+
+
+def test_budget_ledger_concurrent_atomic_persistence(tmp_path) -> None:
+    path = tmp_path / "runs" / "ledger.json"
+    ledger = BudgetLedger(250, member_count=5, state_paths={0: path})
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(lambda _index: ledger.consume(0), range(40)))
+    restored = BudgetLedger(250, member_count=5, state_paths={0: path})
+    assert restored.consumed_by_member[0] == 40

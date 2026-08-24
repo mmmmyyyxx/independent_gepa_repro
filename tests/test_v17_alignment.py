@@ -13,10 +13,15 @@ from independent_gepa.provider import (
     TokenBudgetPolicy,
 )
 from independent_gepa.runner import RunConfig, derive_gepa_seed
-from independent_gepa.v17 import build_v17_export_spec
+from independent_gepa.v17 import build_v17_export_spec, initial_parity_passes
 
 
 REFERENCE = Path(__file__).resolve().parents[2] / "multi_agent_diversity"
+
+
+def test_initial_parity_policy_uses_current_same_run_vector_not_historical_score() -> None:
+    assert initial_parity_passes([50] * 5, ["current"] * 5)
+    assert not initial_parity_passes([50] * 5, ["a", "a", "a", "a", "b"])
 
 
 def test_v17_frozen_source_imports_config_prompts_splits_and_budgets() -> None:

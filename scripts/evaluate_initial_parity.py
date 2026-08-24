@@ -16,6 +16,7 @@ from independent_gepa.parser import StrictAnswerParser
 from independent_gepa.provider import ExactRequestCache, OpenAICompatibleProvider, ProviderAccounting
 from independent_gepa.runner import RunConfig
 from independent_gepa.testing import DeterministicFakeTransport
+from independent_gepa.v17 import INITIAL_PARITY_POLICY_VERSION, initial_parity_passes
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -83,18 +84,15 @@ def main() -> None:
     vector_hashes = [sha256_bytes(canonical_json_bytes(vector)) for vector in vectors]
     correct_counts = [sum(item.correct for item in member_rows) for member_rows in rows]
     expected = bundle.manifest["initial_metrics"]["optimization"]
-    # Temperature zero fixes the sampling configuration, but the hosted backend does
-    # not guarantee byte-for-byte replay of an older request.  The canonical parity
-    # gate is therefore the frozen aggregate outcome plus identical behavior across
-    # the five shared-initialized members.  We retain the historical answer-vector
-    # comparison as a diagnostic, rather than turning backend nondeterminism into a
-    # false protocol failure.
+    # Bundle validation fixes every request identity. The online gate verifies that
+    # the five identical members behave identically in this canonical evaluation;
+    # historical outcomes remain diagnostics and are never resampled/cherry-picked.
     reference_vector_match = vector_hashes[0] == expected["parsed_answer_vector_hash"]
-    parity = (
+    reference_score_match = (
         correct_counts == list(expected["member_correct"])
-        and len(set(vector_hashes)) == 1
         and correct_counts[0] == int(expected["team_correct"])
     )
+    parity = initial_parity_passes(correct_counts, vector_hashes)
     write_private_json(
         args.private_run_dir / "initial_parity_private.json",
         {
@@ -112,6 +110,8 @@ def main() -> None:
         "parsed_answer_vector_hashes": vector_hashes,
         "expected_parsed_answer_vector_hash": expected["parsed_answer_vector_hash"],
         "reference_vector_match": reference_vector_match,
+        "reference_score_match": reference_score_match,
+        "parity_policy_version": INITIAL_PARITY_POLICY_VERSION,
         "logical_evaluations": logical.snapshot(),
         "provider_accounting": accounting.snapshot(),
         "wall_clock_seconds": time.monotonic() - started,

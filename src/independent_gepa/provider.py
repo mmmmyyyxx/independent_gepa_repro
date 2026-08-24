@@ -122,9 +122,21 @@ class ProviderAccounting:
             },
         }
         payload = json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
-        temporary = self.state_path.with_name(f".{self.state_path.name}.tmp")
+        temporary = self.state_path.with_name(
+            f".{self.state_path.name}.{threading.get_ident()}.{time.time_ns()}.tmp"
+        )
         temporary.write_text(payload, encoding="utf-8", newline="\n")
-        os.replace(temporary, self.state_path)
+        try:
+            for attempt in range(5):
+                try:
+                    os.replace(temporary, self.state_path)
+                    break
+                except PermissionError:
+                    if attempt == 4:
+                        raise
+                    time.sleep(0.02 * (attempt + 1))
+        finally:
+            temporary.unlink(missing_ok=True)
 
     def role(self, name: str) -> RoleUsage:
         if name not in self.roles:

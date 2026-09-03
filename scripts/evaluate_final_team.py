@@ -17,7 +17,7 @@ from independent_gepa.final_evaluator import FinalTeamEvaluator, initial_accurac
 from independent_gepa.parser import StrictAnswerParser
 from independent_gepa.protocol import SplitAccessController, SplitName
 from independent_gepa.provider import ExactRequestCache, OpenAICompatibleProvider, ProviderAccounting
-from independent_gepa.runner import RunConfig
+from independent_gepa.runner import RunConfig, assert_model_routing_matches_bundle
 from independent_gepa.testing import DeterministicFakeTransport
 
 
@@ -46,6 +46,7 @@ def main() -> None:
         raise RuntimeError("select exactly one of --offline-fake or --allow-real-api")
     config = RunConfig.load(args.config)
     bundle = validate_bundle(args.bundle, require_formal=True, stage=config.stage)
+    assert_model_routing_matches_bundle(config, bundle)
     team = json.loads(args.team.read_text(encoding="utf-8"))
     prompts = tuple(team.get("prompts", []))
     if team.get("bundle_hash") != bundle.overall_hash or team.get("frozen") is not True:

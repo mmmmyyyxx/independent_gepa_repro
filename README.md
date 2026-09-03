@@ -78,6 +78,24 @@ disjointness, exact split sizes, model and parser identities, initial-metric
 availability, voting and tie rules, stage-specific budget availability, and a
 canonical overall identity hash.
 
+## Model profile for subsequent experiments
+
+Experiments started after 2026-09-03 use `qwen3-8b` for the optimized prompt's
+actual task rollouts and set `enable_thinking: false`. GEPA reflection and
+candidate prompt generation use `qwen3.7-flash`; the evaluator and optimizer
+identities are also frozen as `qwen3.7-flash` so no control-model field can
+silently retain the prior model.
+
+Independent-GEPA correctness remains the existing deterministic strict parser
+plus gold-label comparison. There is no LLM judge in that scoring path, so the
+evaluator model makes zero scoring calls; any evaluator-assisted feedback path
+is required by the bundle and run configuration to use `qwen3.7-flash`.
+
+The model-profile migration derives new bundles from the prior frozen bundles.
+It preserves prompt, split, parser, budget, seed, voting, and reference-result
+files, and marks old-solver initial metrics as not evaluated. The minimal real
+provider smoke result is published in `reports/model_routing_smoke_20260903.json`.
+
 ## Fixed GEPA adapter
 
 The implementation calls the actual v0.1.1 `gepa.optimize` API with one
@@ -99,10 +117,10 @@ For an interrupted member, the fixed GEPA implementation re-evaluates the seed
 before loading `gepa_state.bin`; those actually performed evaluations are
 counted by the external ledger, as required by the resume budget contract.
 
-## V17 matched protocol
+## Historical V17 matched protocol
 
-The current protocol targets `qwen3-14b` with thinking disabled, temperature
-zero, 1,800 output tokens, seeds 56/57/58, the frozen 75/50/125 V17 splits,
+The completed August 24 protocol targeted `qwen3-14b` with thinking disabled,
+temperature zero, 1,800 output tokens, seeds 56/57/58, the frozen 75/50/125 V17 splits,
 shared-identical initialization, and plurality voting with ties counted wrong.
 `scripts/export_v17_comparison_bundles.py` reads the clean sibling repository
 without importing it and freezes one self-contained bundle per seed.

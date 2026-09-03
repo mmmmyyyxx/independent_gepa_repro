@@ -140,6 +140,25 @@ def test_provider_repr_never_contains_credentials() -> None:
     assert provider.accounting.snapshot()["cost_status"] == "unavailable_missing_bundle_pricing"
 
 
+def test_split_model_request_routing_and_solver_thinking_disabled() -> None:
+    provider = OpenAICompatibleProvider(
+        task_model="qwen3-8b",
+        reflection_model="qwen3.7-flash",
+        transport=DeterministicFakeTransport(),
+        temperature=0.0,
+        max_tokens=1800,
+        timeout_seconds=120.0,
+        max_retries=3,
+        enable_thinking=False,
+    )
+    task = provider.request_payload("task", [{"role": "user", "content": "x"}])
+    reflection = provider.request_payload("reflection", [{"role": "user", "content": "x"}])
+    assert task["model"] == "qwen3-8b"
+    assert task["extra_body"] == {"enable_thinking": False}
+    assert reflection["model"] == "qwen3.7-flash"
+    assert reflection["extra_body"] == {"enable_thinking": False}
+
+
 def test_exact_cache_concurrent_atomic_persistence(tmp_path) -> None:
     path = tmp_path / "runs" / "cache.json"
     cache = ExactRequestCache(path)

@@ -30,7 +30,10 @@ def main() -> None:
         spec = build_v17_export_spec(args.source_root, seed, calibration=calibration)
         spec_path = args.spec_output_root / f"seed{seed}_export_spec.json"
         write_canonical_json(spec_path, spec)
-        bundle_path = args.bundle_output_root / f"disambiguation_qa_v17_seed{seed}_v1"
+        bundle_path = (
+            args.bundle_output_root
+            / f"disambiguation_qa_v17_seed{seed}_qwen3_8b_flash_v1"
+        )
         digest = export_bundle_from_spec(args.source_root, spec_path, bundle_path)
         print(f"PASS Seed{seed} bundle={digest}")
 

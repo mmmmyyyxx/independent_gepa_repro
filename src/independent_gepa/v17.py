@@ -9,14 +9,13 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
-import sqlite3
 import subprocess
 from pathlib import Path
 from typing import Any, Mapping
 
-from .bundle import canonical_json_bytes, sha256_bytes, sha256_file
+from .bundle import sha256_file
+from .model_profile import split_role_model_contract
 from .protocol import ProtocolViolation
-from .versions import TASK_REQUEST_TEMPLATE_VERSION
 
 V17_ID = "v17_formal_5arm_3seed_20260813"
 V17_SEEDS = (56, 57, 58)
@@ -68,38 +67,6 @@ def verify_reference_repository(root: Path) -> dict[str, str]:
 def _csv_rows(path: Path) -> list[dict[str, str]]:
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         return [dict(row) for row in csv.DictReader(handle)]
-
-
-def _initial_vector(reference_root: Path, seed: int) -> tuple[list[str | None], str]:
-    source = reference_root / "strict_splits_bbh_seed42" / "disambiguation_qa" / "opt.csv"
-    rows = _csv_rows(source)
-    cache = (
-        reference_root
-        / "runs"
-        / V17_ID
-        / f"seed{seed}"
-        / "disambiguation_qa"
-        / f"shared_static_reference_seed{seed}"
-        / "_solver_cache.sqlite"
-    )
-    if not cache.is_file():
-        raise ProtocolViolation(f"missing V17 initial solver cache for Seed{seed}")
-    with sqlite3.connect(f"file:{cache.as_posix()}?mode=ro", uri=True) as connection:
-        answers = {
-            str(question_hash): json.loads(str(answer_json))
-            for question_hash, answer_json in connection.execute(
-                "SELECT question_hash, answer_json FROM solver_cache WHERE state = 'ready'"
-            )
-        }
-    vector: list[str | None] = []
-    for row in rows:
-        question_hash = hashlib.sha256(str(row["question"]).encode("utf-8")).hexdigest()
-        answer = answers.get(question_hash)
-        if answer is None:
-            raise ProtocolViolation(f"V17 initial cache lacks optimization question {question_hash}")
-        parsed = str(answer.get("answer", "")).strip().upper() if answer.get("valid") else None
-        vector.append(parsed or None)
-    return vector, sha256_bytes(canonical_json_bytes(vector))
 
 
 def _parser_contract(reference_root: Path) -> dict[str, Any]:
@@ -240,17 +207,6 @@ def build_v17_export_spec(
         / "frozen_initialization_manifest.json"
     )
     init = _json(init_path)["initialization_snapshot"]
-    vector, vector_hash = _initial_vector(reference_root, seed)
-    correct = sum(
-        answer == str(row["answer"]).strip().strip("()").upper()
-        for answer, row in zip(
-            vector,
-            _csv_rows(reference_root / "strict_splits_bbh_seed42" / "disambiguation_qa" / "opt.csv"),
-            strict=True,
-        )
-    )
-    if [correct] * 5 != list(init["initial_member_correct_counts"]):
-        raise ProtocolViolation("V17 initial answer vector does not reconcile with frozen counts")
     formal: dict[str, Any] = {
         "status": "calibration_pending",
         "reference_arm": "V17_S4",
@@ -309,73 +265,14 @@ def build_v17_export_spec(
         }
         for name, filename in split_map.items()
     }
+    # V17 initialization outcomes were produced by qwen3-14b. Reusing them as
+    # active qwen3-8b metrics would be false provenance, so the prompt/data stay
+    # frozen while new-model initial metrics remain explicitly unevaluated.
     initial_metrics: dict[str, Any] = {
-        "optimization": {
-            "status": "available",
-            "member_correct": [correct] * 5,
-            "team_correct": correct,
-            "parsed_answer_vector_hash": vector_hash,
-            "reference_outcome_hash": init["initial_vote_oracle_ghm_hash"],
-        }
+        name: {"status": "not_evaluated"}
+        for name in ("optimization", "development", "test")
     }
-    for name, phase in (("development", "validation"), ("test", "test")):
-        summary = _json(
-            reference_root
-            / "runs"
-            / V17_ID
-            / phase
-            / f"seed{seed}"
-            / "S0"
-            / "evaluation_summary_private.json"
-        )
-        initial_metrics[name] = {
-            "status": "available",
-            "member_correct": list(summary["per_agent_correct_counts"]),
-            "team_correct": int(summary["vote_correct_count"]),
-        }
-    model_contract = {
-        "schema_version": "model_contract_v2",
-        "pricing_per_million_tokens": {
-            "task": {"prompt": 1.0, "completion": 4.0},
-            "reflection": {"prompt": 1.0, "completion": 4.0},
-        },
-        "pricing_contract": {
-            "currency": "CNY",
-            "region_class": "china_beijing_or_us_virginia",
-            "thinking": False,
-            "source": "https://help.aliyun.com/zh/model-studio/qwen3-14b",
-            "verified_date": "2026-08-24",
-            "discounts_and_free_quota_excluded": True,
-        },
-        "shared_task_model": {
-            "model": "qwen3-14b",
-            "temperature": 0.0,
-            "max_tokens": 1800,
-            "timeout_seconds": 120.0,
-            "max_retries": 3,
-            "enable_thinking": False,
-            "parser_version": "task_parser_v1",
-            "output_contract_version": "task_output_contract_v1",
-            "request_template_version": TASK_REQUEST_TEMPLATE_VERSION,
-            "question_rendering_version": "bbh_options_marker_v1",
-        },
-        "independent_gepa_reflection_model": {
-            "model": "qwen3-14b",
-            "temperature": 0.0,
-            "max_tokens": 1800,
-            "timeout_seconds": 120.0,
-            "max_retries": 3,
-            "enable_thinking": False,
-        },
-        "reference_optimizer": {
-            "model": "qwen3-14b",
-            "roles": {
-                "teacher": {"temperature": 0.4},
-                "critic": {"temperature": 0.0},
-                "student": {"temperature": 0.5},
-            },
-        },
-    }
+    model_contract = split_role_model_contract()
     return {
         "task": "disambiguation_qa",
         "experiment_seed": seed,
@@ -399,6 +296,8 @@ def build_v17_export_spec(
             "v17_report_execution_commit": _json(report / "source_freeze_sanitized.json")["git_head"],
             "v17_experiment_identity": preregistration["experiment_version"],
             "dataset_manifest_sha256": freeze["manifest_sha256"],
+            "historical_initial_metrics_model": "qwen3-14b",
+            "active_initial_metrics_status": "not_evaluated_after_solver_change",
         },
         "budget_identity": {
             "reference_arm": "V17_S4",

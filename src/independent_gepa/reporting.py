@@ -239,14 +239,44 @@ def build_v17_report(
         "gate": "PASS",
     }
     write_canonical_json(output / "alignment_audit.json", alignment)
+    task_models = {
+        str(bundle.model_contract["shared_task_model"]["model"])
+        for bundle in bundles.values()
+    }
+    reflection_models = {
+        str(bundle.model_contract["independent_gepa_reflection_model"]["model"])
+        for bundle in bundles.values()
+    }
+    evaluator_models = {
+        str(
+            bundle.model_contract.get(
+                "independent_gepa_evaluator_model",
+                bundle.model_contract["independent_gepa_reflection_model"],
+            )["model"]
+        )
+        for bundle in bundles.values()
+    }
+    optimizer_models = {
+        str(
+            bundle.model_contract.get(
+                "independent_gepa_optimizer_model",
+                bundle.model_contract["independent_gepa_reflection_model"],
+            )["model"]
+        )
+        for bundle in bundles.values()
+    }
+    if any(len(values) != 1 for values in (task_models, reflection_models, evaluator_models, optimizer_models)):
+        raise ProtocolViolation("report bundles contain inconsistent model routing")
     provenance = {
         "artifact_schema_version": "v17_independent_gepa_provenance_v1",
         "independent_gepa_repro_commit": repository_commit,
         "multi_agent_diversity_reference_commit": reference_commit,
         "gepa_version": "v0.1.1",
         "gepa_commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
-        "task_model": "qwen3-14b",
-        "reflection_model": "qwen3-14b",
+        "task_model": next(iter(task_models)),
+        "evaluator_model": next(iter(evaluator_models)),
+        "optimizer_model": next(iter(optimizer_models)),
+        "reflection_model": next(iter(reflection_models)),
         "formal_seeds": [56, 57, 58],
         "bundle_hashes": {str(seed): bundles[seed].overall_hash for seed in sorted(bundles)},
         "split_hashes": {

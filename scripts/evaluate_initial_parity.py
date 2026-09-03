@@ -14,7 +14,7 @@ from independent_gepa.bundle import canonical_json_bytes, prompt_hash, sha256_by
 from independent_gepa.evaluator import MemberEvaluator
 from independent_gepa.parser import StrictAnswerParser
 from independent_gepa.provider import ExactRequestCache, OpenAICompatibleProvider, ProviderAccounting
-from independent_gepa.runner import RunConfig
+from independent_gepa.runner import RunConfig, assert_model_routing_matches_bundle
 from independent_gepa.testing import DeterministicFakeTransport
 from independent_gepa.v17 import INITIAL_PARITY_POLICY_VERSION, initial_parity_passes
 
@@ -36,6 +36,7 @@ def main() -> None:
         raise RuntimeError("select exactly one of --offline-fake or --allow-real-api")
     config = RunConfig.load(args.config)
     bundle = validate_bundle(args.bundle, require_formal=True, stage=None)
+    assert_model_routing_matches_bundle(config, bundle)
     if len(set(prompt_hash(prompt) for prompt in bundle.prompts)) != 1:
         raise RuntimeError("initial prompts are not shared-identical")
     examples = bundle.splits["optimization"]

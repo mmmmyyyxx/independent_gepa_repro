@@ -352,7 +352,8 @@ class OpenAICompatibleProvider:
             **kwargs,
         )
 
-    def _request(self, role: str, messages: Sequence[Mapping[str, str]]) -> dict[str, Any]:
+    def request_payload(self, role: str, messages: Sequence[Mapping[str, str]]) -> dict[str, Any]:
+        """Build the exact provider payload used for a task or reflection call."""
         model = self.task_model if role == "task" else self.reflection_model
         return {
             "model": model,
@@ -368,7 +369,7 @@ class OpenAICompatibleProvider:
             usage = self.accounting.role(role)
             usage.logical_calls += 1
             self.accounting._persist_locked()
-        request = self._request(role, messages)
+        request = self.request_payload(role, messages)
         cached = self.cache.get(request)
         if cached is not None:
             with self.accounting._lock:

@@ -11,8 +11,15 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 from .protocol import Example, ProtocolViolation, SplitName
-from .versions import BUNDLE_VERSION, PARSER_CONTRACT_VERSION
-from .versions import TASK_REQUEST_TEMPLATE_VERSION
+from .versions import (
+    BUNDLE_VERSION,
+    EVALUATOR_MODEL,
+    OPTIMIZER_MODEL,
+    PARSER_CONTRACT_VERSION,
+    REFLECTION_MODEL,
+    SOLVER_MODEL,
+    TASK_REQUEST_TEMPLATE_VERSION,
+)
 
 MEMBER_COUNT = 5
 FORMAL_SPLIT_SIZES = {
@@ -136,18 +143,32 @@ def _validate_model_contract(
     *,
     require_formal: bool,
 ) -> None:
-    if model_contract.get("schema_version") != "model_contract_v2":
+    schema_version = model_contract.get("schema_version")
+    if schema_version not in {"model_contract_v2", "model_contract_v3"}:
         raise ProtocolViolation("unsupported model contract schema")
     task = model_contract.get("shared_task_model")
     reference = model_contract.get("reference_optimizer")
     reflection = model_contract.get("independent_gepa_reflection_model")
-    if not all(isinstance(item, Mapping) for item in (task, reference, reflection)):
+    evaluator = model_contract.get("independent_gepa_evaluator_model")
+    optimizer = model_contract.get("independent_gepa_optimizer_model")
+    required_roles = (task, reference, reflection)
+    if schema_version == "model_contract_v3":
+        required_roles += (evaluator, optimizer)
+    if not all(isinstance(item, Mapping) for item in required_roles):
         raise ProtocolViolation("model contract must separate task, reference, and GEPA roles")
-    expected_model = "qwen3-14b"
     if task.get("model") != manifest.get("task_model"):
         raise ProtocolViolation("task model identity mismatch")
     if reflection.get("model") != manifest.get("reflection_model"):
         raise ProtocolViolation("reflection model identity mismatch")
+    if schema_version == "model_contract_v3":
+        if evaluator.get("model") != manifest.get("evaluator_model"):
+            raise ProtocolViolation("evaluator model identity mismatch")
+        if optimizer.get("model") != manifest.get("optimizer_model"):
+            raise ProtocolViolation("optimizer model identity mismatch")
+        if len({evaluator.get("model"), optimizer.get("model"), reflection.get("model")}) != 1:
+            raise ProtocolViolation("evaluator, optimizer, and reflection model identities diverge")
+        if any(row.get("enable_thinking") is not False for row in (evaluator, optimizer)):
+            raise ProtocolViolation("evaluator and optimizer thinking must be disabled")
     if task.get("enable_thinking") is not False or reflection.get("enable_thinking") is not False:
         raise ProtocolViolation("task and reflection thinking must be disabled")
     for name, row in (("shared task", task), ("GEPA reflection", reflection)):
@@ -167,15 +188,24 @@ def _validate_model_contract(
     if task.get("question_rendering_version") != "bbh_options_marker_v1":
         raise ProtocolViolation("task question-rendering identity mismatch")
     roles = reference.get("roles")
-    if reference.get("model") != expected_model or not isinstance(roles, Mapping):
+    if reference.get("model") != "qwen3-14b" or not isinstance(roles, Mapping):
         raise ProtocolViolation("reference optimizer metadata is incomplete")
     if set(roles) != {"teacher", "critic", "student"}:
         raise ProtocolViolation("reference optimizer roles must be teacher, critic, and student")
     for role, row in roles.items():
         if not isinstance(row, Mapping) or not isinstance(row.get("temperature"), (int, float)):
             raise ProtocolViolation(f"reference optimizer role is incomplete: {role}")
-    if require_formal and (task.get("model") != expected_model or reflection.get("model") != expected_model):
-        raise ProtocolViolation("formal model snapshot mismatch")
+    if require_formal:
+        if schema_version == "model_contract_v2":
+            if task.get("model") != "qwen3-14b" or reflection.get("model") != "qwen3-14b":
+                raise ProtocolViolation("legacy formal model snapshot mismatch")
+        elif (
+            task.get("model") != SOLVER_MODEL
+            or evaluator.get("model") != EVALUATOR_MODEL
+            or optimizer.get("model") != OPTIMIZER_MODEL
+            or reflection.get("model") != REFLECTION_MODEL
+        ):
+            raise ProtocolViolation("formal split-role model snapshot mismatch")
 
 
 def _validate_initial_metrics(manifest: Mapping[str, Any]) -> None:
@@ -641,6 +671,13 @@ def export_bundle_from_spec(source_root: Path, spec_path: Path, output: Path) ->
         "split_source_provenance": split_source_provenance,
         "budget_identity": spec["budget_identity"],
     }
+    if model_contract.get("schema_version") == "model_contract_v3":
+        manifest["evaluator_model"] = model_contract["independent_gepa_evaluator_model"][
+            "model"
+        ]
+        manifest["optimizer_model"] = model_contract["independent_gepa_optimizer_model"][
+            "model"
+        ]
     overall = compute_overall_hash(manifest, file_hashes)
     manifest["overall_bundle_hash"] = overall
     write_canonical_json(output / "manifest.json", manifest)

@@ -20,7 +20,14 @@ from .evaluator import MemberEvaluator
 from .parser import StrictAnswerParser
 from .protocol import ProtocolViolation, SplitAccessController, SplitName
 from .provider import OpenAICompatibleProvider, ProviderAccounting, TokenBudgetPolicy
-from .versions import CHECKPOINT_VERSION, METHOD_ID
+from .versions import (
+    CHECKPOINT_VERSION,
+    EVALUATOR_MODEL,
+    METHOD_ID,
+    OPTIMIZER_MODEL,
+    REFLECTION_MODEL,
+    SOLVER_MODEL,
+)
 
 
 @dataclass(frozen=True)
@@ -66,6 +73,8 @@ class RunConfig:
     real_api_allowed: bool
     members: int
     task_model: str
+    evaluator_model: str
+    optimizer_model: str
     reflection_model: str
     member_ids: tuple[int, ...]
     optimization_example_limit: int | None
@@ -116,6 +125,8 @@ class RunConfig:
             real_api_allowed=bool(raw.get("real_api_allowed", False)),
             members=members,
             task_model=str(raw.get("task_model", "")),
+            evaluator_model=str(raw.get("evaluator_model", "")),
+            optimizer_model=str(raw.get("optimizer_model", "")),
             reflection_model=str(raw.get("reflection_model", "")),
             member_ids=tuple(int(item) for item in raw_member_ids),
             optimization_example_limit=(
@@ -139,6 +150,16 @@ class RunConfig:
         )
         if config.method_id != METHOD_ID:
             raise ProtocolViolation("run config method identity mismatch")
+        if config.task_model != SOLVER_MODEL:
+            raise ProtocolViolation(f"solver model must be {SOLVER_MODEL}")
+        if config.evaluator_model != EVALUATOR_MODEL:
+            raise ProtocolViolation(f"evaluator model must be {EVALUATOR_MODEL}")
+        if config.optimizer_model != OPTIMIZER_MODEL:
+            raise ProtocolViolation(f"optimizer model must be {OPTIMIZER_MODEL}")
+        if config.reflection_model != REFLECTION_MODEL:
+            raise ProtocolViolation(f"reflection model must be {REFLECTION_MODEL}")
+        if len({config.evaluator_model, config.optimizer_model, config.reflection_model}) != 1:
+            raise ProtocolViolation("evaluator, optimizer, and reflection models must be identical")
         if config.stage not in {"canary", "smoke", "pilot", "formal", "offline_fake"}:
             raise ProtocolViolation("unsupported run stage")
         if config.stage in {"pilot", "formal", "offline_fake"} and config.members != 5:
@@ -319,6 +340,27 @@ def aggregate_provider_accounting(
     }
 
 
+def assert_model_routing_matches_bundle(config: RunConfig, bundle: ValidatedBundle) -> None:
+    role_contracts = {
+        "task": (config.task_model, bundle.model_contract.get("shared_task_model")),
+        "evaluator": (
+            config.evaluator_model,
+            bundle.model_contract.get("independent_gepa_evaluator_model"),
+        ),
+        "optimizer": (
+            config.optimizer_model,
+            bundle.model_contract.get("independent_gepa_optimizer_model"),
+        ),
+        "reflection": (
+            config.reflection_model,
+            bundle.model_contract.get("independent_gepa_reflection_model"),
+        ),
+    }
+    for role, (configured, contract) in role_contracts.items():
+        if not isinstance(contract, Mapping) or configured != contract.get("model"):
+            raise ProtocolViolation(f"config and bundle {role} model mismatch")
+
+
 class IndependentRunner:
     def __init__(
         self,
@@ -329,12 +371,9 @@ class IndependentRunner:
         provider_factory: ProviderFactory,
         executor: MemberExecutor,
     ):
+        assert_model_routing_matches_bundle(config, bundle)
         task_contract = bundle.model_contract["shared_task_model"]
         reflection_contract = bundle.model_contract["independent_gepa_reflection_model"]
-        if config.task_model != task_contract["model"]:
-            raise ProtocolViolation("config and bundle task model mismatch")
-        if config.reflection_model != reflection_contract["model"]:
-            raise ProtocolViolation("config and bundle reflection model mismatch")
         provider = config.raw["provider"]
         transport_fields = ("temperature", "max_tokens", "timeout_seconds", "max_retries")
         for name, contract in (("task", task_contract), ("reflection", reflection_contract)):
@@ -612,6 +651,31 @@ class IndependentRunner:
             "member_hard_limit": token_policy.hard_tokens,
             "stop_reserve_per_member": token_policy.stop_reserve_tokens,
             "actual_total_tokens": aggregate_provider_accounting(accountings)["total_tokens"],
+        }
+        role_accounting = summary["provider_accounting"]["roles"]
+        summary["model_routing"] = {
+            "solver_rollout": {
+                "provider_role": "task",
+                "model": self.config.task_model,
+                "enable_thinking": False,
+                "real_requests": role_accounting["task"]["real_requests"],
+            },
+            "evaluator_feedback": {
+                "model": self.config.evaluator_model,
+                "llm_calls": 0,
+                "scoring": "strict_parser_plus_gold; no LLM judge in Independent-GEPA",
+            },
+            "prompt_optimizer": {
+                "provider_role": "reflection",
+                "model": self.config.optimizer_model,
+                "real_requests": role_accounting["reflection"]["real_requests"],
+            },
+            "reflection": {
+                "provider_role": "reflection",
+                "model": self.config.reflection_model,
+                "enable_thinking": False,
+                "real_requests": role_accounting["reflection"]["real_requests"],
+            },
         }
         return tuple(prompts), summary
 

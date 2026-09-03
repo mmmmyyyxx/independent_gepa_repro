@@ -1,16 +1,32 @@
 # Implementation status
 
-Updated: 2026-08-24
+Updated: 2026-09-03
 
 ## Current milestone
 
-The V17-matched Independent-GEPA implementation and formal three-seed run are
-complete. All 15 official GEPA member searches, three post-freeze development
-evaluations, and three frozen-test evaluations finished under the frozen
-protocol. The sanitized report decision is
+The subsequent-experiment model profile is implemented and its minimal real
+provider smoke is complete. Solver rollouts now use `qwen3-8b` with thinking
+disabled. Evaluator, prompt optimizer, and reflection identities are all
+`qwen3.7-flash`. No GEPA search, frontier, candidate-generation, stopper,
+budget, split, prompt, seed, parser, or scoring setting changed.
+
+The completed August 24 V17 run and its sanitized report remain immutable
+historical qwen3-14b results with decision
 `CONTINUE_NO_STRONG_BASELINE_PRESSURE`.
 
-## Frozen protocol
+## Model-routing smoke
+
+- Seed 56, member 0, five optimization examples; development and test disabled.
+- Solver: `qwen3-8b`, thinking false, 9 real requests, 6,019 tokens.
+- Optimizer/reflection: `qwen3.7-flash`, 2 real requests, 2,701 tokens.
+- Correctness evaluator: strict parser plus gold comparison; 0 LLM judge calls.
+- Total: 13 logical task-example evaluations, 11 real requests, 8,720 tokens,
+  30.44 seconds, estimated CNY 0.0066682.
+- Three seed-specific derived bundles passed formal validation and retained
+  byte-identical prompt, split, parser, budget, and reference-result files.
+- Sanitized evidence: `reports/model_routing_smoke_20260903.json`.
+
+## Historical frozen protocol
 
 - Model: `qwen3-14b`; thinking false; temperature 0; max tokens 1800.
 - Seeds 56/57/58; frozen splits 75 optimization / 50 development / 125 test.
@@ -47,7 +63,9 @@ protocol. The sanitized report decision is
 - Parser, feedback isolation, member state isolation, split access, budget,
   cache, operational failure, resume, final composition, reporting and
   sanitization tests: PASS.
-- `python -m pytest -q`: PASS, 56 tests.
+- Split-role bundle/formal model routing validation: PASS.
+- Minimal real model-routing smoke: PASS.
+- `python -m pytest -q`: PASS, 58 tests.
 - `python -m compileall -q src scripts tests`: PASS.
 - Deterministic report replay and public leakage audit: PASS.
 - `git diff --check`: PASS.

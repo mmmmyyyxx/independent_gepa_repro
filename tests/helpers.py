@@ -177,7 +177,7 @@ def make_bundle(
             )
         write_canonical_jsonl(bundle / "splits" / f"{name}.jsonl", rows)
     transport = {
-        "model": "qwen3-14b",
+        "model": "qwen3-8b",
         "enable_thinking": False,
         "temperature": 0.0,
         "max_tokens": 128,
@@ -185,7 +185,7 @@ def make_bundle(
         "max_retries": 0,
     }
     model = {
-        "schema_version": "model_contract_v2",
+        "schema_version": "model_contract_v3",
         "shared_task_model": {
             **transport,
             "parser_version": "task_parser_v1",
@@ -201,7 +201,19 @@ def make_bundle(
                 "student": {"temperature": 0.5},
             },
         },
-        "independent_gepa_reflection_model": dict(transport),
+        "independent_gepa_evaluator_model": {
+            "model": "qwen3.7-flash",
+            "enable_thinking": False,
+            "usage": "strict_scoring_is_deterministic_no_llm_judge",
+        },
+        "independent_gepa_optimizer_model": {
+            **transport,
+            "model": "qwen3.7-flash",
+        },
+        "independent_gepa_reflection_model": {
+            **transport,
+            "model": "qwen3.7-flash",
+        },
     }
     budget = {
         "schema_version": "budget_reference_v3",
@@ -270,6 +282,8 @@ def make_bundle(
         "split_hashes": {name: files[f"splits/{name}.jsonl"] for name in names},
         "split_example_id_hashes": example_id_hashes,
         "task_model": model["shared_task_model"]["model"],
+        "evaluator_model": model["independent_gepa_evaluator_model"]["model"],
+        "optimizer_model": model["independent_gepa_optimizer_model"]["model"],
         "reflection_model": model["independent_gepa_reflection_model"]["model"],
         "enable_thinking": False,
         "parser_version": parser_contract()["source_parser_version"],
@@ -318,8 +332,10 @@ def write_run_config(path: Path, *, stage: str = "offline_fake", use_merge: bool
         "stage": stage,
         "real_api_allowed": False,
         "members": 5,
-        "task_model": "qwen3-14b",
-        "reflection_model": "qwen3-14b",
+        "task_model": "qwen3-8b",
+        "evaluator_model": "qwen3.7-flash",
+        "optimizer_model": "qwen3.7-flash",
+        "reflection_model": "qwen3.7-flash",
         "provider": {
             "api_key_env": "NEVER_USED",
             "base_url_env": "NEVER_USED",

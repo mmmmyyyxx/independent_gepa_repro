@@ -142,7 +142,7 @@ def test_provider_repr_never_contains_credentials() -> None:
 
 def test_split_model_request_routing_and_solver_thinking_disabled() -> None:
     provider = OpenAICompatibleProvider(
-        task_model="qwen3-8b",
+        task_model="qwen3-14b",
         reflection_model="qwen3.7-flash",
         transport=DeterministicFakeTransport(),
         temperature=0.0,
@@ -153,7 +153,7 @@ def test_split_model_request_routing_and_solver_thinking_disabled() -> None:
     )
     task = provider.request_payload("task", [{"role": "user", "content": "x"}])
     reflection = provider.request_payload("reflection", [{"role": "user", "content": "x"}])
-    assert task["model"] == "qwen3-8b"
+    assert task["model"] == "qwen3-14b"
     assert task["extra_body"] == {"enable_thinking": False}
     assert reflection["model"] == "qwen3.7-flash"
     assert reflection["extra_body"] == {"enable_thinking": False}

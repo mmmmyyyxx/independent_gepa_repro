@@ -265,9 +265,8 @@ def build_v17_export_spec(
         }
         for name, filename in split_map.items()
     }
-    # V17 initialization outcomes were produced by qwen3-14b. Reusing them as
-    # active qwen3-8b metrics would be false provenance, so the prompt/data stay
-    # frozen while new-model initial metrics remain explicitly unevaluated.
+    # Keep initial metrics explicitly unevaluated for the new split-role run;
+    # this avoids treating historical outputs as a replay of the new identity.
     initial_metrics: dict[str, Any] = {
         name: {"status": "not_evaluated"}
         for name in ("optimization", "development", "test")
@@ -297,7 +296,7 @@ def build_v17_export_spec(
             "v17_experiment_identity": preregistration["experiment_version"],
             "dataset_manifest_sha256": freeze["manifest_sha256"],
             "historical_initial_metrics_model": "qwen3-14b",
-            "active_initial_metrics_status": "not_evaluated_after_solver_change",
+            "active_initial_metrics_status": "not_evaluated_for_new_model_profile",
         },
         "budget_identity": {
             "reference_arm": "V17_S4",

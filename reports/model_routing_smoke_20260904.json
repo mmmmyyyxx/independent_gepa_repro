@@ -1,0 +1,71 @@
+{
+  "artifact_schema_version": "independent_gepa_model_routing_smoke_v1",
+  "audit_status": "PASS",
+  "bundle_hash": "6b1dd7d80200489dbb609068e50ec09f7902db658d4be01bef25ce5a11ec278a",
+  "experiment_seed": 56,
+  "gate": "PASS",
+  "model_profile_id": "qwen3_14b_solver_qwen3_7_flash_control_v1",
+  "models": {
+    "evaluator": {
+      "llm_calls": 0,
+      "model": "qwen3.7-flash",
+      "scoring": "strict_parser_plus_gold_no_llm_judge"
+    },
+    "optimizer": {
+      "model": "qwen3.7-flash",
+      "provider_role": "reflection",
+      "real_requests": 2
+    },
+    "reflection": {
+      "enable_thinking": false,
+      "model": "qwen3.7-flash",
+      "provider_role": "reflection",
+      "real_requests": 2
+    },
+    "solver": {
+      "enable_thinking": false,
+      "model": "qwen3-14b",
+      "provider_role": "task",
+      "real_requests": 9
+    }
+  },
+  "non_model_invariants": {
+    "budget_settings_changed": false,
+    "candidate_generation_changed": false,
+    "dataset_splits_changed": false,
+    "initial_prompts_changed": false,
+    "pareto_or_frontier_changed": false,
+    "parser_or_scoring_changed": false,
+    "search_or_stopping_changed": false,
+    "seeds_changed": false
+  },
+  "provider_accounting": {
+    "estimated_cost_cny": 0.0123316,
+    "logical_task_example_evaluations": 13,
+    "real_requests": 11,
+    "reflection_tokens": 2823,
+    "solver_tokens": 6259,
+    "total_tokens": 9082,
+    "wall_clock_seconds": 38.026565
+  },
+  "smoke_scope": {
+    "configured_logical_evaluation_budget_per_member": 20,
+    "configured_token_budget_per_member": 12000,
+    "development_enabled": false,
+    "member_ids": [
+      0
+    ],
+    "optimization_examples": 5,
+    "test_enabled": false
+  },
+  "supersedes_model_profile_id": "qwen3_8b_solver_qwen3_7_flash_control_v1",
+  "verification": {
+    "bundle_formal_validation": "PASS",
+    "compileall": "PASS",
+    "gepa_fixed_checkout": "PASS",
+    "git_diff_check": "PASS",
+    "offline_preflight": "PASS",
+    "public_leakage_audit": "PASS",
+    "pytest": "58 passed"
+  }
+}

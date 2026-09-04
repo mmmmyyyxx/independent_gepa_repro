@@ -29,7 +29,7 @@ def test_initial_parity_policy_uses_current_same_run_vector_not_historical_score
 def test_split_role_model_profile_keeps_transport_settings_fixed() -> None:
     model = split_role_model_contract()
     task = model["shared_task_model"]
-    assert task["model"] == "qwen3-8b"
+    assert task["model"] == "qwen3-14b"
     assert task["enable_thinking"] is False
     for role in (
         "independent_gepa_evaluator_model",
@@ -45,7 +45,7 @@ def test_split_role_model_profile_keeps_transport_settings_fixed() -> None:
         assert model[role]["max_retries"] == 3
 
 
-def test_model_variant_changes_models_only_and_invalidates_old_initial_metrics(tmp_path) -> None:
+def test_model_variant_preserves_inputs_and_invalidates_prior_run_metrics(tmp_path) -> None:
     source_path = make_bundle(
         tmp_path / "source", sizes=(75, 50, 125), experiment_seed=56
     )
@@ -54,7 +54,7 @@ def test_model_variant_changes_models_only_and_invalidates_old_initial_metrics(t
     export_model_variant_bundle(source_path, output)
     variant = validate_bundle(output, require_formal=True)
 
-    assert variant.model_contract["shared_task_model"]["model"] == "qwen3-8b"
+    assert variant.model_contract["shared_task_model"]["model"] == "qwen3-14b"
     assert variant.model_contract["independent_gepa_reflection_model"]["model"] == "qwen3.7-flash"
     assert variant.prompts == source.prompts
     assert variant.manifest["split_hashes"] == source.manifest["split_hashes"]
@@ -81,7 +81,7 @@ def test_v17_task_request_rendering_matches_fixed_contract() -> None:
 
 def test_v17_formal_config_and_deterministic_gepa_seed() -> None:
     config = RunConfig.load(Path(__file__).resolve().parents[1] / "configs" / "independent_gepa.yaml")
-    assert config.task_model == "qwen3-8b"
+    assert config.task_model == "qwen3-14b"
     assert config.evaluator_model == "qwen3.7-flash"
     assert config.optimizer_model == "qwen3.7-flash"
     assert config.reflection_model == "qwen3.7-flash"
@@ -99,7 +99,7 @@ def test_persistent_provider_accounting_and_hard_token_stop(tmp_path) -> None:
         return ProviderResponse("FINAL_ANSWER: A", "stop", 1, 1)
 
     provider = OpenAICompatibleProvider(
-        task_model="qwen3-8b",
+        task_model="qwen3-14b",
         reflection_model="qwen3.7-flash",
         transport=transport,
         temperature=0,

@@ -13,8 +13,8 @@ from .model_profile import MODEL_PROFILE_ID, split_role_model_contract
 def build_model_variant_spec(source_bundle: Path) -> dict[str, Any]:
     """Build a data-only spec that changes only active model identities.
 
-    Initial outcomes from the prior solver are deliberately not carried over as
-    metrics for the new solver. Prompts, splits, parser, budget, and reference
+    Initial outcomes from the prior run are deliberately not carried over into
+    a new model-profile identity. Prompts, splits, parser, budget, and reference
     results remain byte-for-byte source inputs to the generic bundle exporter.
     """
 
@@ -39,7 +39,7 @@ def build_model_variant_spec(source_bundle: Path) -> dict[str, Any]:
             "parent_bundle_hash": source.overall_hash,
             "parent_source_identity": source.manifest["source_identity"],
             "historical_initial_metrics_model": source.manifest["task_model"],
-            "active_initial_metrics_status": "not_evaluated_after_solver_change",
+            "active_initial_metrics_status": "not_evaluated_for_new_model_profile",
         },
         "initial_metrics": {
             name: {"status": "not_evaluated"}

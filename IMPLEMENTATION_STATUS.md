@@ -2,6 +2,28 @@
 
 Updated: 2026-09-05
 
+## Capacity-probe milestone
+
+The standalone official-GEPA single-prompt capacity probe is complete for
+seeds 75/76/77. It is intentionally outside the historical matched five-member
+baseline and does not alter its budget, data, prompt-team evaluation, or
+results. The new stage uses train/optimizer-validation folds of 100/50,
+ExternalValidation50 only after candidate freeze, and an identity-only
+inaccessible Test50.
+
+- All folds terminated `no_improvement_patience_10` and are `SATURATED`.
+- Seed 75: OptimizerVal 0.40 -> 0.70; ExternalValidation 0.62 -> 0.66;
+  frontier oracle 0.76 (complementarity gap +0.10).
+- Seed 76: OptimizerVal 0.58 -> 0.72; ExternalValidation 0.62 -> 0.74;
+  selected candidate equals frontier oracle.
+- Seed 77: OptimizerVal 0.60 -> 0.80; ExternalValidation 0.60 -> 0.72;
+  selected candidate equals frontier oracle.
+- Aggregate accounting: 3,596 task-example evaluations, 66 reflection calls,
+  3,662 real requests, 6,411,791 tokens, estimated CNY 4.8786658.
+- Public sanitized evidence: `experiments/gepa_single_prompt_capacity_20260905`.
+  Private bundle, prompts, raw outputs, GEPA checkpoints, and caches remain
+  ignored. Test50 was never loaded.
+
 ## Current milestone
 
 The subsequent-experiment model profile is implemented and its minimal real

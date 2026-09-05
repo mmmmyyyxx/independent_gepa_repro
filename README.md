@@ -98,6 +98,40 @@ minimal real provider smoke result is published in
 `reports/model_routing_smoke_20260903.json`. The 2026-09-04 qwen3-14b smoke is
 retained as historical evidence but is superseded for future experiments.
 
+## Single-prompt capacity probe (2026-09-05)
+
+`capacity_probe` is a deliberately separate experiment stage.  It measures
+the generalizable capacity of one `qwen3-8b` prompt under official GEPA v0.1.1,
+not the matched five-member plurality baseline.  It starts every fold from the
+verified D0 P0 hash, uses `qwen3.7-flash` only for reflection, and disables
+thinking for both roles.
+
+The frozen 250-example anti-overfitting artifact is partitioned without
+resampling into TrainDev150, ExternalValidation50, and identity-only Test50.
+For seeds 75/76/77, GEPA receives distinct `trainset=Optimize100` and
+`valset=OptimizerVal50` folds; the ExternalValidation50 replay occurs only
+after GEPA has frozen `result.best_candidate`. Test50 is not exported into the
+capacity bundle and cannot be loaded by its runtime.
+
+The search uses the upstream Pareto/instance frontier, reflection minibatch 3,
+round-robin selection, merge enabled (5 invocations; overlap floor 5), and
+`cache_evaluation=false`. It terminates only through the official
+`NoImprovementStopper(10)` or `MaxCandidateProposalsStopper(50)`; the logical
+ledger is accounting, not a normal stop condition.
+
+```powershell
+python scripts/export_capacity_probe_bundle.py --output data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905
+python scripts/preflight_capacity_probe.py --bundle data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905 --output reports/gepa_capacity_probe_preflight_20260905.json
+python scripts/run_gepa_capacity_probe.py --bundle data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905 --private-output runs/gepa_single_prompt_capacity_20260905 --public-output experiments/gepa_single_prompt_capacity_20260905 --allow-real-api
+```
+
+All three registered folds saturated naturally. Selected ExternalValidation
+accuracies were 0.66 / 0.74 / 0.72 from P0 values 0.62 / 0.62 / 0.60;
+the corresponding GeneralizableOptimizationCapacity values were +0.04, +0.12,
+and +0.12. The seed-75 frontier oracle was 0.76, leaving a +0.10
+SearchSpaceComplementarityGap; the other two selected candidates matched their
+frontier oracle. These are ExternalValidation-only findings, not test claims.
+
 ## Fixed GEPA adapter
 
 The implementation calls the actual v0.1.1 `gepa.optimize` API with one

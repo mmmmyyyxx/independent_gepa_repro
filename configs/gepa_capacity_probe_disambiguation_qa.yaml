@@ -1,0 +1,24 @@
+stage: capacity_probe
+real_api_allowed: true
+task_model: qwen3-8b
+reflection_model: qwen3.7-flash
+provider:
+  api_key_env: DASHSCOPE_API_KEY
+  base_url_env: DASHSCOPE_BASE_URL
+  temperature: 0.0
+  max_tokens: 1800
+  timeout_seconds: 120.0
+  max_retries: 3
+  enable_thinking: false
+gepa:
+  candidate_selection_strategy: pareto
+  frontier_type: instance
+  reflection_minibatch_size: 3
+  skip_perfect_score: false
+  use_merge: true
+  max_merge_invocations: 5
+  merge_val_overlap_floor: 5
+  cache_evaluation: false
+  module_selector: round_robin
+  no_improvement_patience: 10
+  max_candidate_proposals: 50

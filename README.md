@@ -80,7 +80,7 @@ canonical overall identity hash.
 
 ## Model profile for subsequent experiments
 
-Experiments started after the 2026-09-04 correction use `qwen3-14b` for the optimized prompt's
+Experiments started after the 2026-09-05 correction use `qwen3-8b` for the optimized prompt's
 actual task rollouts and set `enable_thinking: false`. GEPA reflection and
 candidate prompt generation use `qwen3.7-flash`; the evaluator and optimizer
 identities are also frozen as `qwen3.7-flash` so no control-model field can
@@ -95,7 +95,7 @@ The model-profile migration derives new bundles from the prior frozen bundles.
 It preserves prompt, split, parser, budget, seed, voting, and reference-result
 files, and marks prior-run initial metrics as not evaluated. The authoritative
 minimal real provider smoke result is published in
-`reports/model_routing_smoke_20260904.json`. The 2026-09-03 qwen3-8b smoke is
+`reports/model_routing_smoke_20260903.json`. The 2026-09-04 qwen3-14b smoke is
 retained as historical evidence but is superseded for future experiments.
 
 ## Fixed GEPA adapter

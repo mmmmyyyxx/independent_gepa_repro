@@ -11,7 +11,7 @@ from independent_gepa.model_variant import export_model_variant_bundle
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Derive a frozen bundle with qwen3-14b solver and qwen3.7-flash "
+            "Derive a frozen bundle with qwen3-8b solver and qwen3.7-flash "
             "evaluator/optimizer/reflection while preserving all non-model inputs"
         )
     )

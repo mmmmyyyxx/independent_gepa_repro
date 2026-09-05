@@ -1,11 +1,11 @@
 # Implementation status
 
-Updated: 2026-09-04
+Updated: 2026-09-05
 
 ## Current milestone
 
 The subsequent-experiment model profile is implemented and its minimal real
-provider smoke is complete. Solver rollouts now use `qwen3-14b` with thinking
+provider smoke is complete. Solver rollouts now use `qwen3-8b` with thinking
 disabled. Evaluator, prompt optimizer, and reflection identities are all
 `qwen3.7-flash`. No GEPA search, frontier, candidate-generation, stopper,
 budget, split, prompt, seed, parser, or scoring setting changed.
@@ -17,15 +17,15 @@ historical qwen3-14b results with decision
 ## Model-routing smoke
 
 - Seed 56, member 0, five optimization examples; development and test disabled.
-- Solver: `qwen3-14b`, thinking false, 9 real requests, 6,259 tokens.
-- Optimizer/reflection: `qwen3.7-flash`, 2 real requests, 2,823 tokens.
+- Solver: `qwen3-8b`, thinking false, 9 real requests, 6,019 tokens.
+- Optimizer/reflection: `qwen3.7-flash`, 2 real requests, 2,701 tokens.
 - Correctness evaluator: strict parser plus gold comparison; 0 LLM judge calls.
-- Total: 13 logical task-example evaluations, 11 real requests, 9,082 tokens,
-  38.03 seconds, estimated CNY 0.0123316.
+- Total: 13 logical task-example evaluations, 11 real requests, 8,720 tokens,
+  30.44 seconds, estimated CNY 0.0066682.
 - Three seed-specific derived bundles passed formal validation and retained
   byte-identical prompt, split, parser, budget, and reference-result files.
-- Sanitized evidence: `reports/model_routing_smoke_20260904.json`.
-- The 2026-09-03 qwen3-8b smoke remains historical only and is superseded by
+- Sanitized evidence: `reports/model_routing_smoke_20260903.json`.
+- The 2026-09-04 qwen3-14b smoke remains historical only and is superseded by
   this corrected model profile.
 
 ## Historical frozen protocol

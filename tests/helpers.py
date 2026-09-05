@@ -177,7 +177,7 @@ def make_bundle(
             )
         write_canonical_jsonl(bundle / "splits" / f"{name}.jsonl", rows)
     transport = {
-        "model": "qwen3-14b",
+        "model": "qwen3-8b",
         "enable_thinking": False,
         "temperature": 0.0,
         "max_tokens": 128,
@@ -332,7 +332,7 @@ def write_run_config(path: Path, *, stage: str = "offline_fake", use_merge: bool
         "stage": stage,
         "real_api_allowed": False,
         "members": 5,
-        "task_model": "qwen3-14b",
+        "task_model": "qwen3-8b",
         "evaluator_model": "qwen3.7-flash",
         "optimizer_model": "qwen3.7-flash",
         "reflection_model": "qwen3.7-flash",

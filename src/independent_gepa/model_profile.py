@@ -12,7 +12,7 @@ from .versions import (
     TASK_REQUEST_TEMPLATE_VERSION,
 )
 
-MODEL_PROFILE_ID = "qwen3_14b_solver_qwen3_7_flash_control_v1"
+MODEL_PROFILE_ID = "qwen3_8b_solver_qwen3_7_flash_control_v1"
 
 
 def split_role_model_contract() -> dict[str, Any]:
@@ -27,7 +27,7 @@ def split_role_model_contract() -> dict[str, Any]:
         "schema_version": "model_contract_v3",
         "model_profile_id": MODEL_PROFILE_ID,
         "pricing_per_million_tokens": {
-            "task": {"prompt": 1.0, "completion": 4.0},
+            "task": {"prompt": 0.5, "completion": 2.0},
             "reflection": {"prompt": 0.2, "completion": 0.8},
         },
         "pricing_contract": {
@@ -35,10 +35,10 @@ def split_role_model_contract() -> dict[str, Any]:
             "region_class": "china_beijing_or_us_virginia",
             "thinking": False,
             "sources": [
-                "https://help.aliyun.com/zh/model-studio/qwen3-14b",
+                "https://help.aliyun.com/zh/model-studio/qwen3-8b",
                 "https://help.aliyun.com/zh/model-studio/qwen3-7-flash",
             ],
-            "verified_date": "2026-09-04",
+            "verified_date": "2026-09-03",
             "discounts_and_free_quota_excluded": True,
         },
         "shared_task_model": {

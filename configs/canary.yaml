@@ -1,4 +1,4 @@
-method_id: independent_gepa_split_model_roles_v4
+method_id: independent_gepa_split_model_roles_v5
 stage: smoke
 real_api_allowed: false
 members: 1
@@ -9,7 +9,7 @@ development_enabled: false
 test_enabled: false
 logical_evaluation_budget: 20
 token_budget: 12000
-task_model: qwen3-14b
+task_model: qwen3-8b
 evaluator_model: qwen3.7-flash
 optimizer_model: qwen3.7-flash
 reflection_model: qwen3.7-flash

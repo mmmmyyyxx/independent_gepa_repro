@@ -15,6 +15,12 @@ The offline guard repair is described in `docs/math_a4_copy_guard_repair_v1.md`;
 its pending config is `configs/math_a4_matched_guard_repair.yaml`. A new real run
 needs fresh authorization; the original one-shot grant cannot be reused.
 
+The user has now authorized one guarded replacement with a3M combined token
+ceiling. Its current config is `configs/math_a4_matched_guard_repair_v3.yaml`,
+specified by `docs/math_a4_guarded_comparison_v3.md`. It adds outcome-blind owner
+conformance review before Full and complete generated/valid/invalid/measured
+funnel reporting. The earlier invalid report is preserved independently.
+
 This repository implements an external, auditable baseline for comparing five
 independently optimized GEPA prompts with a five-member prompt-team method.
 Each member receives the same fixed logical evaluation budget, owns an isolated

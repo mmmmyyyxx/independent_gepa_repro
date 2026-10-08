@@ -144,7 +144,10 @@ def test_seven_native_windows_then_full_audit_include_rejected_candidates(tmp_pa
     accounting['search_accounting']={'charged_tokens':100}
     accounting['structural_vote_preflight']={'historical_all_invalid_examples':0}
     build_report(tmp_path/'public',bundle,selections,rows,baselines,accounting,'f'*64,'e'*40)
-    assert read(tmp_path/'public/summary.json')['integrity']=='VALID'
+    report=read(tmp_path/'public/summary.json')
+    assert report['integrity']=='HOLD_PENDING_INDEPENDENT_OWNER_AUDIT'
+    assert report['candidate_funnel']['generated']==sum(s['proposal_count'] for s in selections)
+    assert report['candidate_funnel']['full_evaluated']==len(rows)
 
 def test_config_does_not_unlock_heldout_or_extra_budget(tmp_path):
     text=(ROOT/'configs/math_a4_matched.yaml').read_text().replace('token_ceiling: 3000000','token_ceiling: 3000001')

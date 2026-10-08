@@ -1,0 +1,25 @@
+schema_version: independent_gepa_math_comparison_v1
+experiment_id: math_a4_matched_gepa_seed81_guard_repair_v3_20261008
+protocol_amendment: guarded_comparison_v3
+candidate_guard: math_candidate_conformance_guard_v3
+owner_conformance_policy: selected_outcome_blind_before_full_v1
+owner_review_timeout_seconds: 900
+seed: 81
+target_schedule: [0, 1, 3, 2, 4, 0, 1]
+window_state: reset_from_initial
+search_metric_cap_per_window: 36
+proposal_cap_per_window: 6
+reflection_minibatch_size: 3
+native_validation_size: 6
+full_candidates_per_window: 4
+candidate_selection: native_best_then_native_pareto_then_hash_order_evaluated_proposals
+token_ceiling: 3000000
+physical_attempt_ceiling: 9000
+concurrency: 1
+provider_profile: lwj
+cache_policy: window_member_attempt_exact_resolved_request
+shadow_access: denied
+validation_access: denied
+test_access: denied
+team_commits: false
+resume: denied

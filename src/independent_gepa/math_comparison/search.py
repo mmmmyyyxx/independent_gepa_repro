@@ -160,6 +160,7 @@ def run_window(runtime: Runtime,examples: list[dict[str,Any]],config: dict[str,A
         'actual_solver_logical_evaluations':runtime.logical['search']-logical_before,
         'guard_rejection_metric_scores':adapter.metrics_used-(runtime.logical['search']-logical_before),
         'candidate_guard':GUARD_ID,
+        'proposal_audit':[{k:v for k,v in row.items() if k!='prompt'} for row in history.proposals],
         'stop_reason':'pre_registered_metric_step_reserve_or_proposal_cap',
         'selected':selected,'selected_hashes':[r['prompt_hash'] for r in selected]}
     import json

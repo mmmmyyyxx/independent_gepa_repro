@@ -17,6 +17,7 @@ from .reporting import build_report
 from .runtime import Runtime,real_transport,audit_accounting,ExecutionAbort
 from .search import run_window,REFLECTION_TEMPLATE
 from .candidate_guard import GUARD_ID
+from .conformance import await_owner_review
 
 def require_fresh_user_grant(root: Path,task_sha: str) -> None:
     """A source repair or new experiment identity never renews a one-shot grant."""
@@ -73,19 +74,23 @@ def freeze(root: Path,bundle: Path,config_path: Path,task: Path,gates: Path,outp
     require_fresh_user_grant(root,file_hash(task))
     if load_config(config_path).get('candidate_guard')!=GUARD_ID:
         raise ProtocolViolation('CURRENT_CANDIDATE_GUARD_ID_REQUIRED')
+    if load_config(config_path).get('owner_conformance_policy')!='selected_outcome_blind_before_full_v1':
+        raise ProtocolViolation('CURRENT_OWNER_CONFORMANCE_POLICY_REQUIRED')
     if git(root,'diff','--name-only') or git(root,'diff','--cached','--name-only'):
         raise ProtocolViolation('CLEAN_TRACKED_SOURCE_REQUIRED')
     receipt=preflight(root,bundle,config_path); evidence=read(gates)
     if evidence.get('status')!='PASS' or evidence.get('provider_calls')!=0 or evidence.get('source_inventory_hash')!=receipt['source_inventory_hash']:
         raise ProtocolViolation('MATCHING_OFFLINE_GATES_REQUIRED')
     grant=task.read_text(encoding='utf-8')
-    if 'authorizes one bounded real-model independent GEPA comparison' not in grant:
+    normalized=''.join(grant.lower().split())
+    if ('authorizes one bounded real-model independent GEPA comparison' not in grant
+        and not ('继续自行完成实验' in grant and '300万tokens' in normalized)):
         raise ProtocolViolation('EXPLICIT_USER_API_AUTHORIZATION_REQUIRED')
     value={'schema_version':'math_comparison_frozen_attempt_v1','experiment_id':load_config(config_path)['experiment_id'],
         'source_sha':git(root,'rev-parse','HEAD'),'source_inventory':source_inventory(root),
         'config':load_config(config_path),'bundle_hash':validate_bundle(bundle)['bundle_hash'],
         'dependencies':verify_environment(root),'python_executable_sha256':file_hash(Path(sys.executable)),
-        'user_task_sha256':file_hash(task),'single_use':True,'authorization_source':'explicit_attached_user_task',
+        'user_task_sha256':file_hash(task),'single_use':True,'authorization_source':'explicit_user_task_text',
         'api_scope':{'roles':['solver','reflection'],'phase':'seven_search_windows_then_frozen_full_audit',
                      'heldout':'denied','retry_authorization':False},
         'command':{'script':'scripts/math_a4_comparison.py','mode':'run',
@@ -149,6 +154,8 @@ def execute(root: Path,bundle: Path,config_path: Path,frozen_path: Path,private:
         write(private/'SEARCH_COMPLETE.json',{'identity':identity,'selections':selections,
             'selection_hash':digest(selections),'search_closed_forever':True,'audit_started':False,
             'search_accounting':runtime.snapshot()})
+        if config.get('owner_conformance_policy')=='selected_outcome_blind_before_full_v1':
+            await_owner_review(private,identity,selections,examples,timeout_seconds=config['owner_review_timeout_seconds'])
         rows,baselines=audit_selected(runtime,bundle,examples,selections,private)
         write(private/'accounting_snapshot.json',runtime.snapshot()); accounting=audit_accounting(private)
         accounting['logical_evaluations']=runtime.logical; accounting['cache_hits']=runtime.cache_hits
@@ -158,8 +165,8 @@ def execute(root: Path,bundle: Path,config_path: Path,frozen_path: Path,private:
             'historical_unanimous_vote_locked_examples','historical_all_invalid_examples',
             'historical_correctness_unanimous','single_member_vote_gain_upper_bound')}
         write(private/'candidate_metrics.json',rows); write(private/'realization_diagnostics.json',baselines)
-        build_report(public,bundle,selections,rows,baselines,accounting,identity,frozen['source_sha'])
-        result={'status':'EXECUTION_COMPLETE','scientific_integrity':'VALID','accounting':accounting}
+        build_report(public,bundle,selections,rows,baselines,accounting,identity,frozen['source_sha'],config=config)
+        result={'status':'EXECUTION_COMPLETE','scientific_integrity':'AWAITING_OWNER_AUDIT','accounting':accounting}
         write(private/'completion.json',result);return result
     except BaseException as exc:
         if runtime.reserved:

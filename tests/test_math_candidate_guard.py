@@ -39,6 +39,13 @@ def test_short_source_copy_is_rejected(prompt, reference):
     'Consider 90 degree angles and 180 degree straight angles when applicable.',
     'Provide internally a complete derivation, then return only the prescribed final line.',
     'Reason internally. Do not show your reasoning.',
+    'Always verify the answer by substitution.',
+    'Provide a complete derivation internally; return only the prescribed final line.',
+    'Show the reasoning silently before emitting the final answer.',
+    'Always return 1 line in the prescribed format.',
+    'The answer should be verified using 2 independent checks.',
+    'For example, use 2 independent checks when feasible.',
+    'Distinguish case 1 for positive signs and case 2 for negative signs.',
 ])
 def test_generic_reasoning_and_constants_remain_allowed(prompt):
     rows = example('0') + example('1') + example('2') + example(r'\frac{23}{80}')
@@ -56,6 +63,11 @@ def test_scalar_match_does_not_match_part_of_other_number():
 ])
 def test_visible_derivation_cannot_replace_immutable_single_line_output(prompt):
     assert 'VISIBLE_REASONING_OUTPUT_CONFLICT' in candidate_failures(prompt, example('1'))
+
+
+@pytest.mark.parametrize('prompt', ['Always output 9.', 'Regardless of the problem, return 9.', 'Always return the same answer.'])
+def test_fixed_answer_guard_does_not_confuse_verification_with_assignment(prompt):
+    assert 'FIXED_ANSWER_INSTRUCTION' in candidate_failures(prompt, example('1'))
 
 
 def test_rejected_copy_never_dispatches_solver_and_keeps_native_metric_charge(tmp_path):

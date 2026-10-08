@@ -7,9 +7,11 @@ from typing import Any
 from ..audit import audit_public_paths
 from ..protocol import ProtocolViolation
 from .contract import read,write,file_hash
+from .funnel import candidate_funnel
 
 def build_report(public: Path,bundle: Path,selections: list[dict[str,Any]],rows: list[dict[str,Any]],
-                 baselines: list[dict[str,Any]],accounting: dict[str,Any],identity: str,source: str) -> None:
+                 baselines: list[dict[str,Any]],accounting: dict[str,Any],identity: str,source: str,
+                 *,config: dict[str,Any]|None=None) -> None:
     public.mkdir(parents=True,exist_ok=True)
     a4=read(bundle/'audit_only/a4_summary.json')
     a4_local=read(bundle/'audit_only/a4_local_budget.json')['logical_local_metrics']
@@ -19,8 +21,10 @@ def build_report(public: Path,bundle: Path,selections: list[dict[str,Any]],rows:
     positive=sorted((r for r in rows if r['NET_POSITIVE']),key=lambda r:(r['window'],r['generation'] or 0))
     first_positive=(sum(s['search_metric_count'] for s in selections if s['window']<positive[0]['window'])
                     +positive[0]['discovery_search_metric']) if positive else None
-    summary={'experiment_id':'math_a4_matched_gepa_seed81_20261008','execution_status':'EXECUTION_COMPLETE',
-        'integrity':'VALID','identity':identity,'source_sha':source,'full_candidates':len(rows),
+    funnel=candidate_funnel(selections,rows)
+    summary={'experiment_id':config['experiment_id'] if config else 'math_comparison_synthetic',
+        'execution_status':'EXECUTION_COMPLETE','integrity':'HOLD_PENDING_INDEPENDENT_OWNER_AUDIT',
+        'identity':identity,'source_sha':source,'full_candidates':len(rows),'candidate_funnel':funnel,
         'completed_windows':len(selections),'proposal_generations':sum(s['proposal_count'] for s in selections),
         'search_metric_evaluations':sum(s['search_metric_count'] for s in selections),
         'actual_solver_logical_evaluations':sum(s.get('actual_solver_logical_evaluations',s['search_metric_count']) for s in selections),
@@ -41,6 +45,7 @@ def build_report(public: Path,bundle: Path,selections: list[dict[str,Any]],rows:
             'search_component_causal_advantage':'INCONCLUSIVE','promotion_bottleneck':'INCONCLUSIVE',
             'generalization':'INCONCLUSIVE'},'accounting':accounting}
     write(public/'summary.json',summary); write(public/'candidate_metrics.json',rows)
+    write(public/'candidate_funnel.json',funnel)
     write(public/'search_windows.json',safe_windows); write(public/'realization_diagnostics.json',baselines)
     table='\n'.join(f'| {r["candidate_id"]} | {r["member"]} | {r["candidate_member_correct"]}/60 | '
         f'{r["original_correct_retained"]} | {r["original_correct_lost"]} | {r["newly_correct"]} | '
@@ -50,7 +55,8 @@ def build_report(public: Path,bundle: Path,selections: list[dict[str,Any]],rows:
         if admissible else 'A matched feedback-format ablation with larger nonadaptive local evaluation support; keep the Solver and Full60 audit fixed.')
     report=f'''# Independent GEPA versus A4: MATH Optimize60
 
-The seven frozen search windows completed. {len(rows)} changed candidates received independent Full60 evaluation;
+Execution completed; scientific validity awaits an independent owner audit. The seven frozen search windows completed.
+{len(rows)} changed candidates received independent Full60 evaluation;
 {admissible} were compatible with the measured Optimize V2.2 transition gate.
 This is development-set evidence. Shadow safety and actual deployment were not tested.
 
@@ -92,6 +98,13 @@ Fresh single-use authorization comes from this task, not A4's closed scope or re
 Shadow, Validation, Test and atomic team commits all have zero calls/actions.
 
 ## C. Search results and accounting
+
+All generated candidates: {funnel['generated']}; contract-valid: {funnel['contract_valid']};
+contract-invalid: {funnel['contract_invalid']}; selected for Full: {funnel['selected_for_full']};
+Full-evaluated: {funnel['full_evaluated']}; member-improving over historical22: {funnel['member_improving']};
+Optimize V2.2-admissible: {funnel['v22_admissible']}; zero-loss repairs: {funnel['pure_repairs']}.
+The complete candidate funnel retains every generated hash, guard category and measurement status.
+Invalid and unmeasured candidates have unknown Full outcomes. It is not a best-only summary.
 
 Generated {summary['proposal_generations']} proposals; {summary['search_metric_evaluations']} native metric scores;
 {summary['actual_solver_logical_evaluations']} actual logical Solver evaluations and
@@ -149,7 +162,8 @@ A4 TeamProbe promotion was not replayed: its outcome for these candidates remain
 
 ## F. Scientific conclusion
 
-ESTABLISHED: the frozen independent search and candidate-level Full audits executed with reconciled accounting.
+Provisional measured classifications below require independent owner conformance and integrity audit.
+The frozen independent search and candidate-level Full audits executed with reconciled accounting.
 Useful observed candidate discovery: {summary['classification']['useful_observed_candidate']}.
 Automatic preservation-safe repair: {summary['classification']['automatic_preservation_safe_repair']}.
 Component causality, A4 promotion error and generalization: INCONCLUSIVE.

@@ -2,6 +2,23 @@
 
 Updated: 2026-10-08
 
+## Authorized guarded MATH replacement
+
+The latest user message authorizes one repaired independent comparison with a
+3M combined charged-token ceiling. Previous evidence and the invalid35/60 run
+remain unchanged. The active replacement is configured in
+`configs/math_a4_matched_guard_repair_v3.yaml`; its normative protocol is
+`docs/math_a4_guarded_comparison_v3.md`.
+
+V3 checks ordinary always-verify and internal-reasoning instructions without
+confusing them with fixed answers or visible derivations. A frozen owner review
+barrier verifies all generated guard-valid procedures and selected membership
+before Full calls. Every generated hash, invalid category and unmeasured outcome
+is retained in the complete candidate funnel. Native GEPA/search and all matched
+models/data/decoding/seeds/budgets remain as V1. Execution completion is provisional
+until the owner's independent scientific and accounting audit. Freeze and new
+authorization consumption occur only after matching offline gates pass.
+
 ## MATH A4 matched candidate-discovery comparison
 
 A separate MATH adapter and governed seven-window runner now preserve official

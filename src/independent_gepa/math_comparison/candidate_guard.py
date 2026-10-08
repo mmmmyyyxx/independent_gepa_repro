@@ -11,7 +11,7 @@ import re
 import unicodedata
 from typing import Any
 
-GUARD_ID = 'math_candidate_conformance_guard_v2'
+GUARD_ID = 'math_candidate_conformance_guard_v3'
 
 
 def _math_text(text: str) -> str:
@@ -68,7 +68,8 @@ def candidate_failures(prompt: str, examples: list[dict[str, Any]]) -> list[str]
     if not isinstance(prompt, str) or not prompt.strip(): return ['EMPTY_PROCEDURE']
     if len(prompt) > 3000: return ['PROCEDURE_LENGTH']
     failures: set[str] = set()
-    if re.search(r'(?i)(?:always|regardless).*?(?:answer|output|return)|(?:final[_ ]answer\s*:)\s*(?!<answer>)[0-9]', prompt):
+    fixed = re.search(r'(?i)\b(?:always\s+|regardless[^\n.!?]{0,60}?)(?:answer|output|return)\s+(?:(?:with|is|the\s+answer\s+is)\s+)?(?:[-+]?\d+(?:\.\d+)?|[A-E]\b|the\s+(?:same|fixed)\s+answer)(?!\d|\.\d)(?!\s+(?:line|lines|step|steps|checks|decimal\s+places)\b)',prompt)
+    if fixed or re.search(r'(?i)(?:final[_ ]answer\s*:)\s*(?!<answer>)[0-9]', prompt):
         failures.add('FIXED_ANSWER_INSTRUCTION')
     if re.search(r'(?i)(?:omit|remove|replace|change|ignore).{0,50}(?:FINAL_ANSWER|marker|response format)', prompt):
         failures.add('IMMUTABLE_INTERFACE_MODIFICATION')
@@ -77,11 +78,13 @@ def candidate_failures(prompt: str, examples: list[dict[str, Any]]) -> list[str]
     for match in re.finditer(r'(?i)\b(?:provide|present|show|write|include|output|explain)\b[^\n;.!?]{0,80}\b(?:derivation|proof|reasoning|solution|steps|work)\b',prompt):
         before=prompt[max(0,match.start()-14):match.start()].lower()
         if re.search(r'(?:do not|don.t|never)\s*$',before): continue
-        if re.search(r'(?i)\b(?:internally|silently|private|mentally)\b',match.group()): continue
+        after=prompt[match.end():match.end()+24]
+        if (re.search(r'(?i)\b(?:internally|silently|private|mentally)\b',match.group())
+            or re.match(r'(?i)\s+(?:internally|silently|privately|mentally)\b',after)): continue
         failures.add('VISIBLE_REASONING_OUTPUT_CONFLICT')
     # References to optimizer-only example numbering or gold metadata cannot
     # become Solver instructions, even when the copied answer is one character.
-    if re.search(r'(?i)\b(?:example|sample|case)\s*#?\s*\d+\b|\b(?:gold|reference|training)\s+answer\b|\b(?:training|feedback)\s+(?:example|sample|problem)\b', prompt):
+    if re.search(r'(?i)\b(?:example|sample)\s*#?\s*\d+\b|\b(?:gold|reference|training)\s+answer\b|\b(?:training|feedback)\s+(?:example|sample|case|problem)\b', prompt):
         failures.add('OPTIMIZER_EXAMPLE_OR_ANSWER_METADATA')
     normalized = ' '.join(prompt.split()).lower()
     compact = _math_text(prompt)
@@ -102,10 +105,11 @@ def candidate_failures(prompt: str, examples: list[dict[str, Any]]) -> list[str]
                 failures.add('SHORT_SOURCE_MATH_LITERAL_COPY')
             for sentence in sentences:
                 answer_context = re.search(r'(?i)\b(?:answer|result|output|solution)\s*(?:is|was|=|:|should\s+be|must\s+be)\s*', sentence)
-                worked_context = (re.search(r'(?i)\b(?:e\.g\.|for example|for instance|such as|suppose)\b', sentence)
-                                  or re.search(r'\d\s*[-+*/÷]\s*\d.{0,32}=', sentence))
+                worked_context = re.search(r'\d\s*[-+*/÷]\s*\d.{0,32}=', sentence)
+                assigned = _math_text(sentence[answer_context.end():]).lstrip('\"\'') if answer_context else ''
+                source_assignment = bool(answer_context and re.match(re.escape(form)+r'(?!\d|\.\d)',assigned))
                 # Universal constants are allowed outside explicit answer context.
-                if (answer_context or (worked_context and form not in {'0','1','-1'})) and _literal_in(_math_text(sentence), form):
+                if (source_assignment or (worked_context and form not in {'0','1','-1'})) and _literal_in(_math_text(sentence), form):
                     failures.add('SHORT_SOURCE_RESULT_IN_WORKED_CONTEXT')
     return sorted(failures)
 

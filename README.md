@@ -1,5 +1,13 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
+The separate October8 MATH candidate-discovery comparison is specified in
+`docs/math_a4_comparison_v1.md` and `configs/math_a4_matched.yaml`. It uses
+`scripts/math_a4_comparison.py` for export, preflight, freeze and single-use
+execution. `scripts/verify_math_comparison_offline.py` verifies the complete
+offline suite and scoring parity. Install the pinned `math` optional dependencies
+in an isolated Python3.11 environment. Historical BBH commands below preserve
+their original experiment identities.
+
 This repository implements an external, auditable baseline for comparing five
 independently optimized GEPA prompts with a five-member prompt-team method.
 Each member receives the same fixed logical evaluation budget, owns an isolated

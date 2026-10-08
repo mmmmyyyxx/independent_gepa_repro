@@ -1,6 +1,28 @@
 # Implementation status
 
-Updated: 2026-09-05
+Updated: 2026-10-08
+
+## MATH A4 matched candidate-discovery comparison
+
+A separate MATH adapter and governed seven-window runner now preserve official
+GEPA v0.1.1 while consuming a self-contained frozen Optimize60 bundle from the
+executed A4 V2.2 seed81 contract. Historical BBH results remain unchanged.
+Solver/reflection decoding, immutable request boundaries, pinned mathematical
+scoring, terminal-invalid recovery and fixed-peer post-hoc diagnostics align
+with that execution. Search uses member-only feedback and native instance
+Pareto selection; Full60 audit selection freezes before any audit outcome.
+
+Caps are36 logical search metrics and6 proposals per window,4 changed Full60
+candidates per window,3M charged tokens and9,000 physical attempts. All seven
+windows reset from initial; held-out and Shadow access, team commits, process
+resume, another seed and another scientific attempt are denied. The attached
+user task is authority for one independently accounted real comparison.
+
+Offline preflight, source/bundle freeze, authorization consumption, journal-first
+reservations, response receipts, source-mutation checks, leakage audit and
+independent accounting reconciliation are implemented. Required tests include
+native seven-window execution and Full audits of native-rejected candidates.
+Real execution evidence will be recorded in a new sanitized report.
 
 ## Capacity-probe milestone
 

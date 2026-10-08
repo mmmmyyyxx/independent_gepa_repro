@@ -12,7 +12,7 @@ def main() -> None:
     export=sub.add_parser('export');export.add_argument('--source',type=Path,required=True);export.add_argument('--output',type=Path,required=True)
     for mode in ('preflight','freeze','run'):
         p=sub.add_parser(mode);p.add_argument('--bundle',type=Path,required=True)
-        p.add_argument('--config',type=Path,default=ROOT/'configs/math_a4_matched.yaml')
+        p.add_argument('--config',type=Path,default=ROOT/'configs/math_a4_matched_guard_repair_v4.yaml')
         if mode=='preflight': p.add_argument('--output',type=Path,required=True)
         else:
             p.add_argument('--freeze',type=Path,required=True);p.add_argument('--private-output',type=Path,required=True)

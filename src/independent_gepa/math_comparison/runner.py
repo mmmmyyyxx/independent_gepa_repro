@@ -17,7 +17,7 @@ from .reporting import build_report
 from .runtime import Runtime,real_transport,audit_accounting,ExecutionAbort
 from .search import run_window,REFLECTION_TEMPLATE
 from .candidate_guard import GUARD_ID
-from .conformance import await_owner_review
+from .conformance import await_owner_review,verify_final_release
 
 def require_fresh_user_grant(root: Path,task_sha: str) -> None:
     """A source repair or new experiment identity never renews a one-shot grant."""
@@ -78,6 +78,8 @@ def freeze(root: Path,bundle: Path,config_path: Path,task: Path,gates: Path,outp
         raise ProtocolViolation('CURRENT_OWNER_CONFORMANCE_POLICY_REQUIRED')
     if load_config(config_path).get('candidate_review_policy')!='owner_semantic_before_solver_v1':
         raise ProtocolViolation('PRE_SOLVER_CANDIDATE_REVIEW_REQUIRED')
+    if load_config(config_path).get('reviewer_identity')!='codex_conformance_v4_seed81_20261008':
+        raise ProtocolViolation('FROZEN_INDEPENDENT_REVIEWER_REQUIRED')
     if git(root,'diff','--name-only') or git(root,'diff','--cached','--name-only'):
         raise ProtocolViolation('CLEAN_TRACKED_SOURCE_REQUIRED')
     receipt=preflight(root,bundle,config_path); evidence=read(gates)
@@ -131,6 +133,7 @@ def execute(root: Path,bundle: Path,config_path: Path,frozen_path: Path,private:
         if (config.get('candidate_guard')!=GUARD_ID
             or config.get('candidate_review_policy')!='owner_semantic_before_solver_v1'
             or config.get('reflection_contract_context')!='explicit_immutable_single_line_v1'
+            or config.get('reviewer_identity')!='codex_conformance_v4_seed81_20261008'
             or config.get('owner_conformance_policy')!='selected_outcome_blind_before_full_v1'):
             raise ProtocolViolation('CURRENT_REAL_EXECUTION_CONFORMANCE_POLICIES_REQUIRED')
         require_fresh_user_grant(root,frozen['user_task_sha256'])
@@ -163,7 +166,9 @@ def execute(root: Path,bundle: Path,config_path: Path,frozen_path: Path,private:
             'selection_hash':digest(selections),'search_closed_forever':True,'audit_started':False,
             'search_accounting':runtime.snapshot()})
         if config.get('owner_conformance_policy')=='selected_outcome_blind_before_full_v1':
-            await_owner_review(private,identity,selections,examples,timeout_seconds=config['owner_review_timeout_seconds'])
+            await_owner_review(private,identity,selections,examples,timeout_seconds=config['owner_review_timeout_seconds'],
+                               bundle=bundle,reviewer=config['reviewer_identity'])
+            runtime.final_review_check=lambda:verify_final_release(private,identity,selections,config['reviewer_identity'])
         rows,baselines=audit_selected(runtime,bundle,examples,selections,private)
         write(private/'accounting_snapshot.json',runtime.snapshot()); accounting=audit_accounting(private)
         accounting['logical_evaluations']=runtime.logical; accounting['cache_hits']=runtime.cache_hits

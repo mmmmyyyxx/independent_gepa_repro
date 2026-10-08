@@ -20,7 +20,7 @@ from independent_gepa.audit import audit_public_paths
 def main():
     p=argparse.ArgumentParser(description='Offline MATH comparison gates')
     p.add_argument('--bundle',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--config',type=Path,default=ROOT/'configs/math_a4_matched.yaml')
+    p.add_argument('--config',type=Path,default=ROOT/'configs/math_a4_matched_guard_repair_v4.yaml')
     p.add_argument('--source',type=Path,required=True);a=p.parse_args()
     # Never make inherited secrets available to pytest or evaluator subprocesses.
     for name in list(os.environ):

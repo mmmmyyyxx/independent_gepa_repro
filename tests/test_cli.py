@@ -19,6 +19,7 @@ SCRIPTS = [
     "verify_math_comparison_offline.py",
     "audit_math_review_abort.py",
     "review_math_candidate.py",
+    "finalize_math_conformance.py",
 ]
 
 

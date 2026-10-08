@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 from pathlib import Path
 from typing import Any, Callable
@@ -33,6 +34,7 @@ class Runtime:
         self.logical={p:0 for p in ('search','baseline','audit')}; self.last_hash='0'*64
         self.source_check=None; self.active_role=None
         self.candidate_checks: dict[tuple[int,int],Callable[[str],dict[str,Any]]]={}
+        self.final_review_check=None
         self.event({'kind':'OPEN','identity':identity,'ceiling':config['token_ceiling']})
 
     def event(self, value: dict[str,Any]) -> None:
@@ -102,6 +104,10 @@ class Runtime:
 
     def solve(self,prompt: str,example: dict[str,Any],window: int,member: int,phase: str) -> dict[str,Any]:
         if phase not in self.logical: raise ProtocolViolation('HELDOUT_ACCESS_FORBIDDEN')
+        if self.source_check is not None:self.source_check()
+        if self.config.get('candidate_review_policy')=='owner_semantic_before_solver_v1' and phase!='search':
+            if self.final_review_check is None:raise ExecutionAbort('FINAL_CONFORMANCE_REQUIRED_BEFORE_FULL')
+            self.final_review_check()
         if self.config.get('candidate_review_policy')=='owner_semantic_before_solver_v1' and prompt!='Solve the problem.':
             check=self.candidate_checks.get((window,member))
             if check is None or not check(prompt)['contract_valid']:
@@ -123,6 +129,8 @@ class Runtime:
             'raw_invalid_count':sum(not p['prediction_valid'] for p in attempts),
             'terminal_invalid':not attempts[-1]['prediction_valid'], 'original_predictions':attempts}
         prediction['correct']=correct(prediction,example['reference'])
+        text=prediction.get('text','')
+        prediction['immutable_single_line_obeyed']=bool(isinstance(text,str) and re.fullmatch(r'FINAL_ANSWER:[^\r\n]+',text.strip()))
         self.cache[key]=prediction
         write(self.private/'cache'/f'{key}.json',prediction)
         return prediction

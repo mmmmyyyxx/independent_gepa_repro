@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from independent_gepa.math_comparison.candidate_guard import candidate_failures, candidate_valid
-from independent_gepa.math_comparison.contract import write
+from independent_gepa.math_comparison.contract import write,digest
 from independent_gepa.math_comparison.evaluation import audit_selected
 from independent_gepa.math_comparison.search import MathAdapter, INITIAL
 from independent_gepa.math_comparison.runner import require_fresh_user_grant
@@ -90,8 +90,8 @@ def test_entire_frozen_pool_is_checked_before_any_audit_request(tmp_path):
     class NoSolver:
         def solve(self, *args): raise AssertionError('Conformance failure reached paid audit')
     private = tmp_path/'private'
-    write(private/'SEARCH_COMPLETE.json', {})
     selections = [{'window':0, 'member':0, 'selected':[{'prompt':'Example 2 has answer 9.'}]}]
+    write(private/'SEARCH_COMPLETE.json', {'selection_hash':digest(selections)})
     with pytest.raises(ProtocolViolation, match='FROZEN_CANDIDATE_CONFORMANCE_FAILURE'):
         audit_selected(NoSolver(), tmp_path/'missing_bundle', example('9'), selections, private)
 

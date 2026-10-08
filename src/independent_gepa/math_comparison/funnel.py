@@ -28,6 +28,7 @@ def candidate_funnel(selections: list[dict[str,Any]],rows: list[dict[str,Any]]) 
                 'contract_valid':row['contract_valid'],'failure_categories':failures,
                 'automatic_guard_passed':row.get('automatic_guard_passed',row['contract_valid']),
                 'owner_review_status':row.get('owner_review_status','NOT_RECORDED_HISTORICALLY'),
+                'local_positive':row.get('native_local_positive'),
                 'selected_for_full':row['prompt_hash'] in selected,'full_evaluated':measurement is not None,
                 'member_improving':measurement['candidate_member_correct']>22 if measurement else None,
                 'fresh_parent_improving':measurement['fresh_parent_delta']>0 if measurement else None,

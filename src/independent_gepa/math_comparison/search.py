@@ -60,6 +60,7 @@ class History(GEPACallback):
         row={'generation':len(self.proposals)+1,'iteration':event['iteration'],'parent_idx':self.parent,
              'prompt_hash':prompt_hash(prompt),'prompt':prompt,'contract_valid':False,
              'candidate_guard':GUARD_ID,'contract_failures':[],
+             'reflection_source_ids_at_generation':list(self.adapter.reflection_source_ids),
              'automatic_guard_passed':candidate_valid(prompt,self.adapter.examples),'owner_review_status':'PENDING'}
         self.proposals.append(row)
         write(self.private/'proposals.json',self.proposals)
@@ -68,9 +69,13 @@ class History(GEPACallback):
         write(self.private/'proposals.json',self.proposals)
         self.record('proposal',**{k:v for k,v in row.items() if k!='prompt'})
     def on_candidate_accepted(self,event):
+        self.proposals[-1]['native_local_positive']=True
+        write(self.private/'proposals.json',self.proposals)
         self.record('accepted',generation=len(self.proposals),candidate_idx=event['new_candidate_idx'],
                     parent_ids=list(event['parent_ids']),local_sum=event['new_score'])
     def on_candidate_rejected(self,event):
+        self.proposals[-1]['native_local_positive']=event['new_score']>event['old_score']
+        write(self.private/'proposals.json',self.proposals)
         self.record('rejected',generation=len(self.proposals),old_sum=event['old_score'],new_sum=event['new_score'])
     def on_pareto_front_updated(self,event):
         self.record('frontier_update',front=event['new_front'],displaced=event['displaced_candidates'])
@@ -95,6 +100,10 @@ class MathAdapter:
         if automatic and prompt!=INITIAL and self.review is not None:
             receipt=self.review.check(prompt,prompt_hash(prompt),self.generation,self.reflection_source_ids)
             status=receipt['status'];receipt_hash=receipt['receipt_sha256']
+            if prompt_hash(prompt) not in self.decisions and hasattr(self.runtime,'event'):
+                self.runtime.event({'kind':'CANDIDATE_REVIEW_DECISION','window':self.window,'member':self.member,
+                    'prompt_hash':prompt_hash(prompt),'status':status,'receipt_sha256':receipt_hash,
+                    'request_sha256':receipt['request_sha256'],'reviewer_identity':receipt['reviewer_identity']})
             if status=='REJECT':failures=['OWNER_CONFORMANCE_'+c for c in receipt['categories']]
         elif failures:status='LEXICAL_REJECTED'
         value={'contract_valid':not failures,'contract_failures':failures,
@@ -159,7 +168,8 @@ def run_window(runtime: Runtime,examples: list[dict[str,Any]],config: dict[str,A
     private.mkdir(parents=True)
     logical_before=runtime.logical['search']
     review=(CandidateReview(private,runtime.identity,window,member,examples,runtime.shell,
-                            config['owner_review_timeout_seconds']) if config.get('candidate_review_policy')==POLICY else None)
+                            config['owner_review_timeout_seconds'],config.get('reviewer_identity','offline_fixture'))
+            if config.get('candidate_review_policy')==POLICY else None)
     adapter=MathAdapter(runtime,examples,window,member,private,review=review);history=History(private,adapter)
     if review is not None:
         runtime.candidate_checks[(window,member)]=adapter.check_candidate

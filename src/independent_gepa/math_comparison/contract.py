@@ -77,6 +77,8 @@ def load_config(path: Path) -> dict[str, Any]:
             or value.get('owner_review_timeout_seconds')!=900
             or value.get('reflection_contract_context')!='explicit_immutable_single_line_v1'):
             raise ProtocolViolation('CANDIDATE_REVIEW_POLICY_MISMATCH')
+        if value.get('candidate_guard')=='math_candidate_conformance_guard_v4' and value.get('reviewer_identity')!='codex_conformance_v4_seed81_20261008':
+            raise ProtocolViolation('V4_REVIEWER_IDENTITY_REQUIRED')
     return value
 
 def source_inventory(root: Path) -> dict[str,str]:

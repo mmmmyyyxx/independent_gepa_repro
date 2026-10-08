@@ -2,6 +2,39 @@
 
 Updated: 2026-10-08
 
+## V4 engineering stopped by user; publication checkpoint
+
+The user's latest instruction stopped V4 engineering and experiment execution
+and authorized saving and pushing the current work. No V4 source/attempt freeze,
+real model request, Full measurement or authorization consumption occurred.
+READY_TO_RUN=false; stage HOLD. The stop supersedes the earlier conditional
+one-shot execution grant. A later execution requires renewed authorization and
+completion of the outstanding engineering gates.
+
+Current changes bind substantive independent reviewer notes and identities to
+per-candidate receipts, revalidate persisted requests before Solver/cache reuse,
+reconcile the complete pool and approval journal before Full, and preserve
+unknown outcomes in reports. The lexical guard covers equivalent source
+fractions, alternative output schemas and unavailable optimizer context while
+admitting ordinary common mathematical constants. Solver decoding, scoring,
+native GEPA search and selection remain unchanged.
+
+The focused regression/lifecycle suite passed74 tests. Three synthetic lifecycle
+fixtures cover mixed decisions, zero valid candidates and poor valid candidates;
+their approvals are explicit unit fixtures. A separate outcome-blind reviewer
+actually reviewed seven historical regression procedures and rejected all seven.
+Neither activity certifies the outstanding complete independent reviewer workflow
+with an external fake provider, or the newly drafted completion auditor. No V4
+scientific result is claimed. Publication checks and remaining work are recorded
+in `reports/math_v4_engineering_stopped_20261008`.
+
+Publication verification passed the complete independent repository suite:
+160 tests with credentials removed and outgoing sockets blocked, compileall,
+official GEPA pin/import/clean checks, bundle/config/budget preflight, copied
+worker and deterministic scorer parity, CLI help, sanitization and diff checks.
+Sibling historical private-artifact replay suites were not run. These checks
+do not change READY_TO_RUN=false or complete the outstanding reviewer workflow.
+
 ## Guarded MATH replacement: aborted; offline V4 pending
 
 The user-authorized V3 attempt is closed: seven searches,27 generated procedures,
@@ -21,12 +54,13 @@ before its first Solver dispatch, checks bound receipts again for native/Full
 reuse, and supplies reflection with the exact immutable single-line boundary.
 Native upstream search/selection and A4 Solver settings are unchanged. The new
 adapter boundary and conformance policy enter a fresh scientific identity.
-Current pending config: `configs/math_a4_matched_guard_repair_v4.yaml`; normative
+V4 config: `configs/math_a4_matched_guard_repair_v4.yaml`; normative
 protocol: `docs/math_a4_guarded_comparison_v4.md`. READY_TO_RUN=false. Both earlier
-one-shot grants are consumed; another real attempt needs fresh explicit approval.
+one-shot grants are consumed; the subsequently authorized V4 task was stopped
+before execution as recorded above.
 There is no authorized resume, automatic rerun or efficacy-driven adaptation.
 
-V4 offline gates:140 tests passed with credentials removed and outgoing sockets
+Prior V4 offline gates:140 tests passed with credentials removed and outgoing sockets
 blocked; compileall, official GEPA pin/import/clean checkout, bundle/config and
 budget preflight, copied MATH/prediction workers and deterministic scorer parity,
 native seven-window approval/rejection smokes, CLI help and diff checks passed.

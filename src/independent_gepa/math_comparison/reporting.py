@@ -31,8 +31,10 @@ def build_report(public: Path,bundle: Path,selections: list[dict[str,Any]],rows:
         'guard_rejection_metric_scores':sum(s.get('guard_rejection_metric_scores',0) for s in selections),
         'best_member_correct':best['candidate_member_correct'] if best else None,
         'pure_repairs':sum(r['PURE_REPAIR'] for r in rows),'net_positive':sum(r['NET_POSITIVE'] for r in rows),
-        'v22_admissible':admissible,'team_vote_gain':max((r['team_vote_delta'] for r in rows),default=0),
-        'oracle_gain':max((r['oracle_delta'] for r in rows),default=0),
+        'v22_admissible':admissible,'team_vote_gain':max((r['team_vote_delta'] for r in rows),default=None),
+        'oracle_gain':max((r['oracle_delta'] for r in rows),default=None),
+        'automatic_guard_passed':funnel['automatic_guard_passed'],'owner_approved':funnel['owner_approved'],
+        'owner_rejected':funnel['owner_rejected'],'remaining_token_ceiling':3_000_000-accounting['charged_tokens'],
         'local_improving_windows':sum(s['native_best_score']>s['native_initial_score'] for s in selections),
         'duplicate_generations':sum(s['proposal_count']-s['unique_proposal_count'] for s in selections),
         'first_observed_net_positive_discovery_search_metric':first_positive,
@@ -144,11 +146,11 @@ Candidate metrics distinguish new correctness on historical terminal-invalid exa
 | Actual logical local Solver evaluations, including roots | {a4_local} | {summary['actual_solver_logical_evaluations']} |
 | Changed Full60 candidates measured | 2 | {len(rows)} |
 | Best observed Full member correct | 19/60 | {str(summary['best_member_correct'])+'/60' if best else 'none'} |
-| Best observed net competence gain | -3 | {max((r['net_competence_gain'] for r in rows),default=0):+d} |
+| Best observed net competence gain | -3 | {str(max(r['net_competence_gain'] for r in rows)) if rows else 'not measured'} |
 | Above22 Full candidates | 0/2 | {sum(r['candidate_member_correct']>22 for r in rows)}/{len(rows)} |
 | Optimize V2.2 compatible | 0/2 | {admissible}/{len(rows)} |
-| Largest replacement Vote gain | 0 | {summary['team_vote_gain']} |
-| Largest replacement Oracle gain | +2 | {summary['oracle_gain']:+d} |
+| Largest replacement Vote gain | 0 | {summary['team_vote_gain'] if rows else 'not measured'} |
+| Largest replacement Oracle gain | +2 | {summary['oracle_gain'] if rows else 'not measured'} |
 | Charged tokens | 480,991 initialization plus seven; 543,976 whole interrupted attempt | {accounting['charged_tokens']} |
 | GEPA search-only charged tokens | not separated from A4 setup/progressive evaluation | {accounting['search_accounting']['charged_tokens']} |
 

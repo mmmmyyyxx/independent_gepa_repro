@@ -19,11 +19,16 @@ The authorized V3 replacement also stopped for an adapter conformance failure;
 its outcome-blind owner barrier prevented every Full request. It completed seven
 searches, generated27 procedures and charged92,204 tokens. Sanitized evidence is
 in [`reports/math_a4_matched_gepa_seed81_guard_repair_v3_20261008`](reports/math_a4_matched_gepa_seed81_guard_repair_v3_20261008/README.md).
-Both real MATH attempts are invalid and both grants are consumed. The pending
+Both real MATH attempts are invalid and both grants are consumed. The V4
 V4 repair uses `configs/math_a4_matched_guard_repair_v4.yaml` and
 `docs/math_a4_guarded_comparison_v4.md`: owner conformance before the first
 changed-procedure Solver request, exact immutable output context for reflection,
-and complete candidate-funnel reporting. No further real request is authorized.
+and complete candidate-funnel reporting. The subsequently authorized V4 repair
+was stopped by the user before source freeze or any real model call. Its current
+changes are saved for review; READY_TO_RUN=false. The complete independent
+reviewer workflow and draft completion auditor still need end-to-end validation.
+No real execution or automatic continuation is authorized after the stop.
+See [`V4 stop record`](reports/math_v4_engineering_stopped_20261008/README.md).
 
 This repository implements an external, auditable baseline for comparing five
 independently optimized GEPA prompts with a five-member prompt-team method.

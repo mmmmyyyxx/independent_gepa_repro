@@ -7,7 +7,7 @@ from typing import Any
 
 from ..protocol import ProtocolViolation
 from .benchmark import compatibility,correct,matrix,team_vote
-from .contract import read,write
+from .contract import read,write,digest
 from .runtime import Runtime
 from .search import INITIAL
 from .candidate_guard import candidate_valid
@@ -27,6 +27,8 @@ def behavior_changes(old: list[dict[str,Any]],child: list[dict[str,Any]]) -> int
 def audit_selected(runtime: Runtime,bundle: Path,examples: list[dict[str,Any]],selections: list[dict[str,Any]],
                    private: Path) -> tuple[list[dict[str,Any]],list[dict[str,Any]]]:
     if not (private/'SEARCH_COMPLETE.json').exists(): raise ProtocolViolation('SEARCH_FREEZE_REQUIRED_BEFORE_AUDIT')
+    if read(private/'SEARCH_COMPLETE.json').get('selection_hash')!=digest(selections):
+        raise ProtocolViolation('SEARCH_SELECTION_CHANGED_AFTER_FREEZE')
     # Check the complete frozen pool before any paid baseline or audit request.
     if any(not candidate_valid(row['prompt'],examples) for selection in selections for row in selection['selected']):
         raise ProtocolViolation('FROZEN_CANDIDATE_CONFORMANCE_FAILURE')
@@ -52,6 +54,7 @@ def audit_selected(runtime: Runtime,bundle: Path,examples: list[dict[str,Any]],s
             'historical_initial_correct':22,'correctness_disagreement':sum(a!=b for a,b in zip(old_vector,baseline_vector,strict=True)),
             'behavior_changes':behavior_changes(profiles[member],baseline),
             'invalid_count':sum(not p['prediction_valid'] for p in baseline)})
+        baselines[-1]['single_line_output_conflict_count']=sum(not p.get('immutable_single_line_obeyed',False) for p in baseline)
         write(private/f'window_{window}/baseline_full.json',baseline)
         for selected in selection['selected']:
             candidate=[runtime.solve(selected['prompt'],example,window,member,'audit') for example in examples]
@@ -75,6 +78,9 @@ def audit_selected(runtime: Runtime,bundle: Path,examples: list[dict[str,Any]],s
                 'behavior_change_count':behavior_changes(profiles[member],candidate),
                 'fresh_parent_behavior_change_count':behavior_changes(baseline,candidate),
                 'candidate_invalid_output_count':sum(not p['prediction_valid'] for p in candidate),
+                'single_line_output_conflict_count':sum(not p.get('immutable_single_line_obeyed',False) for p in candidate),
+                'procedure_conformance':'PRE_SOLVER_OWNER_PASS',
+                'local_positive':next((p.get('native_local_positive') for p in selection.get('proposal_audit',[]) if p['generation']==selected['generation']),None),
                 'raw_invalid_count':sum(p['raw_invalid_count'] for p in candidate),
                 'candidate_correctness_vector_sha256':hashlib.sha256(bytes(scores)).hexdigest(),
                 'mutation_category':'reusable_reasoning_edit_bounded_contract_valid',

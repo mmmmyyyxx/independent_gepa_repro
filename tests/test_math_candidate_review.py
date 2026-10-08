@@ -54,7 +54,11 @@ def test_missing_decision_times_out_before_any_changed_solver(tmp_path):
 def auto_decisions(monkeypatch,status='PASS',categories=None):
     def write_before_release(self,path):
         request_path=path.with_name(path.name.replace('.decision.json','.request.json'))
-        record_decision(request_path,status,categories or [])
+        request=read(request_path)
+        notes={'checks':{c:'RESOLVED' if status=='PASS' else 'REJECTED' for c in
+               ('immutable_interface','source_provenance','inference_available_inputs','reusable_procedure')},
+               'rationale':'Synthetic expected conformance decision in a unit fixture; never used for real proposals.'}
+        record_decision(request_path,status,categories or [],reviewer=request['reviewer_identity'],notes=notes)
         return read(path)
     monkeypatch.setattr(CandidateReview,'_wait_receipt',write_before_release)
 
@@ -99,7 +103,7 @@ def test_direct_solver_cannot_bypass_review_via_cache_or_full_phase(tmp_path):
     fake=Fake();rt=runtime(tmp_path,fake)
     rt.config=load_config(ROOT/'configs/math_a4_matched_guard_repair_v4.yaml')
     for phase in ('search','audit','baseline'):
-        with pytest.raises(ExecutionAbort,match='UNAPPROVED_CHANGED'):
+        with pytest.raises(ExecutionAbort):
             rt.solve(PROMPT,{'problem':'index=0','reference':'1'},0,0,phase)
     assert not fake.requests and rt.logical=={'search':0,'audit':0,'baseline':0}
 
@@ -112,6 +116,8 @@ def test_approved_solver_and_full_cache_use_recheck_the_same_receipt(tmp_path,mo
     adapter=MathAdapter(rt,rows,0,0,tmp_path,review=b);adapter.reflection_source_ids=['e1']
     rt.candidate_checks[(0,0)]=adapter.check_candidate
     assert adapter.evaluate(rows,{'system_prompt':PROMPT}).scores==[1.0]
+    with pytest.raises(ExecutionAbort,match='FINAL_CONFORMANCE'):rt.solve(PROMPT,rows[0],0,0,'audit')
+    rt.final_review_check=lambda:'synthetic_final_barrier_for_unit_fixture'
     assert rt.solve(PROMPT,rows[0],0,0,'audit')['correct'] and rt.cache_hits==1
     assert len(fake.requests)==1
     value=read(b.private/f'{prompt_hash(PROMPT)}.decision.json');value['status']='REJECT'

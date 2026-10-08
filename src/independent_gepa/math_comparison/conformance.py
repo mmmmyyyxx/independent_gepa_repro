@@ -33,8 +33,25 @@ def verify_owner_review(value: dict[str,Any],identity: str,selections: list[dict
         raise ProtocolViolation('OWNER_CONFORMANCE_REVIEW_NOT_PASS')
 
 
+def verify_final_release(private: Path,identity: str,selections: list[dict[str,Any]],reviewer: str) -> str:
+    value=read(private/'owner_conformance.json');manifest=read(private/'outcome_blind_pool_manifest.json')
+    verify_owner_review(value,identity,selections)
+    check=dict(manifest);sha=check.pop('manifest_sha256',None);notes=value.get('review_attestation')
+    if (digest(check)!=sha or value.get('pool_manifest_sha256')!=sha
+        or manifest.get('attempt_identity')!=identity or manifest.get('selection_hash')!=digest(selections)
+        or value.get('reviewer_identity')!=reviewer or manifest.get('reviewer_identity')!=reviewer
+        or value.get('pre_solver_reconciliation')!='PASS' or digest(notes)!=value.get('review_attestation_sha256')
+        or not isinstance(notes,dict) or notes.get('manifest_sha256')!=sha
+        or notes.get('all_candidate_decisions_actually_reviewed') is not True
+        or notes.get('complete_pool_and_selected_membership_checked') is not True
+        or notes.get('full_outcomes_read') is not False or notes.get('search_scores_read') is not False
+        or manifest.get('all_decisions_verified') is not True or manifest.get('no_unapproved_solver_dispatch') is not True):
+        raise ProtocolViolation('FINAL_OWNER_PRE_SOLVER_RECONCILIATION_REQUIRED')
+    return value['receipt_sha256']
+
+
 def await_owner_review(private: Path,identity: str,selections: list[dict[str,Any]],examples: list[dict[str,Any]],
-                       *,timeout_seconds: int=900) -> dict[str,Any]:
+                       *,timeout_seconds: int=900,bundle: Path|None=None,reviewer: str|None=None) -> dict[str,Any]:
     if any(not candidate_valid(row['prompt'],examples) for s in selections for row in s['selected']):
         raise ExecutionAbort('FROZEN_SELECTED_CONFORMANCE_FAILURE')
     print('SEARCH_FROZEN_WAITING_FOR_OUTCOME_BLIND_OWNER_CONFORMANCE; no Full requests dispatched',flush=True)
@@ -43,7 +60,13 @@ def await_owner_review(private: Path,identity: str,selections: list[dict[str,Any
         if time.monotonic()>=deadline: raise ExecutionAbort('OWNER_CONFORMANCE_REVIEW_TIMEOUT')
         time.sleep(1)
     value=read(path)
-    try:verify_owner_review(value,identity,selections)
+    try:
+        verify_owner_review(value,identity,selections)
+        if bundle is not None:
+            from .pool_review import prepare_pool
+            if read(private/'outcome_blind_pool_manifest.json')!=prepare_pool(private,bundle):
+                raise ProtocolViolation('FINAL_POOL_RECONCILIATION_MISMATCH')
+            verify_final_release(private,identity,selections,reviewer)
     except ProtocolViolation as exc:raise ExecutionAbort(str(exc)) from exc
     print('OWNER_CONFORMANCE_PASS; entering frozen independent Full audits',flush=True)
     return value

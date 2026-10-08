@@ -22,7 +22,29 @@ Offline preflight, source/bundle freeze, authorization consumption, journal-firs
 reservations, response receipts, source-mutation checks, leakage audit and
 independent accounting reconciliation are implemented. Required tests include
 native seven-window execution and Full audits of native-rejected candidates.
-Real execution evidence will be recorded in a new sanitized report.
+The authorized real attempt completed seven searches (24 generations,216 native
+scores,210 actual logical Solver evaluations) before an owner conformance stop.
+Two complete Full measurements were35/60 and20/60 versus fresh initial22/60.
+Short source-specific answers escaped V1's guard. The35/60 procedure also asks
+for visible derivation, conflicting with the frozen single-line instruction.
+Whole-comparison status is INVALID; score/retention/ledger replay passed for
+the preserved prefix. It establishes no valid method superiority.
+
+445 physical attempts,444 complete receipts and284,456 conservatively closed
+tokens are sealed in `reports/math_a4_matched_gepa_seed81_20261008`. One unknown
+interrupted request charges10,367 tokens. Original raw evidence and the journal
+remain unchanged; no runner completion receipt is fabricated. All held-out and
+Shadow calls and team commits remain zero. The one-shot grant is consumed.
+
+The offline repair detects short source answer/result copying, optimizer example
+metadata and explicit visible reasoning output. Whole-pool conformance is checked
+before paid audits. Source changes cannot renew a consumed user grant. Repaired
+protocol/config and a non-executable next-attempt proposal are prepared; stage is
+HOLD for fresh explicit authorization. No automatic rerun or hybrid was started.
+The complete repaired offline suite passed98 tests with inherited credentials
+removed and sockets blocked; compileall, bundle/governance preflight, worker
+parity, deterministic fake native smokes and sanitization passed. Sibling
+historical private-artifact replay tests were not run.
 
 ## Capacity-probe milestone
 

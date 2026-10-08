@@ -10,6 +10,7 @@ from .benchmark import compatibility,correct,matrix,team_vote
 from .contract import read,write
 from .runtime import Runtime
 from .search import INITIAL
+from .candidate_guard import candidate_valid
 
 def behavior_changes(old: list[dict[str,Any]],child: list[dict[str,Any]]) -> int:
     changed=0
@@ -26,6 +27,9 @@ def behavior_changes(old: list[dict[str,Any]],child: list[dict[str,Any]]) -> int
 def audit_selected(runtime: Runtime,bundle: Path,examples: list[dict[str,Any]],selections: list[dict[str,Any]],
                    private: Path) -> tuple[list[dict[str,Any]],list[dict[str,Any]]]:
     if not (private/'SEARCH_COMPLETE.json').exists(): raise ProtocolViolation('SEARCH_FREEZE_REQUIRED_BEFORE_AUDIT')
+    # Check the complete frozen pool before any paid baseline or audit request.
+    if any(not candidate_valid(row['prompt'],examples) for selection in selections for row in selection['selected']):
+        raise ProtocolViolation('FROZEN_CANDIDATE_CONFORMANCE_FAILURE')
     original=read(bundle/'audit_only/initial.json')
     profiles=original['profiles']; old_correct=original['correctness']; vote_before=sum(original['vote'])
     if len(profiles)!=5 or any(len(p)!=60 for p in profiles): raise ProtocolViolation('FIXED_PEER_SHAPE_MISMATCH')

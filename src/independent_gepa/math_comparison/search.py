@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import hashlib
-import re
 from pathlib import Path
 from typing import Any
 
@@ -10,6 +9,7 @@ from .._vendor import import_vendor_gepa
 from ..protocol import ProtocolViolation
 from .contract import digest, write
 from .runtime import Runtime, append
+from .candidate_guard import candidate_valid, candidate_failures, GUARD_ID
 
 gepa=import_vendor_gepa()
 from gepa.core.adapter import EvaluationBatch
@@ -29,21 +29,6 @@ or include example-specific facts. Infer reusable reasoning rules instead.
 
 def prompt_hash(prompt: str) -> str:
     return hashlib.sha256(prompt.encode('utf-8')).hexdigest()
-
-def candidate_valid(prompt: str, examples: list[dict[str,Any]]) -> bool:
-    if not isinstance(prompt,str) or not prompt.strip() or len(prompt)>3000: return False
-    if re.search(r'(?i)(?:always|regardless).*?(?:answer|output|return)|(?:final[_ ]answer\s*:)\s*(?!<answer>)[0-9]',prompt):
-        return False
-    if re.search(r'(?i)(?:omit|remove|replace|change|ignore).{0,50}(?:FINAL_ANSWER|marker|response format)',prompt):
-        return False
-    normalized=' '.join(prompt.split()).lower()
-    for row in examples:
-        problem=' '.join(row['problem'].split()).lower()
-        if len(problem)>=80 and any(problem[i:i+80] in normalized for i in range(len(problem)-79)):
-            return False
-        reference=row['reference'].strip()
-        if len(reference)>=16 and reference in prompt: return False
-    return True
 
 class PrivateLogger:
     def __init__(self,path: Path): self.path=path
@@ -65,7 +50,8 @@ class History(GEPACallback):
     def on_proposal_end(self,event):
         prompt=event['new_instructions'][MUTABLE_KEY]
         row={'generation':len(self.proposals)+1,'iteration':event['iteration'],'parent_idx':self.parent,
-             'prompt_hash':prompt_hash(prompt),'prompt':prompt,'contract_valid':candidate_valid(prompt,self.adapter.examples)}
+             'prompt_hash':prompt_hash(prompt),'prompt':prompt,'contract_valid':candidate_valid(prompt,self.adapter.examples),
+             'candidate_guard':GUARD_ID,'contract_failures':candidate_failures(prompt,self.adapter.examples)}
         self.proposals.append(row)
         write(self.private/'proposals.json',self.proposals)
         self.record('proposal',**{k:v for k,v in row.items() if k!='prompt'})
@@ -100,7 +86,9 @@ class MathAdapter:
                            'answer':'','invalid_reason':'CANDIDATE_CONTRACT_REJECTED'} for _ in batch]
         append(self.private/'evaluations.jsonl',{'prompt_hash':prompt_hash(prompt),
             'ids':[r['example_id'] for r in batch],'scores':[int(o['correct']) for o in observations],
-            'contract_valid':admissible,'capture_traces':capture_traces,'metrics_used':self.metrics_used})
+            'contract_valid':admissible,'candidate_guard':GUARD_ID,
+            'contract_failures':candidate_failures(prompt,self.examples),
+            'capture_traces':capture_traces,'metrics_used':self.metrics_used})
         return EvaluationBatch(outputs=observations,scores=[float(o['correct']) for o in observations],
             trajectories=list(zip(batch,observations,strict=True)) if capture_traces else None,
             objective_scores=None)
@@ -139,6 +127,7 @@ def select_candidates(result,history: History,adapter: MathAdapter,limit: int) -
 
 def run_window(runtime: Runtime,examples: list[dict[str,Any]],config: dict[str,Any],window: int,member: int,private: Path):
     private.mkdir(parents=True)
+    logical_before=runtime.logical['search']
     adapter=MathAdapter(runtime,examples,window,member,private); history=History(private,adapter)
     valset=sorted(examples,key=lambda row:digest({'seed':81,'window':window,'id':row['example_id']}))[:6]
     def stopper(state):
@@ -168,6 +157,9 @@ def run_window(runtime: Runtime,examples: list[dict[str,Any]],config: dict[str,A
         'proposal_count':len(history.proposals),'unique_proposal_count':len({r['prompt_hash'] for r in history.proposals}),
         'contract_rejections':sum(not r['contract_valid'] for r in history.proposals),
         'search_metric_count':adapter.metrics_used,'native_metric_count':result.total_metric_calls,
+        'actual_solver_logical_evaluations':runtime.logical['search']-logical_before,
+        'guard_rejection_metric_scores':adapter.metrics_used-(runtime.logical['search']-logical_before),
+        'candidate_guard':GUARD_ID,
         'stop_reason':'pre_registered_metric_step_reserve_or_proposal_cap',
         'selected':selected,'selected_hashes':[r['prompt_hash'] for r in selected]}
     import json

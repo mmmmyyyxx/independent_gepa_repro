@@ -8,6 +8,13 @@ offline suite and scoring parity. Install the pinned `math` optional dependencie
 in an isolated Python3.11 environment. Historical BBH commands below preserve
 their original experiment identities.
 
+The MATH attempt was stopped for adapter conformance failures and is INVALID.
+Preserved measurements, accounting and limitations are in
+[`reports/math_a4_matched_gepa_seed81_20261008`](reports/math_a4_matched_gepa_seed81_20261008/README.md).
+The offline guard repair is described in `docs/math_a4_copy_guard_repair_v1.md`;
+its pending config is `configs/math_a4_matched_guard_repair.yaml`. A new real run
+needs fresh authorization; the original one-shot grant cannot be reused.
+
 This repository implements an external, auditable baseline for comparing five
 independently optimized GEPA prompts with a five-member prompt-team method.
 Each member receives the same fixed logical evaluation budget, owns an isolated

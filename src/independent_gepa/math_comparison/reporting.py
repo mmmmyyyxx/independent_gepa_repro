@@ -23,6 +23,8 @@ def build_report(public: Path,bundle: Path,selections: list[dict[str,Any]],rows:
         'integrity':'VALID','identity':identity,'source_sha':source,'full_candidates':len(rows),
         'completed_windows':len(selections),'proposal_generations':sum(s['proposal_count'] for s in selections),
         'search_metric_evaluations':sum(s['search_metric_count'] for s in selections),
+        'actual_solver_logical_evaluations':sum(s.get('actual_solver_logical_evaluations',s['search_metric_count']) for s in selections),
+        'guard_rejection_metric_scores':sum(s.get('guard_rejection_metric_scores',0) for s in selections),
         'best_member_correct':best['candidate_member_correct'] if best else None,
         'pure_repairs':sum(r['PURE_REPAIR'] for r in rows),'net_positive':sum(r['NET_POSITIVE'] for r in rows),
         'v22_admissible':admissible,'team_vote_gain':max((r['team_vote_delta'] for r in rows),default=0),
@@ -75,7 +77,8 @@ The A4 immutable system/user format, directed gold-first MATH equivalence V2, fo
 timeout120, SDK retries0 and frozen transport retry policy are preserved.
 
 Native trainset is Optimize60; native valset is six outcome-independent hash-selected Optimize examples per window.
-Each window has caps of36 logical Solver metrics and6 proposal generations, reserving12 metrics before each step.
+Each window has caps of36 native metric scores and6 proposal generations, reserving12 metrics before each step.
+Contract-rejected zero scores count against native metrics but do not dispatch Solver evaluations.
 The reserve can leave unused metrics. This is a bounded pilot, not saturation.
 Native best and leading Pareto candidates are selected first, followed by hash-ordered distinct Solver-evaluated
 proposals, including native-rejected proposals; at most4 changed candidates per window.
@@ -90,7 +93,9 @@ Shadow, Validation, Test and atomic team commits all have zero calls/actions.
 
 ## C. Search results and accounting
 
-Generated {summary['proposal_generations']} proposals; {summary['search_metric_evaluations']} logical search metrics.
+Generated {summary['proposal_generations']} proposals; {summary['search_metric_evaluations']} native metric scores;
+{summary['actual_solver_logical_evaluations']} actual logical Solver evaluations and
+{summary['guard_rejection_metric_scores']} guard-rejection zero scores.
 Native local improvement occurred in {summary['local_improving_windows']}/7 windows;
 duplicate generations: {summary['duplicate_generations']}. First observed net-positive discovery among
 the audited pool occurred by cumulative search metric {first_positive if first_positive is not None else 'not observed'}.
@@ -123,7 +128,7 @@ Candidate metrics distinguish new correctness on historical terminal-invalid exa
 |---|---:|---:|
 | Proposal generations | 42 | {summary['proposal_generations']} |
 | Logical local budget cap | 252 | 252 |
-| Actual logical local evaluations, including roots | {a4_local} | {summary['search_metric_evaluations']} |
+| Actual logical local Solver evaluations, including roots | {a4_local} | {summary['actual_solver_logical_evaluations']} |
 | Changed Full60 candidates measured | 2 | {len(rows)} |
 | Best observed Full member correct | 19/60 | {str(summary['best_member_correct'])+'/60' if best else 'none'} |
 | Best observed net competence gain | -3 | {max((r['net_competence_gain'] for r in rows),default=0):+d} |

@@ -16,6 +16,18 @@ from .evaluation import audit_selected
 from .reporting import build_report
 from .runtime import Runtime,real_transport,audit_accounting,ExecutionAbort
 from .search import run_window,REFLECTION_TEMPLATE
+from .candidate_guard import GUARD_ID
+
+def require_fresh_user_grant(root: Path,task_sha: str) -> None:
+    """A source repair or new experiment identity never renews a one-shot grant."""
+    directory=root/'runs/authorization_consumed'
+    if (directory/f'user_grant_{task_sha}.json').exists():
+        raise ProtocolViolation('USER_API_GRANT_ALREADY_CONSUMED')
+    # Reconcile historical attempts created before the grant-keyed marker existed.
+    for path in (root/'runs').glob('*/frozen_attempt.json'):
+        prior=read(path)
+        if prior.get('user_task_sha256')==task_sha and (directory/f'{prior.get("identity")}.json').exists():
+            raise ProtocolViolation('USER_API_GRANT_ALREADY_CONSUMED')
 
 def verify_environment(root: Path) -> dict[str,str]:
     from .._vendor import import_vendor_gepa,vendor_gepa_src
@@ -58,6 +70,9 @@ def preflight(root: Path,bundle: Path,config_path: Path) -> dict[str,Any]:
 def freeze(root: Path,bundle: Path,config_path: Path,task: Path,gates: Path,output: Path,
            private: Path,public: Path) -> dict[str,Any]:
     if output.exists() or private.exists() or public.exists(): raise ProtocolViolation('FRESH_FREEZE_AND_OUTPUTS_REQUIRED')
+    require_fresh_user_grant(root,file_hash(task))
+    if load_config(config_path).get('candidate_guard')!=GUARD_ID:
+        raise ProtocolViolation('CURRENT_CANDIDATE_GUARD_ID_REQUIRED')
     if git(root,'diff','--name-only') or git(root,'diff','--cached','--name-only'):
         raise ProtocolViolation('CLEAN_TRACKED_SOURCE_REQUIRED')
     receipt=preflight(root,bundle,config_path); evidence=read(gates)
@@ -105,10 +120,16 @@ def execute(root: Path,bundle: Path,config_path: Path,frozen_path: Path,private:
         raise ProtocolViolation('EXACT_AUTHORIZED_COMMAND_REQUIRED')
     models=read(bundle/'model_contract.json'); validate_models(models)
     if transport_override is None:
+        require_fresh_user_grant(root,frozen['user_task_sha256'])
+    if transport_override is None:
         transport,client=real_transport(models)
     else: transport=transport_override; client=None
     marker=root/'runs/authorization_consumed'/f'{identity}.json'; marker.parent.mkdir(parents=True,exist_ok=True)
     try:
+        if transport_override is None:
+            grant_marker=marker.parent/f'user_grant_{frozen["user_task_sha256"]}.json'
+            with grant_marker.open('x',encoding='utf-8') as stream:
+                stream.write(identity+'\n');stream.flush();os.fsync(stream.fileno())
         with marker.open('x',encoding='utf-8') as stream: stream.write(identity+'\n');stream.flush();os.fsync(stream.fileno())
     except FileExistsError as exc: raise ProtocolViolation('AUTHORIZATION_ALREADY_CONSUMED') from exc
     private.mkdir(parents=True); write(private/'frozen_attempt.json',frozen)

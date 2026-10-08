@@ -65,12 +65,16 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ProtocolViolation('MATH_COMPARISON_SELECTION_MISMATCH')
     if value.get('provider_profile') != 'lwj' or value.get('cache_policy') != 'window_member_attempt_exact_resolved_request':
         raise ProtocolViolation('MATH_COMPARISON_PROVIDER_MISMATCH')
+    if 'candidate_guard' in value:
+        from .candidate_guard import GUARD_ID
+        if value['candidate_guard']!=GUARD_ID: raise ProtocolViolation('CANDIDATE_GUARD_ID_MISMATCH')
     return value
 
 def source_inventory(root: Path) -> dict[str,str]:
     paths = sorted([*root.joinpath('src').rglob('*.py'), *root.joinpath('scripts').glob('*.py'),
                     *root.joinpath('tests').rglob('*.py'), root/'AGENTS.md', root/'pyproject.toml',
-                    root/'configs/math_a4_matched.yaml', root/'docs/math_a4_comparison_v1.md'])
+                    root/'configs/math_a4_matched.yaml', root/'docs/math_a4_comparison_v1.md',
+                    root/'configs/math_a4_matched_guard_repair.yaml', root/'docs/math_a4_copy_guard_repair_v1.md'])
     return {str(p.relative_to(root)).replace('\\','/'):file_hash(p) for p in paths}
 
 def export_bundle(source: Path, destination: Path) -> str:

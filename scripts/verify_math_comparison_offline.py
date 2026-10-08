@@ -20,6 +20,7 @@ from independent_gepa.audit import audit_public_paths
 def main():
     p=argparse.ArgumentParser(description='Offline MATH comparison gates')
     p.add_argument('--bundle',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--config',type=Path,default=ROOT/'configs/math_a4_matched.yaml')
     p.add_argument('--source',type=Path,required=True);a=p.parse_args()
     # Never make inherited secrets available to pytest or evaluator subprocesses.
     for name in list(os.environ):
@@ -37,7 +38,7 @@ def main():
     subprocess.run([sys.executable,'-c',command],cwd=ROOT,check=True)
     suites=ET.parse(junit).getroot().findall('testsuite')
     passed=sum(int(s.get('tests','0'))-int(s.get('failures','0'))-int(s.get('errors','0'))-int(s.get('skipped','0')) for s in suites)
-    result=preflight(ROOT,a.bundle.resolve(),ROOT/'configs/math_a4_matched.yaml')
+    result=preflight(ROOT,a.bundle.resolve(),a.config.resolve())
     # Parser/scorer copying audit: no algorithm code differs from A4.
     worker=a.source/'multi_dataset_diverse_rl/benchmarks/math_domain_worker.py'
     expected=worker.read_text(encoding='utf-8').replace('from .math_worker import PINS','from .contract import PINS').replace('from .math_domain_v2 import SETTINGS','from .contract import SETTINGS')
@@ -72,6 +73,7 @@ def main():
         'historical_private_replay_suite':'NOT_RUN; sibling repository remains read-only',
         'source_inventory_hash':digest(source_inventory(ROOT))}
     if audit_public_paths([ROOT/'docs/math_a4_comparison_v1.md']): raise RuntimeError('PROTOCOL_SANITIZATION_FAILED')
+    if audit_public_paths([ROOT/'docs/math_a4_copy_guard_repair_v1.md']): raise RuntimeError('REPAIR_PROTOCOL_SANITIZATION_FAILED')
     subprocess.run(['git','diff','--check'],cwd=ROOT,check=True)
     write(a.output.resolve(),public_snapshot)
     print(f'PASS offline gates: {passed} tests, zero provider calls, Vote-locked examples={locked}')

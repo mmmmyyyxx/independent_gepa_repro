@@ -11,7 +11,7 @@ import re
 import unicodedata
 from typing import Any
 
-GUARD_ID = 'math_candidate_conformance_guard_v3'
+GUARD_ID = 'math_candidate_conformance_guard_v4'
 
 
 def _math_text(text: str) -> str:
@@ -75,13 +75,20 @@ def candidate_failures(prompt: str, examples: list[dict[str, Any]]) -> list[str]
         failures.add('IMMUTABLE_INTERFACE_MODIFICATION')
     # Reasoning instructions may govern internal work, but the immutable A4
     # shell requests one final line. Explicitly displaying work violates it.
-    for match in re.finditer(r'(?i)\b(?:provide|present|show|write|include|output|explain)\b[^\n;.!?]{0,80}\b(?:derivation|proof|reasoning|solution|steps|work)\b',prompt):
+    for match in re.finditer(r'(?i)\b(?:provide|present|show|write|include|output|explain)\b[^\n;.!?]{0,80}\b(?:derivation|deduction|proof|reasoning|solution|steps|work)\b',prompt):
         before=prompt[max(0,match.start()-14):match.start()].lower()
         if re.search(r'(?:do not|don.t|never)\s*$',before): continue
         after=prompt[match.end():match.end()+24]
         if (re.search(r'(?i)\b(?:internally|silently|private|mentally)\b',match.group())
             or re.match(r'(?i)\s+(?:internally|silently|privately|mentally)\b',after)): continue
         failures.add('VISIBLE_REASONING_OUTPUT_CONFLICT')
+    # An exception for visible work weakens the shell even without a show/write
+    # verb. Lexical checks remain bounded; every changed procedure also requires
+    # an owner semantic decision before its first Solver evaluation.
+    for match in re.finditer(r'(?i)\b(?:except|other than|apart from|unless)\b[^\n.!?;]{0,70}\b(?:solution|reasoning|derivation|deduction|proof|work)\b',prompt):
+        context=prompt[max(0,match.start()-120):match.end()+40]
+        if re.search(r'(?i)\b(?:response|output|text|commentary|format|content|line|marker)\b',context):
+            failures.add('IMMUTABLE_SINGLE_LINE_EXCEPTION')
     # References to optimizer-only example numbering or gold metadata cannot
     # become Solver instructions, even when the copied answer is one character.
     if re.search(r'(?i)\b(?:example|sample)\s*#?\s*\d+\b|\b(?:gold|reference|training)\s+answer\b|\b(?:training|feedback)\s+(?:example|sample|case|problem)\b', prompt):

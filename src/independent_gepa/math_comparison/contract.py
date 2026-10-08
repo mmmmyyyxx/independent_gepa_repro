@@ -67,11 +67,16 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ProtocolViolation('MATH_COMPARISON_PROVIDER_MISMATCH')
     if 'candidate_guard' in value:
         from .candidate_guard import GUARD_ID
-        if value['candidate_guard'] not in {'math_candidate_conformance_guard_v2',GUARD_ID}:
+        if value['candidate_guard'] not in {'math_candidate_conformance_guard_v2','math_candidate_conformance_guard_v3',GUARD_ID}:
             raise ProtocolViolation('CANDIDATE_GUARD_ID_MISMATCH')
     if value.get('owner_conformance_policy') is not None:
         if value['owner_conformance_policy']!='selected_outcome_blind_before_full_v1' or value.get('owner_review_timeout_seconds')!=900:
             raise ProtocolViolation('OWNER_CONFORMANCE_POLICY_MISMATCH')
+    if value.get('candidate_review_policy') is not None:
+        if (value['candidate_review_policy']!='owner_semantic_before_solver_v1'
+            or value.get('owner_review_timeout_seconds')!=900
+            or value.get('reflection_contract_context')!='explicit_immutable_single_line_v1'):
+            raise ProtocolViolation('CANDIDATE_REVIEW_POLICY_MISMATCH')
     return value
 
 def source_inventory(root: Path) -> dict[str,str]:
@@ -79,7 +84,8 @@ def source_inventory(root: Path) -> dict[str,str]:
                     *root.joinpath('tests').rglob('*.py'), root/'AGENTS.md', root/'pyproject.toml',
                     root/'configs/math_a4_matched.yaml', root/'docs/math_a4_comparison_v1.md',
                     root/'configs/math_a4_matched_guard_repair.yaml', root/'docs/math_a4_copy_guard_repair_v1.md',
-                    root/'configs/math_a4_matched_guard_repair_v3.yaml',root/'docs/math_a4_guarded_comparison_v3.md'])
+                    root/'configs/math_a4_matched_guard_repair_v3.yaml',root/'docs/math_a4_guarded_comparison_v3.md',
+                    root/'configs/math_a4_matched_guard_repair_v4.yaml',root/'docs/math_a4_guarded_comparison_v4.md'])
     return {str(p.relative_to(root)).replace('\\','/'):file_hash(p) for p in paths}
 
 def export_bundle(source: Path, destination: Path) -> str:

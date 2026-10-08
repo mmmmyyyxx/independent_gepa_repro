@@ -46,6 +46,7 @@ def test_short_source_copy_is_rejected(prompt, reference):
     'The answer should be verified using 2 independent checks.',
     'For example, use 2 independent checks when feasible.',
     'Distinguish case 1 for positive signs and case 2 for negative signs.',
+    'Check critical points unless the solution requires a separate boundary analysis.',
 ])
 def test_generic_reasoning_and_constants_remain_allowed(prompt):
     rows = example('0') + example('1') + example('2') + example(r'\frac{23}{80}')
@@ -60,9 +61,15 @@ def test_scalar_match_does_not_match_part_of_other_number():
     'Provide the complete derivation leading to the final result.',
     'Present your solution clearly before the final answer.',
     'Internally check the result; show the full derivation in the response.',
+    'You must provide a step-by-step logical deduction.',
 ])
 def test_visible_derivation_cannot_replace_immutable_single_line_output(prompt):
     assert 'VISIBLE_REASONING_OUTPUT_CONFLICT' in candidate_failures(prompt, example('1'))
+
+
+def test_output_contract_cannot_have_an_exception_for_requested_work():
+    prompt='Your response has no extra text, other than the solution process if requested.'
+    assert 'IMMUTABLE_SINGLE_LINE_EXCEPTION' in candidate_failures(prompt, example('1'))
 
 
 @pytest.mark.parametrize('prompt', ['Always output 9.', 'Regardless of the problem, return 9.', 'Always return the same answer.'])

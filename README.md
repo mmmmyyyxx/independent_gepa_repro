@@ -15,11 +15,15 @@ The offline guard repair is described in `docs/math_a4_copy_guard_repair_v1.md`;
 its pending config is `configs/math_a4_matched_guard_repair.yaml`. A new real run
 needs fresh authorization; the original one-shot grant cannot be reused.
 
-The user has now authorized one guarded replacement with a3M combined token
-ceiling. Its current config is `configs/math_a4_matched_guard_repair_v3.yaml`,
-specified by `docs/math_a4_guarded_comparison_v3.md`. It adds outcome-blind owner
-conformance review before Full and complete generated/valid/invalid/measured
-funnel reporting. The earlier invalid report is preserved independently.
+The authorized V3 replacement also stopped for an adapter conformance failure;
+its outcome-blind owner barrier prevented every Full request. It completed seven
+searches, generated27 procedures and charged92,204 tokens. Sanitized evidence is
+in [`reports/math_a4_matched_gepa_seed81_guard_repair_v3_20261008`](reports/math_a4_matched_gepa_seed81_guard_repair_v3_20261008/README.md).
+Both real MATH attempts are invalid and both grants are consumed. The pending
+V4 repair uses `configs/math_a4_matched_guard_repair_v4.yaml` and
+`docs/math_a4_guarded_comparison_v4.md`: owner conformance before the first
+changed-procedure Solver request, exact immutable output context for reflection,
+and complete candidate-funnel reporting. No further real request is authorized.
 
 This repository implements an external, auditable baseline for comparing five
 independently optimized GEPA prompts with a five-member prompt-team method.
@@ -182,7 +186,7 @@ shared-identical initialization, and plurality voting with ties counted wrong.
 `scripts/export_v17_comparison_bundles.py` reads the clean sibling repository
 without importing it and freezes one self-contained bundle per seed.
 
-The primary search budget is total task-plus-reflection model tokens. Each
+The primary search budget is total task and reflection model tokens. Each
 seed's realized V17 S4 token count is divided equally among the five independent
 members; a calibrated pre-iteration reserve and a 5% hard ceiling prevent an
 accepted overrun. Task and reflection accounting is persisted independently

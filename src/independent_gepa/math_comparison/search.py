@@ -10,6 +10,7 @@ from ..protocol import ProtocolViolation
 from .contract import digest, write
 from .runtime import Runtime, append
 from .candidate_guard import candidate_valid, candidate_failures, GUARD_ID
+from .candidate_review import CandidateReview, POLICY
 
 gepa=import_vendor_gepa()
 from gepa.core.adapter import EvaluationBatch
@@ -21,8 +22,14 @@ MUTABLE_KEY='system_prompt'  # Native component name; actual Solver boundary is 
 REFLECTION_TEMPLATE=InstructionProposalSignature.default_prompt_template+"""
 
 Task boundary: optimize only reusable mathematical reasoning instructions.
-An immutable response format is supplied separately to the Solver. Do not change
-that interface, final-answer marker, or parser. Do not prescribe fixed answers,
+The mutable component is the reasoning procedure inserted in the user message;
+its native component name does not grant control over the system message.
+The immutable Solver interface requires exactly one visible line:
+FINAL_ANSWER: <answer>
+No visible reasoning, derivation, solution process, headings or extra lines
+are allowed, including when a problem asks for a solution. Reason internally.
+Do not weaken that rule or add exceptions. Do not change the interface,
+final-answer marker, or parser. Do not prescribe fixed answers,
 copy training problems, worked examples, their numeric results or solutions,
 or include example-specific facts. Infer reusable reasoning rules instead.
 """
@@ -49,10 +56,15 @@ class History(GEPACallback):
     def on_minibatch_sampled(self,event): self.record('minibatch',ids=event['minibatch_ids'],iteration=event['iteration'])
     def on_proposal_end(self,event):
         prompt=event['new_instructions'][MUTABLE_KEY]
+        generation=len(self.proposals)+1
         row={'generation':len(self.proposals)+1,'iteration':event['iteration'],'parent_idx':self.parent,
-             'prompt_hash':prompt_hash(prompt),'prompt':prompt,'contract_valid':candidate_valid(prompt,self.adapter.examples),
-             'candidate_guard':GUARD_ID,'contract_failures':candidate_failures(prompt,self.adapter.examples)}
+             'prompt_hash':prompt_hash(prompt),'prompt':prompt,'contract_valid':False,
+             'candidate_guard':GUARD_ID,'contract_failures':[],
+             'automatic_guard_passed':candidate_valid(prompt,self.adapter.examples),'owner_review_status':'PENDING'}
         self.proposals.append(row)
+        write(self.private/'proposals.json',self.proposals)
+        checked=self.adapter.check_candidate(prompt,generation)
+        row.update(checked)
         write(self.private/'proposals.json',self.proposals)
         self.record('proposal',**{k:v for k,v in row.items() if k!='prompt'})
     def on_candidate_accepted(self,event):
@@ -68,15 +80,32 @@ class History(GEPACallback):
 
 class MathAdapter:
     propose_new_texts=None
-    def __init__(self,runtime: Runtime,examples: list[dict[str,Any]],window: int,member: int,private: Path):
+    def __init__(self,runtime: Runtime,examples: list[dict[str,Any]],window: int,member: int,private: Path,
+                 *,review: CandidateReview|None=None):
         self.runtime=runtime; self.examples=examples; self.window=window; self.member=member
         self.private=private; self.metrics_used=0; self.evaluated: set[str]=set()
         self.allowed={digest(row) for row in examples}
+        self.review=review;self.reflection_source_ids: list[str]=[];self.generation=0
+        self.decisions: dict[str,dict[str,Any]]={}
+    def check_candidate(self,prompt: str,generation: int|None=None) -> dict[str,Any]:
+        if generation is not None:self.generation=generation
+        failures=candidate_failures(prompt,self.examples);automatic=not failures
+        status='IMMUTABLE_INITIAL' if prompt==INITIAL else 'NOT_REQUIRED_OFFLINE_HISTORICAL'
+        receipt_hash=None
+        if automatic and prompt!=INITIAL and self.review is not None:
+            receipt=self.review.check(prompt,prompt_hash(prompt),self.generation,self.reflection_source_ids)
+            status=receipt['status'];receipt_hash=receipt['receipt_sha256']
+            if status=='REJECT':failures=['OWNER_CONFORMANCE_'+c for c in receipt['categories']]
+        elif failures:status='LEXICAL_REJECTED'
+        value={'contract_valid':not failures,'contract_failures':failures,
+               'automatic_guard_passed':automatic,'owner_review_status':status,'owner_receipt_sha256':receipt_hash}
+        self.decisions[prompt_hash(prompt)]=value
+        return value
     def evaluate(self,batch,candidate,capture_traces=False):
         if set(candidate)!={MUTABLE_KEY}: raise ProtocolViolation('ONE_MUTABLE_COMPONENT_REQUIRED')
         if any(digest(row) not in self.allowed for row in batch): raise ProtocolViolation('NON_OPTIMIZE_SEARCH_ACCESS')
         if self.metrics_used+len(batch)>36: raise ProtocolViolation('SEARCH_METRIC_CEILING')
-        prompt=candidate[MUTABLE_KEY]; admissible=candidate_valid(prompt,self.examples)
+        prompt=candidate[MUTABLE_KEY];checked=self.check_candidate(prompt);admissible=checked['contract_valid']
         observations=[]; self.metrics_used+=len(batch)
         if admissible:
             observations=[self.runtime.solve(prompt,row,self.window,self.member,'search') for row in batch]
@@ -87,7 +116,7 @@ class MathAdapter:
         append(self.private/'evaluations.jsonl',{'prompt_hash':prompt_hash(prompt),
             'ids':[r['example_id'] for r in batch],'scores':[int(o['correct']) for o in observations],
             'contract_valid':admissible,'candidate_guard':GUARD_ID,
-            'contract_failures':candidate_failures(prompt,self.examples),
+            **checked,
             'capture_traces':capture_traces,'metrics_used':self.metrics_used})
         return EvaluationBatch(outputs=observations,scores=[float(o['correct']) for o in observations],
             trajectories=list(zip(batch,observations,strict=True)) if capture_traces else None,
@@ -95,6 +124,7 @@ class MathAdapter:
     def make_reflective_dataset(self,candidate,eval_batch,components_to_update):
         if components_to_update!=[MUTABLE_KEY] or eval_batch.trajectories is None:
             raise ProtocolViolation('REFLECTION_COMPONENT_MISMATCH')
+        self.reflection_source_ids=[row['example_id'] for row,_ in eval_batch.trajectories]
         return {MUTABLE_KEY:[{'Problem':row['problem'],'Current Member Response':out['text'],
             'Parsed Answer':out['answer'],'Gold Answer':row['reference'],'Correct':out['correct'],
             'Valid':out['prediction_valid'],'Failure Reason':out['invalid_reason']}
@@ -106,7 +136,7 @@ def select_candidates(result,history: History,adapter: MathAdapter,limit: int) -
     def add(prompt,rule,native_index=None,generation=None,parent_idx=None):
         identity=prompt_hash(prompt)
         if len(selected)>=limit or identity in seen or identity==prompt_hash(INITIAL): return
-        if identity not in adapter.evaluated or not candidate_valid(prompt,adapter.examples): return
+        if identity not in adapter.evaluated or not adapter.check_candidate(prompt)['contract_valid']: return
         seen.add(identity); selected.append({'prompt':prompt,'prompt_hash':identity,'selection_rule':rule,
             'native_index':native_index,'generation':generation,'parent_idx':parent_idx})
     add(result.best_candidate[MUTABLE_KEY],'native_best',result.best_idx)
@@ -128,7 +158,11 @@ def select_candidates(result,history: History,adapter: MathAdapter,limit: int) -
 def run_window(runtime: Runtime,examples: list[dict[str,Any]],config: dict[str,Any],window: int,member: int,private: Path):
     private.mkdir(parents=True)
     logical_before=runtime.logical['search']
-    adapter=MathAdapter(runtime,examples,window,member,private); history=History(private,adapter)
+    review=(CandidateReview(private,runtime.identity,window,member,examples,runtime.shell,
+                            config['owner_review_timeout_seconds']) if config.get('candidate_review_policy')==POLICY else None)
+    adapter=MathAdapter(runtime,examples,window,member,private,review=review);history=History(private,adapter)
+    if review is not None:
+        runtime.candidate_checks[(window,member)]=adapter.check_candidate
     valset=sorted(examples,key=lambda row:digest({'seed':81,'window':window,'id':row['example_id']}))[:6]
     def stopper(state):
         # An entire reflective step reserves 3 parent + 3 child + at most 6 native val metrics.

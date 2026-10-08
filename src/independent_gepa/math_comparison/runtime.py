@@ -32,6 +32,7 @@ class Runtime:
                             'charged_tokens':0} for r in ('solver','reflection')}
         self.logical={p:0 for p in ('search','baseline','audit')}; self.last_hash='0'*64
         self.source_check=None; self.active_role=None
+        self.candidate_checks: dict[tuple[int,int],Callable[[str],dict[str,Any]]]={}
         self.event({'kind':'OPEN','identity':identity,'ceiling':config['token_ceiling']})
 
     def event(self, value: dict[str,Any]) -> None:
@@ -101,6 +102,10 @@ class Runtime:
 
     def solve(self,prompt: str,example: dict[str,Any],window: int,member: int,phase: str) -> dict[str,Any]:
         if phase not in self.logical: raise ProtocolViolation('HELDOUT_ACCESS_FORBIDDEN')
+        if self.config.get('candidate_review_policy')=='owner_semantic_before_solver_v1' and prompt!='Solve the problem.':
+            check=self.candidate_checks.get((window,member))
+            if check is None or not check(prompt)['contract_valid']:
+                raise ExecutionAbort('UNAPPROVED_CHANGED_PROCEDURE_BEFORE_SOLVER')
         self.logical[phase]+=1
         messages=[{'role':'system','content':self.shell['system']},
                   {'role':'user','content':prompt+'\n\n'+example['problem']+self.shell['suffix']}]

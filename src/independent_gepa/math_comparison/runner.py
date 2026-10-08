@@ -76,6 +76,8 @@ def freeze(root: Path,bundle: Path,config_path: Path,task: Path,gates: Path,outp
         raise ProtocolViolation('CURRENT_CANDIDATE_GUARD_ID_REQUIRED')
     if load_config(config_path).get('owner_conformance_policy')!='selected_outcome_blind_before_full_v1':
         raise ProtocolViolation('CURRENT_OWNER_CONFORMANCE_POLICY_REQUIRED')
+    if load_config(config_path).get('candidate_review_policy')!='owner_semantic_before_solver_v1':
+        raise ProtocolViolation('PRE_SOLVER_CANDIDATE_REVIEW_REQUIRED')
     if git(root,'diff','--name-only') or git(root,'diff','--cached','--name-only'):
         raise ProtocolViolation('CLEAN_TRACKED_SOURCE_REQUIRED')
     receipt=preflight(root,bundle,config_path); evidence=read(gates)
@@ -84,7 +86,8 @@ def freeze(root: Path,bundle: Path,config_path: Path,task: Path,gates: Path,outp
     grant=task.read_text(encoding='utf-8')
     normalized=''.join(grant.lower().split())
     if ('authorizes one bounded real-model independent GEPA comparison' not in grant
-        and not ('继续自行完成实验' in grant and '300万tokens' in normalized)):
+        and not ('继续自行完成实验' in grant and '300万tokens' in normalized)
+        and not ('授权' in grant and 'v4' in normalized and '300万tokens' in normalized)):
         raise ProtocolViolation('EXPLICIT_USER_API_AUTHORIZATION_REQUIRED')
     value={'schema_version':'math_comparison_frozen_attempt_v1','experiment_id':load_config(config_path)['experiment_id'],
         'source_sha':git(root,'rev-parse','HEAD'),'source_inventory':source_inventory(root),
@@ -125,6 +128,11 @@ def execute(root: Path,bundle: Path,config_path: Path,frozen_path: Path,private:
         raise ProtocolViolation('EXACT_AUTHORIZED_COMMAND_REQUIRED')
     models=read(bundle/'model_contract.json'); validate_models(models)
     if transport_override is None:
+        if (config.get('candidate_guard')!=GUARD_ID
+            or config.get('candidate_review_policy')!='owner_semantic_before_solver_v1'
+            or config.get('reflection_contract_context')!='explicit_immutable_single_line_v1'
+            or config.get('owner_conformance_policy')!='selected_outcome_blind_before_full_v1'):
+            raise ProtocolViolation('CURRENT_REAL_EXECUTION_CONFORMANCE_POLICIES_REQUIRED')
         require_fresh_user_grant(root,frozen['user_task_sha256'])
     if transport_override is None:
         transport,client=real_transport(models)

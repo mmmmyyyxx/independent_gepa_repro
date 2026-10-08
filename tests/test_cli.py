@@ -15,6 +15,10 @@ SCRIPTS = [
     "run_independent_gepa.py",
     "evaluate_final_team.py",
     "audit_run.py",
+    "math_a4_comparison.py",
+    "verify_math_comparison_offline.py",
+    "audit_math_review_abort.py",
+    "review_math_candidate.py",
 ]
 
 

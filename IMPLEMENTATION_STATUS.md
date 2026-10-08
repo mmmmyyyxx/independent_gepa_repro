@@ -2,22 +2,42 @@
 
 Updated: 2026-10-08
 
-## Authorized guarded MATH replacement
+## Guarded MATH replacement: aborted; offline V4 pending
 
-The latest user message authorizes one repaired independent comparison with a
-3M combined charged-token ceiling. Previous evidence and the invalid35/60 run
-remain unchanged. The active replacement is configured in
-`configs/math_a4_matched_guard_repair_v3.yaml`; its normative protocol is
-`docs/math_a4_guarded_comparison_v3.md`.
+The user-authorized V3 attempt is closed: seven searches,27 generated procedures,
+14 automatic guard passes,13 automatic rejections,210 native metric scores
+(171 actual logical Solver evaluations and39 guard zeros). The owner found one
+confirmed exception to the immutable output contract and three unresolved risks;
+they are not four established leaks. The owner barrier failed before any baseline
+or Full request. Completion is EXECUTION_ABORTED; scientific status INVALID and
+efficacy NOT_EVALUABLE.92,204 tokens and216 successful physical requests are
+reconciled, with no pending reservation or conservative charge. Held-out and
+Shadow calls and team commits are zero.707 original files are sealed unchanged.
+See `reports/math_a4_matched_gepa_seed81_guard_repair_v3_20261008/README.md`.
 
-V3 checks ordinary always-verify and internal-reasoning instructions without
-confusing them with fixed answers or visible derivations. A frozen owner review
-barrier verifies all generated guard-valid procedures and selected membership
-before Full calls. Every generated hash, invalid category and unmeasured outcome
-is retained in the complete candidate funnel. Native GEPA/search and all matched
-models/data/decoding/seeds/budgets remain as V1. Execution completion is provisional
-until the owner's independent scientific and accounting audit. Freeze and new
-authorization consumption occur only after matching offline gates pass.
+This is a second adapter failure, not an unfavorable valid GEPA result. The V4
+repair requires outcome-blind owner conformance for every changed procedure
+before its first Solver dispatch, checks bound receipts again for native/Full
+reuse, and supplies reflection with the exact immutable single-line boundary.
+Native upstream search/selection and A4 Solver settings are unchanged. The new
+adapter boundary and conformance policy enter a fresh scientific identity.
+Current pending config: `configs/math_a4_matched_guard_repair_v4.yaml`; normative
+protocol: `docs/math_a4_guarded_comparison_v4.md`. READY_TO_RUN=false. Both earlier
+one-shot grants are consumed; another real attempt needs fresh explicit approval.
+There is no authorized resume, automatic rerun or efficacy-driven adaptation.
+
+V4 offline gates:140 tests passed with credentials removed and outgoing sockets
+blocked; compileall, official GEPA pin/import/clean checkout, bundle/config and
+budget preflight, copied MATH/prediction workers and deterministic scorer parity,
+native seven-window approval/rejection smokes, CLI help and diff checks passed.
+All51 historical generated procedures were replayed; four confirmed violations
+were rejected and thirteen normal reasoning controls passed against Optimize60.
+Known replay is regression evidence, not certification of unseen procedures.
+Source/manifest/hash receipts and the concrete reviewed next command are in
+`experiments/protocols/math_a4_guard_repair_v4_pending`. Sibling historical
+private-artifact replay suites were omitted; this is the complete independent
+repository suite, not a claim of all A4 historical replay passing. Further API
+calls after the V3 abort:0. Neither the sibling nor the vendor checkout was edited.
 
 ## MATH A4 matched candidate-discovery comparison
 
@@ -119,7 +139,7 @@ historical qwen3-14b results with decision
   GEPA v0.1.1 runs using seeds `experiment_seed * 1000 + member_id`.
 - Search feedback is current-member strict correctness only. Development and
   test are inaccessible until the five prompts are frozen.
-- Primary cap is the corresponding V17 S4 realized task-plus-reflection token
+- Primary cap is the corresponding V17 S4 realized task and reflection token
   count, divided equally across members, with a 5% hard ceiling.
 - Initial parity policy `identity_and_same_run_member_vector_v2` freezes all
   request identities and requires five identical members to agree in the

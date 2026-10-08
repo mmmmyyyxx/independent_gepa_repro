@@ -75,6 +75,7 @@ def main():
     if audit_public_paths([ROOT/'docs/math_a4_comparison_v1.md']): raise RuntimeError('PROTOCOL_SANITIZATION_FAILED')
     if audit_public_paths([ROOT/'docs/math_a4_copy_guard_repair_v1.md']): raise RuntimeError('REPAIR_PROTOCOL_SANITIZATION_FAILED')
     if audit_public_paths([ROOT/'docs/math_a4_guarded_comparison_v3.md']): raise RuntimeError('CURRENT_PROTOCOL_SANITIZATION_FAILED')
+    if audit_public_paths([ROOT/'docs/math_a4_guarded_comparison_v4.md']): raise RuntimeError('PRE_SOLVER_PROTOCOL_SANITIZATION_FAILED')
     subprocess.run(['git','diff','--check'],cwd=ROOT,check=True)
     write(a.output.resolve(),public_snapshot)
     print(f'PASS offline gates: {passed} tests, zero provider calls, Vote-locked examples={locked}')

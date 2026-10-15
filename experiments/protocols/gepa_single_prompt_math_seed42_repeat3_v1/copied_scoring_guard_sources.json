@@ -1,0 +1,101 @@
+{
+  "adaptations": [
+    "local exception and value-type imports",
+    "shared pinned payload worker",
+    "omit team runtime imports"
+  ],
+  "copied": [
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py",
+      "source_file_sha256": "eaaebd00eb847abb02ec1b8c726a52372010f34428da9cb8c1244653bcc8dd2d",
+      "symbol": "complete_module_except_exception_import"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "source_ast_sha256": "b235fab7df7683160bfd309b78e7cfb45167b163b47b2822b1c8b278b9349e2d",
+      "source_file_sha256": "75fcaa65ac273db839054936e46eaa8bb4a65e5fa88bcd0dd033e079f933e86e",
+      "symbol": "MATHPrediction"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "source_ast_sha256": "cf9a965ab5e8f0a9ca9cd206a1b88cb44c27549a016db51636892949a934453a",
+      "source_file_sha256": "75fcaa65ac273db839054936e46eaa8bb4a65e5fa88bcd0dd033e079f933e86e",
+      "symbol": "MATHResolvedPrediction"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "source_ast_sha256": "43135d6bec466c659a5fec92ea1a9fefa52dcb60dd0e3f0d9fa27482219e64bc",
+      "source_file_sha256": "75fcaa65ac273db839054936e46eaa8bb4a65e5fa88bcd0dd033e079f933e86e",
+      "symbol": "resolve_predictions"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/system_prompt.py",
+      "source_ast_sha256": "156bda1a627056c5e0833438dcf41f693f58a5a39fd7db2eaa7da98dae54c702",
+      "source_file_sha256": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+      "symbol": "SystemPrompt"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/system_prompt.py",
+      "source_ast_sha256": "95f46951f0521a498030b4793d03cfd46fe68b26f9d56cfd4ebdd98e6724e0da",
+      "source_file_sha256": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+      "symbol": "require_prompt"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/system_prompt.py",
+      "source_ast_sha256": "f099d1549de3094af5c7b8a34e1eb20ed1e30ac3cd6742ae1dfb301d852da9ed",
+      "source_file_sha256": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+      "symbol": "solver_messages"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/evaluation/semantic_mutable_contract.py",
+      "source_ast_sha256": "44de5fed60f93294d971cfd7fc1670618b831cba925bb1f772181fc4651a2fae",
+      "source_file_sha256": "8ba0201b132bb58ae6c791972b3bc9f7e7aced5ba6b75a7c150b2a45b161eb3a",
+      "symbol": "_FIXED_ANSWER_PAYLOAD"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/example_text.py",
+      "source_ast_sha256": "80b760e18fbeda1b638b114d289d8a9718305d22382dd61646cfe61b42dde5a3",
+      "source_file_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+      "symbol": "_normalized_tokens"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/local_optimizers/example_text.py",
+      "source_ast_sha256": "c162587cc415d106e9a9ef3bba6553477622b8d181315dd5c3f47945c53eb5d8",
+      "source_file_sha256": "4c4ed0000efb14888fd1db926c6f5eef2e39e71745ceb3669d4e83788d27e881",
+      "symbol": "contains_supplied_example_text"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/optimization_evidence.py",
+      "source_ast_sha256": "6f3787c9777a18e09d217c6204d6a5830344555ca59707fe6c5a470c230a62dd",
+      "source_file_sha256": "1035385d4ecbc912ac3a28770f0d84f2e10234f54d4e5033c190a7c12069728e",
+      "symbol": "executability_checks"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/system_prompt.py",
+      "source_ast_sha256": "d1958dea081f438ec5bd06c357fd08370bbb00cf99d1cc50f4a04b2474269b80",
+      "source_file_sha256": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+      "symbol": "candidate_failed_checks"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/reflection_steps.py",
+      "source_ast_sha256": "b829473a25f0dcad337584e5e7240178967769c7317286bbc9799036fa877556",
+      "source_file_sha256": "7583ecc35dd78c3144cd5037ab4d4607498d49471315de0c3c1d7ef8f3feb6f4",
+      "symbol": "inference_dependency_checks"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/reflection_steps.py",
+      "source_ast_sha256": "03f61354b327ab11c0d6d897ff613eab1ca065a05410b6ca56cbcf83b9677878",
+      "source_file_sha256": "7583ecc35dd78c3144cd5037ab4d4607498d49471315de0c3c1d7ef8f3feb6f4",
+      "symbol": "worked_reference"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/research/ablations/generation.py",
+      "source_ast_sha256": "b4a3a14b53775d3aa815fc68b7351a9e7f7b58bc14faab84c294ba0e6dc48489",
+      "source_file_sha256": "7fcded1db88de7d57a307b6b32ecc45fabacadf0b9b3fe3616bca6b4cbb77221",
+      "symbol": "candidate_checks"
+    }
+  ],
+  "identity": "MATH_SINGLE_PROMPT_COPIED_SCORING_GUARDS_V1",
+  "reference_source_sha": "ad7dc0e5e2c84d9c2f98a977237fa7218e4aeafc",
+  "scope": "comparison physics, prompt state and conformance only; no team search copied"
+}

@@ -1,0 +1,48 @@
+{
+  "adaptations": [
+    "local imports and exception/value types",
+    "typed infrastructure recovery for local workers",
+    "three text components keep canonical serialization/rendering; empty and unbounded candidate strings are accepted",
+    "all reference candidate semantic, length and no-op filters removed by explicit user instruction"
+  ],
+  "copied": [
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_flexible_answer.py",
+      "source_file_sha256": "eaaebd00eb847abb02ec1b8c726a52372010f34428da9cb8c1244653bcc8dd2d",
+      "symbol": "complete_module_except_exception_import"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "source_ast_sha256": "b235fab7df7683160bfd309b78e7cfb45167b163b47b2822b1c8b278b9349e2d",
+      "source_file_sha256": "75fcaa65ac273db839054936e46eaa8bb4a65e5fa88bcd0dd033e079f933e86e",
+      "symbol": "MATHPrediction"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "source_ast_sha256": "cf9a965ab5e8f0a9ca9cd206a1b88cb44c27549a016db51636892949a934453a",
+      "source_file_sha256": "75fcaa65ac273db839054936e46eaa8bb4a65e5fa88bcd0dd033e079f933e86e",
+      "symbol": "MATHResolvedPrediction"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/benchmarks/math_prediction_validity.py",
+      "source_ast_sha256": "43135d6bec466c659a5fec92ea1a9fefa52dcb60dd0e3f0d9fa27482219e64bc",
+      "source_file_sha256": "75fcaa65ac273db839054936e46eaa8bb4a65e5fa88bcd0dd033e079f933e86e",
+      "symbol": "resolve_predictions"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/system_prompt.py",
+      "source_ast_sha256": "95f46951f0521a498030b4793d03cfd46fe68b26f9d56cfd4ebdd98e6724e0da",
+      "source_file_sha256": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+      "symbol": "require_prompt"
+    },
+    {
+      "source": "multi_dataset_diverse_rl/search/system_prompt.py",
+      "source_ast_sha256": "f099d1549de3094af5c7b8a34e1eb20ed1e30ac3cd6742ae1dfb301d852da9ed",
+      "source_file_sha256": "919e28a61c5db3baa3e26450d3dd6adf5a673bbdfcc6795c43737081e2db581b",
+      "symbol": "solver_messages"
+    }
+  ],
+  "identity": "MATH_SINGLE_PROMPT_SCORING_PROVENANCE_V4",
+  "reference_source_sha": "ad7dc0e5e2c84d9c2f98a977237fa7218e4aeafc",
+  "scope": "scoring, canonical rendering and data interface only; no reference candidate guards"
+}

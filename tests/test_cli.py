@@ -8,6 +8,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = [
+    "single_prompt_gepa.py",
+    "verify_single_prompt_gepa_offline.py",
     "verify_environment.py",
     "export_comparison_bundle.py",
     "validate_comparison_bundle.py",

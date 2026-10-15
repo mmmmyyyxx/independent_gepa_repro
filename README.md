@@ -1,5 +1,25 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
+The October15 two-arm single-Prompt MATH preparation is documented in
+[the protocol](docs/gepa_single_prompt_math_v1.md) and
+[the paper/source semantic review](docs/gepa_single_prompt_semantic_review_v2.md).
+It compares native current_best with native pareto while preserving the GEPA
+harness, reference memberships and seed42 for three repeats per arm.
+The current [V4 native-policy review](reports/gepa_single_prompt_native_policy_v4_review_20261015/README.md)
+records272 passing tests, including72 recovery-module checks and zero real model
+calls. Both arms now have no extra semantic, length, nonempty or no-op filters;
+native GEPA acceptance does not certify absence of answer copying.
+The earlier [V3 recovery review](reports/gepa_single_prompt_recovery_review_20261015/README.md)
+and [V2 selector review](reports/gepa_single_prompt_semantic_review_20261015/README.md)
+remain historical offline evidence. Formal execution remains HOLD
+pending source freeze and explicit user authorization after reviewing this comparison.
+The user subsequently authorized the exact V4 formal attempt and two-hour local
+monitoring on2026-10-15; see the
+[execution request](experiments/protocols/gepa_single_prompt_math_seed42_repeat3_v4/attempt1_execution_request.json).
+The private exact freeze and lifecycle establish actual startup status.
+The older five-member and October8 experiments below retain their own identities.
+
+
 The separate October8 MATH candidate-discovery comparison is specified in
 `docs/math_a4_comparison_v1.md` and `configs/math_a4_matched.yaml`. It uses
 `scripts/math_a4_comparison.py` for export, preflight, freeze and single-use

@@ -1,0 +1,51 @@
+schema_version: gepa_single_prompt_two_arm_math_v4
+experiment_id: gepa_single_prompt_two_arm_math_seed42_repeat3_20261015_v4
+arms: [strict_validation, native_pareto]
+cell_order: arm_then_repeat_sequential
+seed: 42
+repeat_ids: [1, 2, 3]
+max_native_iterations: 20
+selectors:
+  strict_validation: current_best
+  native_pareto: pareto
+frontier_type: instance
+module_selector: round_robin
+reflection_minibatch_size: 3
+skip_perfect_score: true
+use_merge: false
+cache_evaluation: false
+val_evaluation_policy: full_eval
+mutable_components: [role, strategy, answer]
+maximum_rendered_prompt_characters: null
+candidate_guard_policy: native_only
+solver_concurrency: 32
+test_solver_concurrency: 16
+reflection_concurrency: 1
+training_successful_semantic_and_inflight_ceiling: 90420
+test_successful_semantic_and_inflight_ceiling: 3600
+token_ceiling: null
+network_failed_physical_attempt_ceiling: null
+network_retry_categories: [APITimeoutError, APIConnectionError, APIStatusError_transient, TransientProviderPayload]
+http_retry_status_codes: [408, 409, 425, 429]
+http_retry_status_range: [500, 599]
+provider_retry_limit: null
+retry_after_policy: max_backoff_and_valid_seconds_ms_http_date
+provider_cooldown: shared_provider_profile
+recovery_wait_heartbeat_seconds: 30
+local_worker_retry_categories: [MATH_EVALUATOR_TIMEOUT, MATH_EVALUATOR_RESOURCE_TEMPORARY]
+local_worker_retry_limit: null
+local_worker_initial_deadlines_seconds: {search: 8, test: 30}
+local_worker_retry_deadline_multiplier: 2
+local_worker_retry_max_deadline_seconds: 120
+network_backoff_seconds: [2, 4, 8, 16, 30, 60]
+reflection_truncation_draws: 4
+solver_semantic_draws: 4
+test_worker_deadline_seconds: 30
+cache_policy: exact_resolved_solver_same_repeat_across_arms_phase_split_request
+teacher_cache: forbidden
+validation_access: native_selection_only_no_reflection_feedback
+test_access: after_all_six_searches_audited_and_frozen
+shadow_access: denied
+resume: denied
+automatic_rerun: denied
+provider_fallback: false

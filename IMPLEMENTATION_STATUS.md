@@ -1,6 +1,60 @@
 # Implementation status
 
-Updated: 2026-10-08
+Updated: 2026-10-15
+
+## October15 V4 formal execution authorization
+
+The user authorized the reviewed V4 six-cell formal experiment and two-hour
+monitoring on2026-10-15. The exact attempt is
+`gepa_single_prompt_native_v4_attempt1_20261015`; reviewed source, configuration,
+bundle, models, seed42, repeats, native opportunity caps and recovery are unchanged.
+A necessary local commit pins the reviewed source before a private exact single-use
+authorization/freeze. The request is registered in
+`experiments/protocols/gepa_single_prompt_math_seed42_repeat3_v4/attempt1_execution_request.json`.
+Runtime readiness, command, source SHA, lifecycle and monitoring evidence live in
+ignored attempt-control artifacts. Source preparation below describes its earlier
+pre-authorization state. No push is included in this execution request.
+
+## October15 single-Prompt selector comparison: offline preparation
+
+This separate six-cell experiment follows the user's latest instructions:
+current_best versus pareto using the same native GEPA engine, three repeats
+per arm, seed42, at most20 native iterations each, unchanged Optimize150,
+Validation100 and Test300 membership, and paired exact Solver observations
+within repeat across arms. Native minibatch survival, archive, reflection,
+component selection, sampler and final-best selection are shared.
+
+The handwritten strict-loop draft and custom sampler RNG were removed before
+execution. The semantic review distinguishes a single active parent chain from
+native archival history. Common matched-C interfaces, provider recovery and
+operational constraints are explicitly disclosed as task adaptations.
+The V3 infrastructure amendment adds indefinite exact-request retries
+for connection/timeouts, transient HTTP statuses and malformed provider envelopes,
+provider-scoped Retry-After cooldowns, and same-paid-answer local worker recovery
+in search, Validation, Test and independent audit. Payload subprocess timeouts no
+longer become cached model-invalid answers. The native GEPA search remains fixed.
+
+The current V4 native-policy amendment removes reference semantic/copy/dependency
+filters and all extra length, nonempty and no-op restrictions from both arms.
+Candidate registration records provenance only; it does not impose semantic
+approval. Pinned GEPA has no independent anti-copy guard. Native parsing and
+selection cannot certify semantic legitimacy or generalization.
+Completed explicit null content is treated as empty model output. Exhausted
+reflection truncation or content filtering uses the native no-proposal path.
+Unchanged source timestamps, Git ref packing and closed optional progress output
+no longer cause false aborts; actual identity and evidence failures still do.
+
+The complete V4 offline run passed272 tests, including72 recovery-module checks
+and three complete six-cell fake-provider lifecycle cases. Credentials
+were removed from the process environment and outgoing sockets blocked.
+Compileall, bundle/pins/parity, native semantic and ledger checks passed.
+The current receipt is in
+`reports/gepa_single_prompt_native_policy_v4_review_20261015`.
+The V3 256-test and V2 186-test reviews remain historical offline evidence.
+No real model call, source commit, push or formal authorization consumption has
+occurred. READY_TO_RUN=false. Formal execution requires fresh explicit user
+authorization after review and an exact committed source freeze.
+The stopped V4 work and unrelated untracked capacity-probe report are preserved.
 
 ## V4 engineering stopped by user; publication checkpoint
 

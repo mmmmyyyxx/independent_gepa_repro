@@ -20,12 +20,15 @@ from .runtime import Runtime,serialized_request,validate_response
 from .recovery import retry_local_worker,retry_delay,RetryDecision
 
 
-def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None) -> dict:
+def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None,
+              scoring_function=None,recovery_policy_config=None,allow_incomplete_test=False) -> dict:
     validate_bundle(bundle);frozen=read(directory/'frozen.json');identity=frozen['identity'];cfg=frozen['config']
     def audit_guard():
         if (directory/'STOP').exists():raise Abort('EXPERIMENT_STOPPED')
         if check is not None:check()
     audit_guard()
+    score_function=score if scoring_function is None else scoring_function
+    replay_config=cfg if recovery_policy_config is None else recovery_policy_config
     initial=SystemPrompt.from_dict(read(bundle/'initial.json'));models=read(bundle/'model_contract.json')
     prototype=Runtime.__new__(Runtime);prototype.models=models
     splits={s:load_rows(bundle,s,'test' if s=='test' else 'search')
@@ -49,7 +52,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
     calls={};awaiting_retry={};ready_retry=set();retry_categories=Counter();role_failures=Counter()
     allowed_kinds={'OPEN','CANDIDATE_REGISTERED','LOGICAL_SOLVER','RESERVE','FAILURE_CHARGE','RESPONSE_CHARGE',
         'CACHE_HIT','SOLVER_RESOLVED','REFLECTION_TRUNCATION_EXHAUSTED','SAME_PAID_ANSWER_LOCAL_SCORE_TIMEOUT',
-        'SAME_PAID_ANSWER_EXTRACTION_TIMEOUT','SEARCH_ACCOUNTING_CLOSED','TEST_PHASE_OPEN','PROVIDER_RETRY','LOCAL_WORKER_RETRY','REFLECTION_UNAVAILABLE'}
+        'SAME_PAID_ANSWER_EXTRACTION_TIMEOUT','SEARCH_ACCOUNTING_CLOSED','TEST_PHASE_OPEN','PROVIDER_RETRY','LOCAL_WORKER_RETRY','REFLECTION_UNAVAILABLE','CONTINUATION_OPEN'}
     for line in (directory/'accounting.jsonl').read_bytes().splitlines():
         event=json.loads(line);value=dict(event);sha=value.pop('event_sha256')
         if digest(value)!=sha or value['previous_event_sha256']!=previous:
@@ -57,6 +60,12 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
         previous=sha;kind=event['kind']
         if kind not in allowed_kinds:raise ProtocolViolation('AUDIT_UNKNOWN_EVENT')
         if kind=='OPEN' and event['attempt_identity']!=identity:raise ProtocolViolation('AUDIT_ATTEMPT_IDENTITY')
+        if kind=='CONTINUATION_OPEN':
+            continuation=read(directory/'continuation_frozen.json');content=dict(continuation);cid=content.pop('identity')
+            if (digest(content)!=cid or cid!=event['continuation_identity']
+                or continuation['parent_attempt_identity']!=identity
+                or continuation['prepared_last_event_sha256']!=event['previous_event_sha256']):
+                raise ProtocolViolation('AUDIT_CONTINUATION_IDENTITY')
         if kind=='TEST_PHASE_OPEN':
             if not include_test or not (directory/'SEARCH_COMPLETE.json').exists():raise ProtocolViolation('AUDIT_TEST_ACCESS')
             test_open=True
@@ -189,7 +198,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
                 raise ProtocolViolation('AUDIT_FIRST_VALID_OR_DRAW_BOUND')
             expected=resolve_predictions(predictions,transport_retry_attempts=failures[key])
             if digest(asdict(expected))!=digest(value['prediction']):raise ProtocolViolation('AUDIT_FLEXIBLE_EXTRACTION_OR_RECOVERY')
-            if score(expected,row['reference_final_answer'])!=value['correct'] or expected.prediction_valid!=value['valid']:
+            if score_function(expected,row['reference_final_answer'])!=value['correct'] or expected.prediction_valid!=value['valid']:
                 raise ProtocolViolation('AUDIT_MATHEMATICAL_SCORE')
             return (repeat,phase,split,ph,row['stable_example_id']),value
         def record(**event):
@@ -197,7 +206,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
                 with (directory/'audit_worker_recovery.jsonl').open('ab') as stream:
                     stream.write(canonical({'key':key,'include_test':include_test,**event})+b'\n')
                     stream.flush();os.fsync(stream.fileno())
-        return retry_local_worker(operation,cfg,cfg['local_worker_initial_deadlines_seconds'][phase],
+        return retry_local_worker(operation,replay_config,cfg['local_worker_initial_deadlines_seconds'][phase],
                                   check=audit_guard,on_retry=record)
     with ThreadPoolExecutor(max_workers=16) as pool:observations=dict(pool.map(replay,resolved.items()))
     for arm in cfg['arms']:
@@ -242,6 +251,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
             raise ProtocolViolation('AUDIT_NATIVE_LOGICAL_METRIC_RECONCILIATION')
         verify_selector_trace(cfg,arm,iterations,native,selection)
         if include_test:
+            if allow_incomplete_test and not (folder/'test_result.json').exists():continue
             result=read(folder/'test_result.json');profile=read(folder/'test_predictions.json')
             expected=[observations[(repeat,'test','test',selection['selected_hash'],row['stable_example_id'])] for row in splits['test']]
             if profile!=expected or result['correct']!=sum(p['correct'] for p in expected) or result['count']!=300:
@@ -255,7 +265,8 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
         or any(snapshot['roles'][r]['network_failed_attempts']!=role_failures[r] for r in ('solver','reflection'))):
         raise ProtocolViolation('AUDIT_TRANSIENT_FAILURE_COUNTERS')
     return {'identity':'NATIVE_GEPA_SINGLE_PROMPT_INTEGRITY_AUDIT_V1','status':'PASS','attempt_identity':identity,
-        'include_test':include_test,'charged_tokens':sum(charged.values()),'physical_attempts':sum(physical.values()),
+        'include_test':include_test,'incomplete_test_preparation_only':allow_incomplete_test,
+        'charged_tokens':sum(charged.values()),'physical_attempts':sum(physical.values()),
         'pending_physical_attempts':0,'cache_hits':hits,'logical_evaluations':dict(logical),'resolved_observations':len(resolved),
         'charged_tokens_by_phase_arm_role':{f'{p}:{a}:{r}':n for (p,a,r),n in charged.items()},
         'physical_attempts_by_phase_arm_role':{f'{p}:{a}:{r}':n for (p,a,r),n in physical.items()},

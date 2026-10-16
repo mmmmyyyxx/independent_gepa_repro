@@ -78,7 +78,7 @@ def validate_response(role,request,result):
 
 class Runtime:
     def __init__(self,directory: Path,config: dict,models: dict,identity: str,transport: Callable,
-                 source_check: Callable=lambda:None):
+                 source_check: Callable=lambda:None,*,open_event: bool=True):
         self.directory=directory;self.config=config;self.models=models;self.identity=identity
         self.transport=transport;self.source_check=source_check
         self.lock=threading.RLock();self.failed=threading.Event();self.phase='search'
@@ -89,7 +89,10 @@ class Runtime:
             'output_tokens':0,'fallback_usage_calls':0,'network_failed_attempts':0} for r in ('solver','reflection')}
         self.logical={};self.cache_hits=0;self.cache={};self.futures={}
         self.test_release_check=None;self.provider_cooldowns={};self.retry_categories={}
-        self.event('OPEN',attempt_identity=identity,phase=self.phase)
+        if open_event:self.event('OPEN',attempt_identity=identity,phase=self.phase)
+
+    def score_prediction(self,prediction,reference):
+        return score(prediction,reference)
 
     def event(self,kind: str,**fields):
         with self.lock:
@@ -296,7 +299,7 @@ class Runtime:
             paid={'prediction':asdict(resolved),'repeat':repeat,'split':split,'phase':self.phase,
                   'example_id':row['stable_example_id'],'prompt_hash':prompt.prompt_hash,'key':key}
             write(self.directory/'resolved_answers'/f'{key}.json',paid)
-            correctness=self.local_worker(lambda:score(resolved,row['reference_final_answer']),
+            correctness=self.local_worker(lambda:self.score_prediction(resolved,row['reference_final_answer']),
                 stage='scoring',repeat=repeat,split=split,key=key)
             value={**paid,'correct':correctness,'valid':resolved.prediction_valid,'answer':resolved.answer}
             write(self.directory/'cache'/f'{key}.json',value)

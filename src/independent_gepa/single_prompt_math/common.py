@@ -67,6 +67,8 @@ def source_inventory(root: Path) -> dict[str,str]:
            root/'docs/gepa_single_prompt_semantic_review_v2.md',
            root/'docs/gepa_single_prompt_recovery_v3.md',
            root/'docs/gepa_single_prompt_native_guard_v4.md',
+           root/'docs/gepa_single_prompt_scoring_continuation_v5.md',
+           root/'configs/gepa_single_prompt_scoring_continuation_v5.yaml',
            root/'experiments/protocols/gepa_single_prompt_math_seed42_repeat3_v4/copied_scoring_sources.json']
     return {p.relative_to(root).as_posix():file_hash(p) for p in sorted(paths)}
 

@@ -1,5 +1,11 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
+The October16 user-authorized [V5 scoring repair and sealed-Test continuation](docs/gepa_single_prompt_scoring_continuation_v5.md)
+addresses pathological symbolic expansion using bounded exact separation and
+explicit unresolved-computation escalation. Search, final prompts, memberships,
+models and paid observations are preserved. Existing scores must replay unchanged
+before new Test provider access; the V4 source attempt remains preserved.
+
 The October15 two-arm single-Prompt MATH preparation is documented in
 [the protocol](docs/gepa_single_prompt_math_v1.md) and
 [the paper/source semantic review](docs/gepa_single_prompt_semantic_review_v2.md).

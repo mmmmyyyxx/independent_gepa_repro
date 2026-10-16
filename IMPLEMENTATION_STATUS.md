@@ -1,6 +1,23 @@
 # Implementation status
 
-Updated: 2026-10-15
+Updated: 2026-10-16
+
+## October16 user-authorized V5 scoring repair and continuation
+
+The old frozen process was stopped with evidence after repeated deterministic
+symbolic-scoring timeout. Its six searches and paid requests remain immutable.
+V5 provides bounded exact-rational separation for widely unequal closed scalar
+expressions and retains pinned parser/verifier fallback for unknown cases.
+Two timeouts at the maximum worker allowance yield unresolved computation;
+network and temporary OS resource retries remain unchanged. Test-only preparation
+repairs already-paid unresolved scoring and independently replays all existing
+scores. A fresh committed source, policy, imported-evidence freeze and single-use
+user authorization precede any missing Test model call. No search is rerun.
+The real pathological response completed locally in about0.66 seconds with
+no model call. The complete current offline suite passed296 tests with zero model calls.
+Import audit preserved5346 existing grades and completed one paid unresolved
+observation; three Test profiles are reusable and three remain. Exact source
+freeze and continuation startup are recorded privately after this checkpoint.
 
 ## October15 V4 formal execution authorization
 

@@ -267,7 +267,8 @@ def publish(root,run,public):
         raise ProtocolViolation('REAL_COMPLETE_RESULT_REQUIRED_FOR_SCIENTIFIC_REPORT')
     if public.exists():raise ProtocolViolation('FRESH_PUBLIC_REPORT_REQUIRED')
     audit=read(run/'final_audit.json')
-    if audit['status']!='PASS' or file_hash(run/'final_audit.json')!=result['final_audit_sha256']:
+    if (audit['status']!='PASS' or audit.get('incomplete_test_preparation_only')
+        or file_hash(run/'final_audit.json')!=result['final_audit_sha256']):
         raise ProtocolViolation('FINAL_AUDIT_RECEIPT_MISMATCH')
     summary=build_summary(result,frozen,audit)
     write(public/'summary.json',summary);write(public/'integrity_audit.json',audit)

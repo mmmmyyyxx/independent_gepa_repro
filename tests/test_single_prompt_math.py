@@ -416,3 +416,47 @@ def test_content_filtered_reflection_skips_native_opportunity_without_aborting(t
     result=run_repeat(rt,cfg,initial,rows('optimize',3),rows('validation',3),tmp_path/'cell',1)
     assert result['generated']==0 and result['native_iterations']==2 and not rt.failed.is_set()
     assert calls.count('reflection')==2
+
+
+def test_v5_completed_paid_fixture_continuation_requires_no_new_model_calls(complete_fake,tmp_path):
+    import shutil
+    from independent_gepa.single_prompt_math import continuation
+    f=complete_fake;root=tmp_path/'root';parent=root/'runs/parent';parent.parent.mkdir(parents=True)
+    shutil.copytree(f.run,parent)
+    (root/'configs').mkdir();shutil.copyfile(ROOT/'configs/gepa_single_prompt_scoring_continuation_v5.yaml',
+        root/'configs/gepa_single_prompt_scoring_continuation_v5.yaml')
+    directory=root/'runs/continuation';receipt=root/'preparation.json'
+    prepared=continuation.prepare(root,f.bundle,parent,directory,receipt,fake_fixture=True)
+    assert prepared['existing_scores_changed']==0 and len(prepared['reused_test_profiles'])==6
+    assert prepared['remaining_test_profiles']==[] and prepared['preparation_model_calls']==0
+    parent_hash=prepared['parent_inventory_sha256']
+    frozen={'fake_fixture':True,'preparation_path':'preparation.json','run_root':'runs/continuation',
+        'policy':continuation.load_policy(root),'parent_attempt_identity':prepared['parent_attempt_identity'],
+        'prepared_last_event_sha256':prepared['prepared_last_event_sha256']}
+    frozen['identity']=digest(frozen);freeze=root/'continuation.json';write(freeze,frozen)
+    def forbidden(*args):pytest.fail('all paid fixture profiles must be reused')
+    result=continuation.execute(root,f.bundle,freeze,transport_override=forbidden)
+    assert result['status']=='EXECUTION_COMPLETE' and result['additional_physical_attempts']==0
+    assert result['additional_charged_tokens']==0
+    assert digest(continuation.inventory(parent))==parent_hash
+    assert read(directory/'final_audit.json')['status']=='PASS'
+    assert read(directory/'final_audit.json')['incomplete_test_preparation_only'] is False
+    with pytest.raises(ProtocolViolation,match='REAL_COMPLETED'):
+        continuation.publish(root,directory,root/'public')
+
+
+def test_v5_runtime_missing_test_observation_uses_repaired_score_and_paired_cache(tmp_path,config,models,initial):
+    from independent_gepa.single_prompt_math.continuation import TestContinuationRuntime,load_policy
+    calls=[]
+    def transport(role,request):
+        calls.append(role);return response(r'Final answer:(2+\sqrt{2})^{3^{77}-1}')
+    rt=TestContinuationRuntime(tmp_path,config,models,'fixture',transport,policy=load_policy(ROOT))
+    rt.phase='test';rt.test_release_check=lambda:None;rt.bind_arm('strict_validation')
+    prompt=SystemPrompt.from_dict(initial);rt.register_prompt(prompt,1);row=rows('test',1)[0]
+    first=rt.prediction(prompt,row,1,'test','final')
+    assert first['valid'] and not first['correct'] and calls==['solver']
+    rt.bind_arm('native_pareto');rt.register_prompt(prompt,1)
+    assert rt.prediction(prompt,row,1,'test','final')==first and calls==['solver']
+    assert rt.snapshot()['cache_hits']==1
+    with pytest.raises(Abort,match='CONTINUATION_TEST_SOLVER_ONLY'):
+        rt.complete('reflection',[],1,'test')

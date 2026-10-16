@@ -36,7 +36,7 @@ def main():
     passed=sum(int(s.get('tests',0))-int(s.get('failures',0))-int(s.get('errors',0))-int(s.get('skipped',0)) for s in suites)
     if source_inventory(ROOT)!=starting_inventory:raise RuntimeError('SOURCE_CHANGED_DURING_OFFLINE_GATES')
     evidence=preflight(ROOT,a.bundle.resolve())
-    public=[ROOT/'docs/gepa_single_prompt_math_v1.md',ROOT/'docs/gepa_single_prompt_semantic_review_v2.md',ROOT/'docs/gepa_single_prompt_recovery_v3.md',ROOT/'docs/gepa_single_prompt_native_guard_v4.md']
+    public=[ROOT/'docs/gepa_single_prompt_math_v1.md',ROOT/'docs/gepa_single_prompt_semantic_review_v2.md',ROOT/'docs/gepa_single_prompt_recovery_v3.md',ROOT/'docs/gepa_single_prompt_native_guard_v4.md',ROOT/'docs/gepa_single_prompt_scoring_continuation_v5.md']
     if audit_public_paths(public):raise RuntimeError('PUBLIC_PROTOCOL_SANITIZATION_FAILED')
     subprocess.run(['git','diff','--check'],cwd=ROOT,check=True)
     evidence.update(status='FOCUSED_DEBUG_PASS' if a.focused else 'PASS',pytest_passed=passed,

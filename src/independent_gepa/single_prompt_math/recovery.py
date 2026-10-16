@@ -76,7 +76,7 @@ def temporary_worker_exit(code):
 def retry_local_worker(operation: Callable[[],T],config,initial_deadline,*,check=lambda:None,
                        wait=None,on_retry=lambda **event:None) -> T:
     from .math_domain_v2 import worker_deadline
-    retries=0;deadline=initial_deadline
+    retries=0;deadline=initial_deadline;timeouts_at_ceiling=0
     if wait is None:
         def wait(seconds):
             end=time.monotonic()+seconds;heartbeat=time.monotonic()+config['recovery_wait_heartbeat_seconds']
@@ -93,6 +93,11 @@ def retry_local_worker(operation: Callable[[],T],config,initial_deadline,*,check
         except ProtocolViolation as exc:
             category=str(exc)
             if category not in config['local_worker_retry_categories']:raise
+            if category=='MATH_EVALUATOR_TIMEOUT' and deadline>=config['local_worker_retry_max_deadline_seconds']:
+                timeouts_at_ceiling+=1
+                limit=config.get('local_timeout_attempts_at_ceiling')
+                if limit is not None and timeouts_at_ceiling>=limit:
+                    raise ProtocolViolation('MATH_EVALUATOR_UNRESOLVED_COMPUTATION') from exc
             delay=retry_delay(config,retries)
             next_deadline=min(deadline*config['local_worker_retry_deadline_multiplier'],config['local_worker_retry_max_deadline_seconds'])
             on_retry(category=category,retry_index=retries+1,delay_seconds=delay,

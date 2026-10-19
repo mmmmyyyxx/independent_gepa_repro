@@ -16,48 +16,93 @@ from .prompt import SystemPrompt
 from .runtime import Runtime,real_transport
 from .search import run_repeat
 from .audit import reconcile
+from . import heldout,posthoc
+from .analysis import paired,align_tokens
+from .scoring import IDENTITY as SCORING_IDENTITY
 
-CONFIG='configs/gepa_single_prompt_math_seed42_repeat3.yaml'
-PROTOCOL='docs/gepa_single_prompt_math_v1.md'
+CONFIG='configs/gepa_single_prompt_math_v6.yaml'
+PROTOCOL='docs/gepa_single_prompt_math_v6.md'
 
 
 def load_config(root: Path):
     cfg=yaml.safe_load((root/CONFIG).read_text(encoding='utf-8'))
-    expected={'schema_version':'gepa_single_prompt_two_arm_math_v4','seed':42,'repeat_ids':[1,2,3],
-        'arms':['strict_validation','native_pareto'],'cell_order':'arm_then_repeat_sequential',
-        'max_native_iterations':20,'selectors':{'strict_validation':'current_best','native_pareto':'pareto'},'frontier_type':'instance',
-        'module_selector':'round_robin','reflection_minibatch_size':3,'skip_perfect_score':True,
-        'use_merge':False,'cache_evaluation':False,'val_evaluation_policy':'full_eval',
-        'mutable_components':['role','strategy','answer'],'maximum_rendered_prompt_characters':None,'candidate_guard_policy':'native_only',
-        'solver_concurrency':32,'test_solver_concurrency':16,'reflection_concurrency':1,
-        'training_successful_semantic_and_inflight_ceiling':90420,'test_successful_semantic_and_inflight_ceiling':3600,
-        'token_ceiling':None,'network_failed_physical_attempt_ceiling':None,
-        'network_retry_categories':['APITimeoutError','APIConnectionError','APIStatusError_transient','TransientProviderPayload'],
-        'http_retry_status_codes':[408,409,425,429],'http_retry_status_range':[500,599],
-        'provider_retry_limit':None,'retry_after_policy':'max_backoff_and_valid_seconds_ms_http_date',
-        'provider_cooldown':'shared_provider_profile','recovery_wait_heartbeat_seconds':30,
-        'local_worker_retry_categories':['MATH_EVALUATOR_TIMEOUT','MATH_EVALUATOR_RESOURCE_TEMPORARY'],
-        'local_worker_retry_limit':None,'local_worker_initial_deadlines_seconds':{'search':8,'test':30},
-        'local_worker_retry_deadline_multiplier':2,'local_worker_retry_max_deadline_seconds':120,'network_backoff_seconds':[2,4,8,16,30,60],
-        'reflection_truncation_draws':4,'solver_semantic_draws':4,'test_worker_deadline_seconds':30,
-        'cache_policy':'exact_resolved_solver_same_repeat_across_arms_phase_split_request',
-        'teacher_cache':'forbidden','validation_access':'native_selection_only_no_reflection_feedback',
-        'test_access':'after_all_six_searches_audited_and_frozen','shadow_access':'denied',
-        'resume':'denied','automatic_rerun':'denied','provider_fallback':False}
+    expected={'schema_version': 'gepa_single_prompt_two_arm_math_v6',
+     'reference_bundle_hash':'296f22ab723f9574c8e9794f4d7e17801058d16b7e5e40fc52589df5ef005d49',
+     'arms': ['strict_validation', 'native_pareto'],
+     'cell_order': 'arm_then_repeat_sequential',
+     'seed': 42,
+     'repeat_ids': [1, 2, 3],
+     'selectors': {'strict_validation': 'current_best', 'native_pareto': 'pareto'},
+     'frontier_type': 'instance',
+     'module_selector': 'round_robin',
+     'reflection_minibatch_size': 3,
+     'skip_perfect_score': True,
+     'use_merge': False,
+     'cache_evaluation': False,
+     'val_evaluation_policy': 'full_eval',
+     'mutable_components': ['role', 'strategy', 'answer'],
+     'maximum_rendered_prompt_characters': None,
+     'candidate_guard_policy': 'native_only',
+     'solver_concurrency': 32,
+     'test_solver_concurrency': 16,
+     'reflection_concurrency': 1,
+     'training_successful_semantic_and_inflight_ceiling': 51600,
+     'test_successful_semantic_and_inflight_ceiling': 3600,
+     'token_ceiling': None,
+     'network_failed_physical_attempt_ceiling': None,
+     'network_retry_categories': ['APITimeoutError',
+                                  'APIConnectionError',
+                                  'APIStatusError_transient',
+                                  'TransientProviderPayload'],
+     'http_retry_status_codes': [408, 409, 425, 429],
+     'http_retry_status_range': [500, 599],
+     'provider_retry_limit': None,
+     'retry_after_policy': 'max_backoff_and_valid_seconds_ms_http_date',
+     'provider_cooldown': 'shared_provider_profile',
+     'recovery_wait_heartbeat_seconds': 30,
+     'local_worker_retry_categories': ['MATH_EVALUATOR_TIMEOUT', 'MATH_EVALUATOR_RESOURCE_TEMPORARY'],
+     'local_worker_retry_limit': None,
+     'local_worker_initial_deadlines_seconds': {'search': 8, 'test': 30},
+     'local_worker_retry_deadline_multiplier': 2,
+     'local_worker_retry_max_deadline_seconds': 120,
+     'network_backoff_seconds': [2, 4, 8, 16, 30, 60],
+     'reflection_truncation_draws': 4,
+     'solver_semantic_draws': 4,
+     'test_worker_deadline_seconds': 30,
+     'cache_policy': 'exact_resolved_solver_same_repeat_across_arms_phase_split_request',
+     'teacher_cache': 'forbidden',
+     'validation_access': 'native_selection_only_no_reflection_feedback',
+     'test_access': 'after_all_six_searches_audited_and_frozen',
+     'shadow_access': 'denied',
+     'resume': 'denied',
+     'automatic_rerun': 'denied',
+     'provider_fallback': False,
+     'native_logical_budget': 3000,
+     'max_native_proposals': 1000,
+     'budget_milestones': [500, 1000, 1500, 2000, 2500, 3000],
+     'scoring_policy': 'V5_EXACT_SCORING_ALL_PHASES_V6',
+     'local_timeout_attempts_at_ceiling': 2,
+     'compute_matching': 'matched_solver_evaluations_not_exact_total_compute',
+     'cost_axis': 'standalone_attributed_search_input_output_plus_conservative_tokens',
+     'posthoc_policy': 'configs/gepa_single_prompt_posthoc_v6.yaml',
+     'test_policy': 'verified_fresh_else_explicit_historical_exploratory'}
     if any(cfg.get(k)!=v or type(cfg.get(k)) is not type(v) for k,v in expected.items()):
         raise ProtocolViolation('SINGLE_PROMPT_CONFIGURATION_MISMATCH')
     if set(cfg)!=set(expected)|{'experiment_id'}:raise ProtocolViolation('UNREAD_CONFIGURATION_FIELD')
+    if cfg['scoring_policy']!=SCORING_IDENTITY:raise ProtocolViolation('UNBOUND_SCORING_POLICY')
+    posthoc.load_policy(root,cfg['posthoc_policy'])
     return cfg
 
 
 def preflight(root: Path,bundle: Path):
     cfg=load_config(root);data=validate_bundle(bundle)
+    if data['bundle_hash']!=cfg['reference_bundle_hash']:raise ProtocolViolation('FROZEN_REFERENCE_BUNDLE_REQUIRED')
     import gepa
     if (git(root/'vendor/gepa','rev-parse','HEAD')!=GEPA_COMMIT or git(root/'vendor/gepa','status','--porcelain')
         or not Path(gepa.__file__).resolve().is_relative_to((root/'vendor/gepa').resolve())):
         raise ProtocolViolation('PINNED_NATIVE_GEPA_REQUIRED')
     from ..math_comparison.contract import PINS
-    for name,version in {**PINS,'openai':'2.37.0'}.items():
+    for name,version in {**PINS,'openai':'2.37.0','matplotlib':'3.10.7'}.items():
         if importlib.metadata.version(name)!=version:raise ProtocolViolation('PINNED_DEPENDENCY_MISMATCH')
     train=load_rows(bundle,'optimize','search');validation=load_rows(bundle,'validation','search')
     if set(r['stable_example_id'] for r in train)&set(r['stable_example_id'] for r in validation):
@@ -66,11 +111,15 @@ def preflight(root: Path,bundle: Path):
     if (models['routes']['solver']['model']!='gpt-4o-mini' or models['routes']['solver']['provider_profile']!='openlux'
         or models['routes']['reflection']['model']!='qwen3.7-flash' or models['routes']['reflection']['provider_profile']!='lwj'):
         raise ProtocolViolation('REFERENCE_MODEL_ROUTING_MISMATCH')
-    return {'identity':'SINGLE_PROMPT_GEPA_PREFLIGHT_V4','status':'PASS','READY_TO_RUN':False,
+    return {'identity':'SINGLE_PROMPT_GEPA_PREFLIGHT_V6','status':'PASS','READY_TO_RUN':False,
         'config_sha256':file_hash(root/CONFIG),'protocol_sha256':file_hash(root/PROTOCOL),
         'source_inventory_sha256':digest(source_inventory(root)),'bundle_hash':data['bundle_hash'],
         'seed':42,'repeat_ids':cfg['repeat_ids'],'arms':cfg['arms'],'counts':data['counts'],
-        'provider_calls':0,'source_freeze_required':True}
+        'provider_calls':0,'source_freeze_required':True,
+        'comparison_label':'Matched solver-evaluation budget, not exactly matched total compute.',
+        'cost_axis':cfg['cost_axis'],'money_calculated':False,
+        'heldout_assessment':heldout.assess(root,bundle),
+        'posthoc_policy_sha256':digest(posthoc.load_policy(root,cfg['posthoc_policy']))}
 
 
 class SourceGuard:
@@ -109,10 +158,11 @@ class SourceGuard:
         if self.current_head_sha()!=self.frozen['source_sha']:raise Abort('FROZEN_SOURCE_HEAD_CHANGED')
 
 
-def freeze(root,bundle,authorization,gates,output,run_root):
+def freeze(root,bundle,authorization,gates,output,run_root,*,fresh_heldout=None):
     receipt=preflight(root,bundle);evidence=read(gates);cfg=load_config(root)
     if (evidence.get('status')!='PASS' or evidence.get('source_inventory_sha256')!=receipt['source_inventory_sha256']
-        or evidence.get('complete_two_arm_three_repeat_fake_e2e')!='PASS'):
+        or evidence.get('complete_two_arm_three_repeat_fake_e2e')!='PASS'
+        or evidence.get('historical_5346_parity')!='PASS' or evidence.get('v6_engineering_tests_passed',0)<30):
         raise ProtocolViolation('COMPLETE_CURRENT_OFFLINE_GATES_REQUIRED')
     if git(root,'diff','--name-only') or git(root,'diff','--cached','--name-only'):
         raise ProtocolViolation('COMMITTED_CLEAN_SOURCE_REQUIRED')
@@ -120,8 +170,12 @@ def freeze(root,bundle,authorization,gates,output,run_root):
     if set(inventory)-tracked:raise ProtocolViolation('UNCOMMITTED_EXPERIMENT_SOURCE')
     run_root=require_private(root,run_root)
     if run_root.exists() or output.exists():raise ProtocolViolation('FRESH_ATTEMPT_PATHS_REQUIRED')
+    test_contract=heldout.contract(bundle,fresh_heldout,root=root)
+    if fresh_heldout is not None:
+        require_private(root,fresh_heldout,'data/private_bundles')
+        test_contract['fresh_path']=fresh_heldout.relative_to(root).as_posix()
     auth=read(authorization)
-    if (auth.get('identity')!='USER_REQUESTED_SINGLE_PROMPT_GEPA_SCOPE_V1' or auth.get('execute') is not True
+    if (auth.get('identity')!='USER_REQUESTED_SINGLE_PROMPT_GEPA_SCOPE_V6' or auth.get('execute') is not True
         or auth.get('authorization_stage')!='POST_SEMANTIC_REVIEW_EXACT_FORMAL_APPROVAL'
         or auth.get('source_sha')!=git(root,'rev-parse','HEAD')
         or auth.get('source_inventory_sha256')!=receipt['source_inventory_sha256']
@@ -129,18 +183,22 @@ def freeze(root,bundle,authorization,gates,output,run_root):
         or auth.get('offline_gate_sha256')!=file_hash(gates)
         or auth.get('config_sha256')!=file_hash(root/CONFIG) or auth.get('bundle_hash')!=receipt['bundle_hash']
         or auth.get('run_root')!=run_root.relative_to(root).as_posix()
+        or auth.get('test_contract')!=test_contract
+        or auth.get('native_logical_budget_per_cell')!=3000 or auth.get('money_calculated') is not False
         or not auth.get('user_requests') or auth.get('clarifications')!={
             'data':'keep_reference_memberships','arms':['strict_validation','native_pareto'],
             'strict_parent':'single_retained_chain','solver_cache':'share_exact_requests_within_repeat_across_arms',
-            'resources':'reference_per_arm_uncapped_tokens','seed':42,
+            'resources':'native_3000_per_cell_separate_diagnostics_and_test_uncapped_tokens','seed':42,
             'candidate_guard':'native_only_no_extra_content_length_nonempty_or_noop_filters'}):
         raise ProtocolViolation('EXACT_NEW_USER_SCOPE_REQUIRED')
-    value={'schema_version':'gepa_two_arm_single_prompt_frozen_v4','source_sha':git(root,'rev-parse','HEAD'),
+    value={'schema_version':'gepa_two_arm_single_prompt_frozen_v6','source_sha':git(root,'rev-parse','HEAD'),
         'source_inventory':inventory,'config':cfg,'config_sha256':file_hash(root/CONFIG),
         'protocol_sha256':file_hash(root/PROTOCOL),'bundle_hash':receipt['bundle_hash'],
         'authorization_sha256':file_hash(authorization),'authorization_path':authorization.relative_to(root).as_posix(),
         'offline_gate_sha256':file_hash(gates),'run_root':run_root.relative_to(root).as_posix(),
-        'user_scope_roles':{'search':['solver','reflection'],'test':['solver']},'fake_only_fixture':False}
+        'user_scope_roles':{'search':['solver','reflection'],'test':['solver']},'fake_only_fixture':False,
+        'test_contract':test_contract,'posthoc_policy':posthoc.load_policy(root,cfg['posthoc_policy']),
+        'scoring_policy':cfg['scoring_policy']}
     value['identity']=digest(value);write(output,value)
     return value
 
@@ -157,6 +215,8 @@ def execute(root,bundle,frozen_path,run_root,*,transport_override=None):
     frozen=read(frozen_path);check=dict(frozen);identity=check.pop('identity')
     if digest(check)!=identity or validate_bundle(bundle)['bundle_hash']!=frozen['bundle_hash']:
         raise ProtocolViolation('FROZEN_ATTEMPT_OR_BUNDLE_IDENTITY')
+    if frozen['config'].get('schema_version')!='gepa_single_prompt_two_arm_math_v6':
+        raise ProtocolViolation('CURRENT_V6_EXECUTION_IDENTITY_REQUIRED')
     run_root=run_root.resolve()
     if run_root.exists():raise ProtocolViolation('EXISTING_ATTEMPT_NO_RESUME')
     clients={};fake=transport_override is not None
@@ -177,6 +237,9 @@ def execute(root,bundle,frozen_path,run_root,*,transport_override=None):
     else:
         if not frozen.get('fake_only_fixture'):raise ProtocolViolation('EXPLICIT_FAKE_FIXTURE_REQUIRED')
         source_check=lambda:None;transport=transport_override
+    test_contract=frozen.get('test_contract') or heldout.contract(bundle)
+    policy=posthoc.load_policy(root,frozen['config']['posthoc_policy'])
+    if not fake and frozen.get('posthoc_policy')!=policy:raise ProtocolViolation('FROZEN_POSTHOC_CRITERIA_CHANGED')
     run_root.mkdir(parents=True);write(run_root/'frozen.json',frozen)
     runtime=Runtime(run_root,frozen['config'],read(bundle/'model_contract.json'),identity,transport,source_check)
     start=time.monotonic();selections=[]
@@ -192,21 +255,31 @@ def execute(root,bundle,frozen_path,run_root,*,transport_override=None):
                 write(run_root/'accounting_snapshot.json',runtime.snapshot())
                 progress(f'SEARCH_REPEAT_COMPLETE arm={arm} repeat={repeat} selected_hash={record["selected_hash"]}')
         source_check();write(run_root/'accounting_snapshot.json',runtime.snapshot())
+        content_review=posthoc.audit_run(run_root,train,policy)
+        content_sha=file_hash(run_root/'posthoc_content.json')
         search_audit=reconcile(run_root,bundle,check=source_check);write(run_root/'search_audit.json',search_audit)
         seal={'identity':identity,'selections':selections,'selection_sha256':digest(selections),
-              'all_searches_closed':True,'test_opened':False,'search_audit_sha256':file_hash(run_root/'search_audit.json')}
+              'all_searches_closed':True,'test_opened':False,'search_audit_sha256':file_hash(run_root/'search_audit.json'),
+              'posthoc_content_sha256':content_sha,'posthoc_policy_sha256':digest(policy)}
         write(run_root/'SEARCH_COMPLETE.json',seal)
         receipt_sha=file_hash(run_root/'search_audit.json');seal_sha=file_hash(run_root/'SEARCH_COMPLETE.json')
-        runtime.test_release_check=lambda:release_check(run_root,identity,selections,receipt_sha,seal_sha)
-        runtime.enter_test();test_rows=load_rows(bundle,'test','test');results=[]
+        def test_release():
+            release_check(run_root,identity,selections,receipt_sha,seal_sha)
+            if file_hash(run_root/'posthoc_content.json')!=content_sha:raise Abort('FROZEN_POSTHOC_EVIDENCE_CHANGED')
+        runtime.test_release_check=test_release
+        runtime.enter_test();test_rows=heldout.load_test(bundle,test_contract,root);results=[];profiles={};test_accounting=[]
         write(run_root/'lifecycle.json',{'status':'RUNNING','phase':'test','fake_provider':fake,'attempt_identity':identity})
         for selected in selections:
+            test_started=time.monotonic()
             runtime.bind_arm(selected['arm'])
             repeat=selected['repeat_id'];prompt=SystemPrompt.from_dict(selected['selected'])
             profile=runtime.evaluate(prompt,test_rows,repeat,'test','final')
             folder=run_root/selected['arm']/f'repeat_{repeat}';write(folder/'test_predictions.json',profile)
+            profiles[(selected['arm'],repeat)]=profile
             record={'arm':selected['arm'],'repeat_id':repeat,'seed':42,'selected_hash':prompt.prompt_hash,'correct':sum(p['correct'] for p in profile),
                 'count':len(profile),'invalid':sum(not p['valid'] for p in profile)}
+            measured={'arm':selected['arm'],'repeat_id':repeat,'wall_seconds':time.monotonic()-test_started,'tokens':runtime.token_snapshot(repeat)}
+            write(folder/'test_accounting.json',measured);test_accounting.append(measured)
             write(folder/'test_result.json',record);results.append(record)
             progress(f'TEST_REPEAT_COMPLETE arm={selected["arm"]} repeat={repeat} correct={record["correct"]}/{record["count"]}')
         write(run_root/'accounting_snapshot.json',runtime.snapshot());source_check()
@@ -214,7 +287,18 @@ def execute(root,bundle,frozen_path,run_root,*,transport_override=None):
         completion={'status':'EXECUTION_COMPLETE','attempt_identity':identity,'fake_provider':fake,
                     'scientific_status':'FAKE_ENGINEERING_FIXTURE' if fake else 'AUDITED_COMPLETE',
                     'selections':selections,'test_results':results,'accounting':runtime.snapshot(),
-                    'wall_seconds':time.monotonic()-start,'final_audit_sha256':file_hash(run_root/'final_audit.json')}
+                    'wall_seconds':time.monotonic()-start,'final_audit_sha256':file_hash(run_root/'final_audit.json'),
+                    'test_contract':test_contract,'paired_analysis':paired(profiles),
+                    'token_accounting':runtime.tokens.view(),
+                    'token_accounting_by_arm':{arm:runtime.tokens.view(arm=arm) for arm in frozen['config']['arms']},
+                    'wall_seconds_by_arm':{arm:sum(v['wall_seconds'] for v in [*selections,*test_accounting] if v['arm']==arm) for arm in frozen['config']['arms']},
+                    'test_accounting':test_accounting,
+                    'wall_scope':'cell search/diagnostics plus Test; shared independent audit and figure work separate',
+                    'search_token_alignment':align_tokens({f'{s["arm"]}:{s["repeat_id"]}':read(run_root/s['arm']/f'repeat_{s["repeat_id"]}'/'mechanism_events.json') for s in selections}),
+                    'posthoc_review':content_review}
+        write(run_root/'compute_accounting.json',runtime.tokens.view())
+        from .figures import render
+        render(run_root,run_root/'figures',fake=fake)
         write(run_root/'completion.json',completion)
         write(run_root/'lifecycle.json',{'status':'EXECUTION_COMPLETE','phase':'complete','fake_provider':fake,'attempt_identity':identity})
         return completion
@@ -224,6 +308,7 @@ def execute(root,bundle,frozen_path,run_root,*,transport_override=None):
                 'category':str(exc) if isinstance(exc,Abort) else type(exc).__name__,
                 'scientific_status':'NOT_EVALUABLE_PENDING_OWNER_AUDIT','accounting':runtime.snapshot(),
                 'wall_seconds':time.monotonic()-start,'automatic_rerun_authorized':False}
+        write(run_root/'compute_accounting.json',runtime.tokens.view())
         write(run_root/'completion.json',record);write(run_root/'lifecycle.json',record)
         raise
     finally:
@@ -245,7 +330,7 @@ def build_summary(result,frozen,audit):
         values={r['arm']:r['correct'] for r in result['test_results'] if r['repeat_id']==repeat}
         paired.append({'repeat_id':repeat,'pareto_minus_strict_correct':values['native_pareto']-values['strict_validation']})
     deltas=[r['pareto_minus_strict_correct'] for r in paired]
-    return {'identity':'GEPA_TWO_ARM_SINGLE_PROMPT_MATH_REPORT_V4',
+    return {'identity':'GEPA_TWO_ARM_SINGLE_PROMPT_MATH_REPORT_V6',
         'status':'FAKE_ENGINEERING_FIXTURE' if result['fake_provider'] else 'AUDITED_COMPLETE',
         'attempt_identity':frozen['identity'],'source_sha':frozen.get('source_sha'),
         'bundle_hash':frozen['bundle_hash'],'seed':42,'repeat_ids':[1,2,3],
@@ -255,8 +340,14 @@ def build_summary(result,frozen,audit):
         'pareto_win_tie_loss':{'wins':sum(d>0 for d in deltas),'ties':sum(d==0 for d in deltas),'losses':sum(d<0 for d in deltas)},
         'accounting':result['accounting'],'wall_seconds':result['wall_seconds'],
         'cache_cost_allocation':'first dispatcher pays; paired logical evaluations count in both arms',
-        'comparison':'native current_best versus native pareto; same harness; iteration caps do not match compute',
-        'heldout_exposure':'historically exposed; no independent confirmatory claim',
+        'comparison':'Matched solver-evaluation budget, not exactly matched total compute.',
+        'money_calculated':False,'paired_analysis':result.get('paired_analysis'),
+        'token_accounting':result.get('token_accounting'),'search_token_alignment':result.get('search_token_alignment'),
+        'token_accounting_by_arm':result.get('token_accounting_by_arm'),'wall_seconds_by_arm':result.get('wall_seconds_by_arm'),
+        'test_accounting':result.get('test_accounting'),
+        'wall_scope':result.get('wall_scope'),
+        'posthoc_review':result.get('posthoc_review'),
+        'heldout_exposure':result.get('test_contract',{}).get('mode','historical_exploratory'),
         'historical_A_B_C':'descriptive external references only','test_used_for_selection':False,
         'shadow_calls':0,'team_commits':0,'automatic_rerun_authorized':False}
 
@@ -276,7 +367,8 @@ def publish(root,run,public):
         'Both arms use the same pinned native GEPA engine; only current_best versus pareto parent selection differs.',
         'No reference candidate filter or extra content/length/nonempty/no-op guard runs; native acceptance is not semantic or anti-copy certification.',
         'Three repeats per arm use seed42, identical frozen data and repeat-scoped paired Solver realizations.',
-        'Each repeat permits20 native iterations; this does not imply equal physical or logical compute.','',
+        'Each repeat caps native logical evaluations at3000; complete-iteration reservation prevents overshoot.',
+        'Matched solver-evaluation budget, not exactly matched total compute. No money is calculated.','',
         '| Arm | Repeat | Initial Optimize | Selected Optimize | Initial Validation | Selected Validation | Test |',
         '|---|---:|---:|---:|---:|---:|---:|']
     for s,t in zip(summary['selections'],result['test_results'],strict=True):
@@ -289,4 +381,6 @@ def publish(root,run,public):
     (public/'README.md').write_text('\n'.join(lines),encoding='utf-8',newline='\n')
     from ..audit import audit_public_paths
     if audit_public_paths(list(public.glob('*'))):raise ProtocolViolation('PUBLIC_REPORT_SANITIZATION_FAILED')
+    from .figures import render
+    render(run,public/'figures',fake=False)
     return summary

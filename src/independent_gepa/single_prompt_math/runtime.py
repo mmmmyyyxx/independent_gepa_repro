@@ -14,7 +14,9 @@ from ..protocol import ProtocolViolation
 from .common import Abort,canonical,digest,read,write,progress
 from .math_flexible_answer import classify_prediction
 from .math_prediction_validity import resolve_predictions
-from .math_domain_v2 import score,worker_deadline
+from .math_domain_v2 import worker_deadline
+from .scoring import score
+from .tokens import TokenLedger
 from .prompt import solver_messages
 from .recovery import transport_failure,retry_delay,retry_local_worker,TransientProviderPayload,ReflectionUnavailable
 
@@ -88,6 +90,7 @@ class Runtime:
         self.roles={r:{'physical_attempts':0,'successes':0,'charged_tokens':0,'input_tokens':0,
             'output_tokens':0,'fallback_usage_calls':0,'network_failed_attempts':0} for r in ('solver','reflection')}
         self.logical={};self.cache_hits=0;self.cache={};self.futures={}
+        self.tokens=TokenLedger(directory)
         self.test_release_check=None;self.provider_cooldowns={};self.retry_categories={}
         if open_event:self.event('OPEN',attempt_identity=identity,phase=self.phase)
 
@@ -100,6 +103,7 @@ class Runtime:
             self.last_hash=digest(row)
             with (self.directory/'accounting.jsonl').open('ab') as stream:
                 stream.write(canonical({**row,'event_sha256':self.last_hash})+b'\n');stream.flush();os.fsync(stream.fileno())
+            self.tokens.consume(row)
 
     def snapshot(self):
         with self.lock:
@@ -109,6 +113,10 @@ class Runtime:
                 'phase_successful_responses_by_arm':self.arm_successes,
                 'roles':self.roles,'transient_failure_attempts_by_category':self.retry_categories,'logical_evaluations':self.logical,'cache_hits':self.cache_hits,
                 'last_event_sha256':self.last_hash})
+
+    def token_snapshot(self,repeat=None):
+        with self.lock:
+            return self.tokens.view(self.phase,self.arm,repeat)
 
     def guard(self):
         if self.failed.is_set() or (self.directory/'STOP').exists():raise Abort('EXPERIMENT_STOPPED')
@@ -164,8 +172,13 @@ class Runtime:
             self.event('LOCAL_WORKER_RETRY',phase=self.phase,arm=self.arm,repeat=repeat,split=split,
                        stage=stage,key=key,**event)
             progress(f'LOCAL_WORKER_RETRY stage={stage} phase={self.phase} category={event["category"]} retry={event["retry_index"]}')
-        return retry_local_worker(operation,self.config,self.config['local_worker_initial_deadlines_seconds'][self.phase],
-                                  check=self.guard,wait=self.delay,on_retry=record)
+        try:
+            return retry_local_worker(operation,self.config,self.config['local_worker_initial_deadlines_seconds'][self.phase],
+                                      check=self.guard,wait=self.delay,on_retry=record)
+        except ProtocolViolation as exc:
+            self.event('LOCAL_WORKER_TERMINAL',phase=self.phase,arm=self.arm,repeat=repeat,split=split,
+                       stage=stage,key=key,category=str(exc))
+            raise
 
     def complete(self,role: str,messages: list,repeat: int,split: str,capacity: int|None=None,logical_key: str|None=None):
         if (self.arm not in self.config['arms'] or repeat not in (1,2,3) or self.phase not in ('search','test')

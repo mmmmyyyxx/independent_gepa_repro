@@ -1,0 +1,15 @@
+identity: GEPA_POSTHOC_CONTENT_REVIEW_V6
+mode: observation_only_never_filter_reselect_or_change_score
+long_reference_min_characters: 12
+solution_fragment_min_tokens: 16
+solution_fragment_min_characters: 80
+normalize_math_variants: true
+short_reference_requires_explicit_example_context: true
+fixed_constant_output_detection: explicit_unconditional_output_literal
+manual_rubric:
+- general_mathematical_technique
+- specific_training_example_or_reference
+- instance_identity_lookup
+- ambiguous_needs_review
+scope: all_generated_and_selected_candidates
+review_model_calls: 0

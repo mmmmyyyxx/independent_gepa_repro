@@ -23,7 +23,9 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture(scope='module')
-def config():return load_config(ROOT)
+def config():
+    # Small synthetic budget for lifecycle tests; production remains exactly3000.
+    return {**load_config(ROOT),'native_logical_budget':330}
 
 
 @pytest.fixture(scope='module')
@@ -115,7 +117,7 @@ def complete_fake(request,tmp_path_factory,config,models,initial):
     monkeypatch=pytest.MonkeyPatch()
     # Warm only the numeric fixtures, avoiding an artificial cold-start stampede
     # from an instant fake transport under production Solver32 concurrency.
-    from independent_gepa.single_prompt_math.math_domain_v2 import score
+    from independent_gepa.single_prompt_math.scoring import score
     for answer in ('0','1'):score(classify_prediction('Final answer: '+answer),'1')
     bundle=tmp_path/'bundle';manifest=fixture_bundle(bundle,models,initial)
     frozen={'config':config,'bundle_hash':manifest['bundle_hash'],'fake_only_fixture':True}
@@ -140,7 +142,8 @@ def complete_fake(request,tmp_path_factory,config,models,initial):
     def observed(**kwargs):
         common={k:v for k,v in kwargs.items() if k not in
                 ('adapter','reflection_lm','run_dir','logger','callbacks','trainset','valset','stop_callbacks')}
-        common['stop_max_proposals']=kwargs['stop_callbacks'].max_proposals
+        common['stop_max_proposals']=kwargs['stop_callbacks'].safety_proposals
+        common['native_logical_budget']=kwargs['stop_callbacks'].limit
         captured.append(common);return real_optimize(**kwargs)
     monkeypatch.setattr(search,'optimize',observed)
     run=tmp_path/'run';result=execute(ROOT,bundle,freeze,run,transport_override=transport)
@@ -152,7 +155,7 @@ def test_complete_six_cell_pipeline_and_paired_realizations(complete_fake):
     f=complete_fake;r=f.result
     assert r['status']=='EXECUTION_COMPLETE' and r['fake_provider']
     assert len(r['selections'])==len(r['test_results'])==6
-    assert all(s['seed']==42 and s['native_iterations']==20 for s in r['selections'])
+    assert all(s['seed']==42 and s['native_budget']['used']<=330 and s['native_budget']['stop_reason']=='insufficient_complete_iteration_budget' for s in r['selections'])
     assert {s['arm'] for s in r['selections']}=={'strict_validation','native_pareto'}
     assert r['accounting']['pending_physical_attempts']==0
     assert all(s['generated']>0 for s in r['selections']), 'silent proposer failures must not pass'
@@ -189,6 +192,32 @@ def test_wire_tamper_detected_independently(complete_fake):
     try:
         with pytest.raises(ProtocolViolation,match='WIRE'):reconcile(f.run,f.bundle,include_test=True)
     finally:write(path,original)
+
+
+def test_v6_independent_budget_prefix_and_posthoc_tamper_detection(complete_fake):
+    f=complete_fake
+    folder=f.run/'native_pareto/repeat_1'
+    cases=[(folder/'native_budget.json',lambda d:d.update(used=d['used']+1),'BUDGET'),
+           (folder/'mechanism_events.json',lambda d:d[0].update(search_tokens=d[0]['search_tokens']+1),'COST_PREFIX'),
+           (folder/'iterations.json',lambda d:d[0].update(parent_only_correct=d[0]['parent_only_correct']+1),'COMPLEMENTARITY'),
+           (folder/'test_accounting.json',lambda d:d['tokens']['actual_dispatch'].update(accounted_tokens=1),'TEST_TOKEN'),
+           (f.run/'posthoc_content.json',lambda d:d['cells'][0]['selected'].update(risk_flag=not d['cells'][0]['selected']['risk_flag']),'POSTHOC')]
+    for path,mutate,category in cases:
+        original=path.read_bytes();value=read(path);mutate(value);write(path,value)
+        try:
+            with pytest.raises(ProtocolViolation,match=category):reconcile(f.run,f.bundle,include_test=True)
+        finally:path.write_bytes(original)
+    from independent_gepa.single_prompt_math.figures import audit_figures
+    audit_figures(f.run/'figures')
+
+
+def test_v6_posthoc_observer_never_calls_solver_or_changes_selected_winner(complete_fake):
+    from independent_gepa.single_prompt_math import posthoc
+    f=complete_fake;before=len(f.fake.calls)
+    hashes={p:file_hash(p) for p in f.run.rglob('selection.json')}
+    review=posthoc.audit_run(f.run,read(f.bundle/'optimize.json'),posthoc.load_policy(ROOT),persist=False)
+    assert review['changes_to_native_selection']==0 and len(f.fake.calls)==before
+    assert all(file_hash(p)==sha for p,sha in hashes.items())
 
 
 @pytest.mark.parametrize('arm',['strict_validation','native_pareto'])
@@ -361,7 +390,7 @@ def test_independent_receipt_replay_recovers_local_timeout_without_model_call(co
 @pytest.mark.parametrize('kind',['geometry','gradient','fixed_answer','long','empty','no_op'])
 def test_native_only_candidate_policy_has_no_reference_filter(tmp_path,config,models,initial,kind):
     from independent_gepa.single_prompt_math.prompt import solver_messages
-    cfg=deepcopy(config);cfg['max_native_iterations']=1
+    cfg=deepcopy(config);cfg['max_native_proposals']=1
     text={'geometry':'If the problem is geometric, introduce coordinates.',
           'gradient':'Use the gradient to locate stationary points.',
           'fixed_answer':'Always output 7.','long':'A'*4001,'empty':'','no_op':initial['role']}[kind]
@@ -384,7 +413,7 @@ def test_native_only_candidate_policy_has_no_reference_filter(tmp_path,config,mo
 
 
 def test_exhausted_reflection_uses_native_no_proposal_instead_of_empty_child(tmp_path,config,models,initial):
-    cfg=deepcopy(config);cfg['max_native_iterations']=2;counts={'reflection':0,'solver':0}
+    cfg=deepcopy(config);cfg['max_native_proposals']=2;counts={'reflection':0,'solver':0}
     def transport(role,request):
         counts[role]+=1
         return response('unfinished','length') if role=='reflection' else response('Final answer:0')
@@ -408,7 +437,7 @@ def test_native_pareto_can_choose_complementary_lower_aggregate_parent():
 
 
 def test_content_filtered_reflection_skips_native_opportunity_without_aborting(tmp_path,config,models,initial):
-    cfg=deepcopy(config);cfg['max_native_iterations']=2;calls=[]
+    cfg=deepcopy(config);cfg['max_native_proposals']=2;calls=[]
     def transport(role,request):
         calls.append(role)
         return response('','content_filter') if role=='reflection' else response('Final answer:0')

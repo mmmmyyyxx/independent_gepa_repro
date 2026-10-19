@@ -188,6 +188,8 @@ def restore_runtime(directory,frozen,policy,models,transport,check):
     rt.successes=snapshot['phase_successful_semantic_responses'];rt.arm_successes=deepcopy(snapshot['phase_successful_responses_by_arm'])
     rt.roles=deepcopy(snapshot['roles']);rt.logical=deepcopy(snapshot['logical_evaluations']);rt.cache_hits=snapshot['cache_hits']
     rt.retry_categories=deepcopy(snapshot['transient_failure_attempts_by_category']);rt.phase='test'
+    from .tokens import TokenLedger
+    rt.tokens=TokenLedger.replay(directory)
     rt.cache={p.stem:read(p) for p in (directory/'cache').glob('*.json')}
     for selection in read(directory/'SEARCH_COMPLETE.json')['selections']:
         rt.registered.add((selection['arm'],selection['repeat_id'],selection['selected_hash']))

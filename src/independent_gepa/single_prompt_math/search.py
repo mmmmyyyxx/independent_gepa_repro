@@ -1,4 +1,4 @@
-"""Unmodified upstream GEPA search with observable, guarded component boundaries."""
+"""Unmodified upstream GEPA search with registered, observable component boundaries."""
 from __future__ import annotations
 
 from copy import deepcopy
@@ -7,7 +7,6 @@ from pathlib import Path
 
 from gepa import optimize
 from gepa.core.adapter import EvaluationBatch
-from gepa.utils import MaxCandidateProposalsStopper
 
 from ..protocol import ProtocolViolation
 from .common import Abort,digest,write,progress
@@ -96,19 +95,19 @@ class History:
 
 class Adapter:
     propose_new_texts=None
-    def __init__(self,runtime,repeat,initial,optimize_rows,validation_rows):
+    def __init__(self,runtime,repeat,initial,optimize_rows,validation_rows,budget=None):
         self.runtime=runtime;self.repeat=repeat;self.reflection_examples=[];self.pending=None
         self.members={r['stable_example_id']:(split,r) for split,rows in
             (('optimize',optimize_rows),('validation',validation_rows)) for r in rows}
         self.decisions={candidate_hash(initial):{'native_parseable':True,'origin':'frozen_initial'}}
         self.native_metric_calls=0;self.reflection_calls=0
+        self.budget=budget
 
     def evaluate(self,batch,candidate,capture_traces=False):
         try:
             sha=candidate_hash(candidate);decision=self.decisions.get(sha)
             if self.pending and sha==self.pending['candidate_hash'] and not capture_traces:decision=self.pending
             if decision is None:raise Abort('NATIVE_CANDIDATE_WITHOUT_REGISTRATION_RECORD')
-            self.native_metric_calls+=len(batch)
             split=None
             for row in batch:
                 member=self.members.get(row['stable_example_id'])
@@ -116,6 +115,9 @@ class Adapter:
                 if split is not None and split!=member[0]:raise Abort('MIXED_NATIVE_SPLIT_BATCH')
                 split=member[0]
             if capture_traces and split!='optimize':raise Abort('VALIDATION_REFLECTION_FEEDBACK_FORBIDDEN')
+            if self.budget is None:raise Abort('NATIVE_BUDGET_BINDING_REQUIRED')
+            self.budget.admit(len(batch),'parent_trace' if capture_traces else split)
+            self.native_metric_calls+=len(batch)
             prompt=SystemPrompt.from_dict(candidate)
             outputs=self.runtime.evaluate(prompt,batch,self.repeat,split)
             traces=[{'row':row,'observation':output} for row,output in zip(batch,outputs,strict=True)] if capture_traces else None
@@ -148,13 +150,19 @@ class Adapter:
 
 
 def run_repeat(runtime,config,initial,optimize_rows,validation_rows,directory: Path,repeat: int):
+    import time
+    from .budget import NativeBudget
+    from .telemetry import MechanismHistory
+    started=time.monotonic()
     directory.mkdir(parents=True)
     initial={k:initial[k] for k in config['mutable_components']}
+    budget=NativeBudget(config['native_logical_budget'],len(validation_rows),config['reflection_minibatch_size'],config['max_native_proposals'])
     root_prompt=SystemPrompt.from_dict(initial)
     runtime.register_prompt(root_prompt,repeat)
     before=runtime.evaluate(root_prompt,optimize_rows,repeat,'optimize','initial_diagnostic')
     write(directory/'initial_optimize.json',before)
-    adapter=Adapter(runtime,repeat,initial,optimize_rows,validation_rows);history=History(adapter,directory)
+    adapter=Adapter(runtime,repeat,initial,optimize_rows,validation_rows,budget)
+    history=MechanismHistory(adapter,directory,validation_rows,budget,config['budget_milestones'])
     # Keep upstream logging containing private prompts exclusively in the ignored run directory.
     class PrivateLogger:
         @fail_closed
@@ -167,7 +175,7 @@ def run_repeat(runtime,config,initial,optimize_rows,validation_rows,directory: P
         module_selector=config['module_selector'],
         skip_perfect_score=config['skip_perfect_score'],use_merge=config['use_merge'],
         cache_evaluation=config['cache_evaluation'],val_evaluation_policy=config['val_evaluation_policy'],
-        stop_callbacks=MaxCandidateProposalsStopper(config['max_native_iterations']),seed=config['seed'],
+        stop_callbacks=budget,seed=config['seed'],
         run_dir=str(directory/'native'),logger=PrivateLogger(),callbacks=[history],
         display_progress_bar=False,raise_on_exception=True)
     selected=result.best_candidate;sha=candidate_hash(selected)
@@ -176,6 +184,7 @@ def run_repeat(runtime,config,initial,optimize_rows,validation_rows,directory: P
     write(directory/'search_result.json',{**result.to_dict(),'engine':'unmodified_native_gepa_v0.1.1'})
     history.save()
     after=runtime.evaluate(SystemPrompt.from_dict(selected),optimize_rows,repeat,'optimize','selected_diagnostic')
+    history.finish()
     write(directory/'selected_optimize.json',after)
     old=[x['correct'] for x in before];new=[x['correct'] for x in after]
     record={'arm':runtime.arm,'repeat_id':repeat,'seed':42,'selected':selected,'selected_hash':sha,
@@ -192,6 +201,8 @@ def run_repeat(runtime,config,initial,optimize_rows,validation_rows,directory: P
         'selected_optimize_correct':sum(new),'old_correct_retained':sum(a and b for a,b in zip(old,new,strict=True)),
         'old_correct_lost':sum(a and not b for a,b in zip(old,new,strict=True)),
         'newly_correct':sum(not a and b for a,b in zip(old,new,strict=True)),
+        'native_budget':{k:v for k,v in budget.summary().items() if k!='batches'},
+        'wall_seconds':time.monotonic()-started,'tokens':runtime.token_snapshot(repeat),
         'selector':config['selectors'][runtime.arm],'selection':'unmodified_native_result_best_candidate'}
     write(directory/'selection.json',record)
     return record

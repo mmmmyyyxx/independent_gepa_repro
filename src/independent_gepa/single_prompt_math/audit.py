@@ -14,7 +14,8 @@ from .bundle import load_rows,validate_bundle
 from .common import Abort,digest,read,canonical
 from .math_flexible_answer import classify_prediction
 from .math_prediction_validity import resolve_predictions
-from .math_domain_v2 import score,worker_deadline
+from .math_domain_v2 import worker_deadline
+from .scoring import score
 from .prompt import SystemPrompt,solver_messages
 from .runtime import Runtime,serialized_request,validate_response
 from .recovery import retry_local_worker,retry_delay,RetryDecision
@@ -31,8 +32,10 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
     replay_config=cfg if recovery_policy_config is None else recovery_policy_config
     initial=SystemPrompt.from_dict(read(bundle/'initial.json'));models=read(bundle/'model_contract.json')
     prototype=Runtime.__new__(Runtime);prototype.models=models
-    splits={s:load_rows(bundle,s,'test' if s=='test' else 'search')
-            for s in (('optimize','validation','test') if include_test else ('optimize','validation'))}
+    splits={s:load_rows(bundle,s,'search') for s in ('optimize','validation')}
+    if include_test:
+        from .heldout import load_test,contract
+        splits['test']=load_test(bundle,frozen.get('test_contract') or contract(bundle),directory.parent.parent)
     by_id={s:{r['stable_example_id']:r for r in rows} for s,rows in splits.items()}
     prompts={};proposals={}
     for arm in cfg['arms']:
@@ -51,7 +54,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
     logical_contexts=set();successes=Counter();logical_by_cell=Counter()
     calls={};awaiting_retry={};ready_retry=set();retry_categories=Counter();role_failures=Counter()
     allowed_kinds={'OPEN','CANDIDATE_REGISTERED','LOGICAL_SOLVER','RESERVE','FAILURE_CHARGE','RESPONSE_CHARGE',
-        'CACHE_HIT','SOLVER_RESOLVED','REFLECTION_TRUNCATION_EXHAUSTED','SAME_PAID_ANSWER_LOCAL_SCORE_TIMEOUT',
+        'CACHE_HIT','SOLVER_RESOLVED','REFLECTION_TRUNCATION_EXHAUSTED','SAME_PAID_ANSWER_LOCAL_SCORE_TIMEOUT','LOCAL_WORKER_TERMINAL',
         'SAME_PAID_ANSWER_EXTRACTION_TIMEOUT','SEARCH_ACCOUNTING_CLOSED','TEST_PHASE_OPEN','PROVIDER_RETRY','LOCAL_WORKER_RETRY','REFLECTION_UNAVAILABLE','CONTINUATION_OPEN'}
     for line in (directory/'accounting.jsonl').read_bytes().splitlines():
         event=json.loads(line);value=dict(event);sha=value.pop('event_sha256')
@@ -59,6 +62,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
             raise ProtocolViolation('AUDIT_ACCOUNTING_HASH_CHAIN')
         previous=sha;kind=event['kind']
         if kind not in allowed_kinds:raise ProtocolViolation('AUDIT_UNKNOWN_EVENT')
+        if kind=='LOCAL_WORKER_TERMINAL':raise ProtocolViolation('AUDIT_UNRESOLVED_LOCAL_COMPUTATION')
         if kind=='OPEN' and event['attempt_identity']!=identity:raise ProtocolViolation('AUDIT_ATTEMPT_IDENTITY')
         if kind=='CONTINUATION_OPEN':
             continuation=read(directory/'continuation_frozen.json');content=dict(continuation);cid=content.pop('identity')
@@ -227,7 +231,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
                 raise ProtocolViolation('AUDIT_NATIVE_VALIDATION_AGGREGATE')
         generated=[r for (a,rep,n),r in proposals.items() if a==arm and rep==repeat]
         iterations=read(folder/'iterations.json')
-        if (len(iterations)!=cfg['max_native_iterations'] or len(generated)>cfg['max_native_iterations']
+        if (len(iterations)>cfg['max_native_proposals'] or len(generated)>len(iterations)
             or selection['generated']!=len(generated) or selection['native_parseable']!=len(generated) or selection.get('semantic_guard_evaluated') is not False):
             raise ProtocolViolation('AUDIT_FUNNEL_OR_ITERATION_BOUND')
         if (selection['full_validation_evaluated']!=len(native['candidates'])-1
@@ -264,6 +268,10 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
     if (snapshot['transient_failure_attempts_by_category']!=dict(retry_categories)
         or any(snapshot['roles'][r]['network_failed_attempts']!=role_failures[r] for r in ('solver','reflection'))):
         raise ProtocolViolation('AUDIT_TRANSIENT_FAILURE_COUNTERS')
+    from .conformance import reconcile_v6
+    token_ledger=reconcile_v6(directory,cfg,splits)
+    if token_ledger.view()['actual_dispatch']['accounted_tokens']!=snapshot['charged_tokens']:
+        raise ProtocolViolation('AUDIT_UNIFIED_TOKEN_ACCOUNTING')
     return {'identity':'NATIVE_GEPA_SINGLE_PROMPT_INTEGRITY_AUDIT_V1','status':'PASS','attempt_identity':identity,
         'include_test':include_test,'incomplete_test_preparation_only':allow_incomplete_test,
         'charged_tokens':sum(charged.values()),'physical_attempts':sum(physical.values()),

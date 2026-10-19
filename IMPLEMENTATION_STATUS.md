@@ -1,6 +1,55 @@
 # Implementation status
 
-Updated: 2026-10-16
+Updated: 2026-10-19
+
+## V6 default single-Prompt engineering completed offline
+
+The [V6 preparation report](reports/gepa_single_prompt_v6_preparation_20261019/README.md)
+registers the new default single-Prompt schema/config with seed42 and three repeats
+per native selector. The3000-call cap includes seed Validation, Parent/child
+minibatches and Full. An outcome-blind106-call reserve and atomic pre-batch check
+prevent overshoot; there is no20-round cap or added candidate content gate.
+
+Optimize/Validation/Test/audit share the unchanged V5 repaired mathematical
+algorithm; all5346 old graded observations replayed unchanged. Native callbacks
+and independent RNG/ledger-prefix audits cover Parent complementarity, descendant
+conversion, token attribution and availability-safe curves. All five figures export
+as SVG/PNG. Test metrics are sidecars, retaining strict scientific result schemas.
+Token-only accounting follows the user's clarification; no prices are calculated.
+
+The complete current offline verification passed336 tests, including33 V6-specific
+cases, production compileall, pins, frozen bundle, metadata/curve tamper checks,
+three complete six-cell mock scenarios and scoring parity. Real model requests
+and tokens0. An initial metadata-schema failure was repaired without loosening
+immutable result checks. Earlier audit sections and unrelated files are preserved.
+
+Fresh confirmatory Test eligibility cannot be established without a complete
+reviewed exposure inventory. Historical Test300 remains exploratory; the code
+rejects relabeling/reidentifying old Test rows as fresh data. READY_TO_RUN=false:
+source is uncommitted, no exact V6 attempt is frozen, and no API authorization was
+granted. No automatic execution, Git commit, push or old-scope reuse occurred.
+
+## October19 expansion audit, no runtime changes
+
+The completed V5 result remains preserved. The user's replacement direction keeps
+seed42 and three repeats, superseding the attachment's distinct-seed suggestion.
+The [offline expansion audit](reports/gepa_single_prompt_extension_audit_20261019/README.md)
+replayed120 native Parent/minibatch choices exactly. Pareto chose strictly below-best
+Parents28/60 times, generating15 children and9 Full profiles; two became new
+Validation aggregate bests. Selected Pareto repeats1/3 retain specific training
+reference literals, confirmed against their own reflection sources. This is a
+post-hoc interpretation limitation, not retrospective native rejection.
+
+Budget admission and search-wide repaired scoring need engineering before expansion:
+native metric thresholds can overshoot by105 for the current106-call maximum
+iteration, and the default loader/audit still require20 opportunities. The current
+V5 scorer amendment remains Test-only. The audit recommends a non-executable
+3000-native-evaluation target per cell (six cells, all seed42), with separate
+diagnostic/Test accounting and outcome-blind complete-iteration reservation.
+No production/config files, prompts, seeds or historical evidence changed.
+New model calls/tokens0; no commit/push. READY_TO_RUN=false for the expansion.
+The296-test offline source receipt was reused after inventory equality; new
+verification comprises mechanism/ledger/content checks and five fake budget cases.
 
 ## October16 user-authorized V5 scoring repair and continuation
 

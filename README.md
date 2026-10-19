@@ -1,5 +1,21 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
+The [V6 single-Prompt preparation](reports/gepa_single_prompt_v6_preparation_20261019/README.md)
+is now the default for `scripts/single_prompt_gepa.py`. It caps each of six
+native searches at3000 logical evaluations, retains seed42, binds V5 scoring to
+all phases, and exports token/selection diagnostics and five curves. The complete
+offline suite passed336 tests; all5346 historical grades replayed unchanged.
+No real experiment, commit or push is authorized. Fresh Test provenance remains
+unverified, and READY_TO_RUN=false. Historical configs/results below are preserved.
+
+The [October19 expansion audit](reports/gepa_single_prompt_extension_audit_20261019/README.md)
+replays all120 Parent/minibatch choices, identifies two non-best-Parent new bests,
+and records training-reference literals in two selected Pareto candidates.
+The proposed budget-driven replacement keeps seed42 and three repeats; it is
+HOLD for engineering and fresh formal authorization. The
+[completed V5 result](reports/gepa_single_prompt_native_v5_results_20261016/README.md)
+remains historical evidence. No expanded experiment has started.
+
 The October16 user-authorized [V5 scoring repair and sealed-Test continuation](docs/gepa_single_prompt_scoring_continuation_v5.md)
 addresses pathological symbolic expansion using bounded exact separation and
 explicit unresolved-computation escalation. Search, final prompts, memberships,

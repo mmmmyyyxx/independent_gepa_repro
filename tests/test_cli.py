@@ -8,6 +8,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = [
+    "replay_single_prompt_v5_scores.py",
     "continue_single_prompt_gepa.py",
     "single_prompt_gepa.py",
     "verify_single_prompt_gepa_offline.py",

@@ -2,6 +2,28 @@
 
 Updated: 2026-10-20
 
+## Initial Prompt baseline and scorer/update diagnosis completed
+
+Baseline Test300 scores231/224/225 average75.56%. Repeat2 reuses the audited
+CurrentBest repeat2 final Prompt, which is byte-identical to the initial Prompt;
+repeats1 and3 use isolated fresh request identities. New usage is634 successful
+Test/Solver requests,434,655 tokens and600 logical evaluations; no network failure,
+search or Reflection call occurred. Fresh-process replay of all600 new and300
+reused observations passed. The unchanged367-pass/2-skip offline suite was reused,
+with a separate600-observation zero-network orchestration and tamper smoke.
+
+The [scorer/update diagnostic](reports/gepa_baseline_update_scoring_audit_20261020/README.md)
+checks all2,400 unique baseline/GEPA Test observations: V7 reproduces all grades;
+V5 reproduces2,399 and times out only on the original already-disclosed paid case,
+which V7 grades false. All900 baseline grades agree across versions. Native
+CurrentBest global-best refresh counts are2/0/3; Pareto4/1/3. Invalid outputs are
+14/900 baseline,23/900 CurrentBest and27/900 Pareto. These are exploratory
+descriptive diagnostics and do not isolate a causal mechanism.
+
+The user subsequently authorized publication of the reports and metadata.
+Production algorithm source remains unchanged; the publication adds no model
+calls. See the [baseline and six-group table](reports/initial_prompt_test300_baseline_repeat3_20261020/README.md).
+
 ## V7 Test scoring repair and continuation completed
 
 All six selected winners completed historical exploratory Test300. Strict scores

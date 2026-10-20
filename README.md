@@ -1,5 +1,13 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
+The [initial-Prompt baseline](reports/initial_prompt_test300_baseline_repeat3_20261020/README.md)
+is complete:231/224/225 on Test300, mean75.56%. One exact initial-Prompt profile
+was reused and two independent repeat scopes added634 Solver requests/434,655
+tokens. The [update and scorer audit](reports/gepa_baseline_update_scoring_audit_20261020/README.md)
+replays2,400 unique final Test observations: no resolved V5/V7 verdict changes.
+The baseline and diagnostic reports include sanitized evidence and the six-group
+comparison; the user subsequently authorized their publication.
+
 The [V7 Test scoring repair and continuation](reports/gepa_single_prompt_v7_test_results_20261020/README.md)
 is complete. Final integrity reconciliation passed; all six frozen winners have
 Test300 results. Strict Validation scored227/224/227 and native Pareto220/229/222,
@@ -8,7 +16,7 @@ establish a stable Pareto advantage. The repair preserved all17,459 old grades,
 resolved one paid observation locally and acquired only672 missing Test/Solver
 responses,657,304 tokens. No search or winner selection was rerun. Two final
 prompts carry automatic content-review flags; semantic legitimacy is not
-certified. Local commits are authorized; no push was performed.
+certified. The V7 repair and results were published as `df19bf8` before this baseline task.
 
 [V6 attempt2](reports/gepa_single_prompt_v6_attempt2_launch_20261019/README.md)
 was started after a new explicit user authorization on2026-10-19

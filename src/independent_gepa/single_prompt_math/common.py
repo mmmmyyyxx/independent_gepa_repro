@@ -64,6 +64,7 @@ def source_inventory(root: Path) -> dict[str,str]:
            *root.joinpath('tests').rglob('*.py'),root/'AGENTS.md',root/'pyproject.toml',
            root/'configs/gepa_single_prompt_math_seed42_repeat3.yaml',
            root/'configs/gepa_single_prompt_math_v6.yaml',root/'configs/gepa_single_prompt_posthoc_v6.yaml',
+           root/'configs/gepa_single_prompt_scoring_continuation_v7.yaml',root/'docs/gepa_single_prompt_scoring_continuation_v7.md',
            root/'docs/gepa_single_prompt_math_v6.md',root/'docs/gepa_single_prompt_compute_v6.md',
            root/'docs/gepa_single_prompt_analysis_v6.md',
            root/'docs/gepa_single_prompt_math_v1.md',

@@ -1,0 +1,15 @@
+identity: GEPA_SCORING_CONTINUATION_V7
+interval_precision_bits: 64
+interval_max_nodes: 256
+interval_max_arithmetic_bits: 4096
+interval_max_finite_power: 256
+interval_max_exponent_bits: 256
+separation_factor: 2
+separation_margin: 2
+local_timeout_attempts_at_ceiling: 2
+reuse_parent_paid_responses: true
+replay_all_existing_scores_before_provider_access: true
+new_search_or_reflection_calls: false
+test_memberships_and_final_prompts: frozen_parent
+network_and_temporary_resource_retries: unchanged_indefinite
+large_power_exponent_lower_bound: floor_certified_closed_real_interval

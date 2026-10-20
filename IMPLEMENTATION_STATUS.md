@@ -1,6 +1,74 @@
 # Implementation status
 
-Updated: 2026-10-19
+Updated: 2026-10-20
+
+## V7 Test scoring repair and bounded continuation in progress
+
+The final current-source offline suite passed367 tests, with31 V7 cases and
+two explicitly skipped duplicate integration scenarios. The
+[offline acceptance](reports/gepa_single_prompt_v7_preparation_20261020/README.md)
+is separate from the still-running real-parent grade/import gate. No new model
+calls are permitted until that gate and the fresh exact freeze succeed.
+
+V6 attempt2 completed all six searches and passed its sealed search audit. Its
+native budgets sum17624/18000. Strict Test profiles227/224/227 are complete;
+Pareto repeat1 stopped on unresolved local symbolic grading. The original
+attempt and all paid observations are preserved. Its accounting records20415
+physical attempts and30872155 charged tokens, including conservative failed
+request bounds; these are not new continuation calls.
+
+The user requested repair and Test completion and authorized a local commit,
+without a push. V7 adds a bounded exact lower-exponent certificate, keeping
+pinned parsing/fallback and the V5 algorithm unchanged. The stalled paid
+observation now grades locally in under a second;17 dedicated tests pass.
+Full offline gates and pointwise parent-score reconciliation are in progress.
+Only missing Test/Solver observations may be acquired after exact freeze;
+no search, Reflection, winner selection or paid-response resampling is allowed.
+
+## V6 attempt2 authorized and running
+
+The user explicitly authorized attempt2 after the path correction. A new frozen
+identity and single-use scope started the process on2026-10-19 at20:45
+Asia/Shanghai. Its short clean checkout retains source61d42b8, inventorydb31a411,
+all scientific settings and the matching336-test receipt. No old cache,
+checkpoint or authorization is reused. Paid answers and grades persist beyond
+the previous32-response failure boundary. The new two-hour monitor passed its
+initial check and remains enabled. See the
+[launch report](reports/gepa_single_prompt_v6_attempt2_launch_20261019/README.md).
+No code change, commit or push is part of this startup.
+
+## V6 attempt1 aborted; attempt2 path correction prepared
+
+The user authorized formal execution after acceptance. Attempt1 consumed its
+new single-use scope and32 Solver responses,15053 tokens, then aborted in initial
+Optimize diagnostics before native search, Reflection or Test. The deep checkout
+made the atomic paid-answer temporary path265 characters; a synthetic writer
+reproduces the filesystem failure. All32 response contracts pass offline replay;
+31 parse valid and one model-invalid. No new API calls were used for diagnosis.
+
+The [postmortem and attempt2 plan](reports/gepa_single_prompt_v6_attempt1_launch_20261019/README.md)
+preserve the failed attempt and prepare a shorter clean source61d42b8 checkout.
+Production preflight and71 atomic filesystem probes pass; maximum checked
+proposed path174 characters. Scientific settings and code remain unchanged.
+The336-test evidence is reused after exact source-inventory equality. At that
+preparation stage, attempt2 had no authorization or calls. The later explicit
+approval and startup are recorded above; automatic resume/rerun remain denied. The failed attempt's scheduled monitor
+is disabled after its terminal alert. No new commit or push occurred.
+
+## V6 post-commit acceptance for source61d42b8
+
+The V6 preparation was pushed as `61d42b82b87a4198764641e5b6875a44308b11e5`.
+The publication-only LF normalization changed the source inventory, so the older
+complete offline receipt cannot satisfy the current freeze. The separate
+[post-commit acceptance](reports/gepa_single_prompt_v6_postcommit_acceptance_20261019/README.md)
+records a fresh complete offline run and an isolated exact-source freeze/startup
+smoke; the original preparation and publication receipts remain unchanged.
+
+The user selected the historical Test300 contract for exploratory comparison
+only. No newly unexposed Test is certified. At acceptance time, formal API
+authorization was pending. The later authorized startup and consumed failed
+scope are recorded above; that grant is unavailable for attempt2. Runtime algorithms, scientific settings and source identity
+remain the committed61d42b8 version.
 
 ## V6 default single-Prompt engineering completed offline
 
@@ -26,8 +94,10 @@ immutable result checks. Earlier audit sections and unrelated files are preserve
 Fresh confirmatory Test eligibility cannot be established without a complete
 reviewed exposure inventory. Historical Test300 remains exploratory; the code
 rejects relabeling/reidentifying old Test rows as fresh data. READY_TO_RUN=false:
-source is uncommitted, no exact V6 attempt is frozen, and no API authorization was
-granted. No automatic execution, Git commit, push or old-scope reuse occurred.
+at preparation time the source was uncommitted and no exact V6 attempt or API
+authorization existed. That historical receipt is preserved. Publication and
+current acceptance status are recorded in the newer section above; old scopes
+remain unusable.
 
 ## October19 expansion audit, no runtime changes
 

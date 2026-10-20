@@ -1,12 +1,38 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
+The user requested a [V7 Test scoring repair](docs/gepa_single_prompt_scoring_continuation_v7.md)
+after V6 attempt2 completed all six searches but aborted on a local Test
+computation. Offline verification and paid-response import are in progress.
+The repair retains all final winners, completed Test profiles and original
+request identities; it permits only missing Test/Solver observations. A local
+commit is authorized, while a push and new search are not.
+
+[V6 attempt2](reports/gepa_single_prompt_v6_attempt2_launch_20261019/README.md)
+was started after a new explicit user authorization on2026-10-19
+at20:45 Asia/Shanghai from a clean short-path61d42b8 checkout. Paid answers and
+grades are persisting successfully. Both selectors retain seed42, three repeats,
+3000 native evaluations per cell and historical exploratory Test300. Token and
+transient retry counts are uncapped. The process subsequently aborted in final
+Test scoring; all six searches are complete. Its terminal monitor is disabled.
+
+The user-authorized [V6 attempt1](reports/gepa_single_prompt_v6_attempt1_launch_20261019/README.md)
+aborted during initial diagnostics because an atomic paid-answer temporary path
+exceeded the host Windows path limit. Native search and Test had not started.
+All32 paid responses and15053 tokens are accounted and preserved. A fresh shorter
+checkout passes source preflight and71 filesystem probes. The consumed attempt1
+scope grants no automatic rerun; the later attempt2 uses its own new user grant.
+
 The [V6 single-Prompt preparation](reports/gepa_single_prompt_v6_preparation_20261019/README.md)
 is now the default for `scripts/single_prompt_gepa.py`. It caps each of six
 native searches at3000 logical evaluations, retains seed42, binds V5 scoring to
 all phases, and exports token/selection diagnostics and five curves. The complete
 offline suite passed336 tests; all5346 historical grades replayed unchanged.
-No real experiment, commit or push is authorized. Fresh Test provenance remains
-unverified, and READY_TO_RUN=false. Historical configs/results below are preserved.
+The preparation was committed and pushed as `61d42b8`. The later explicit
+authorization, failed startup and pending recovery scope are recorded above. The [post-commit acceptance](reports/gepa_single_prompt_v6_postcommit_acceptance_20261019/README.md)
+rebinds the offline evidence to the committed bytes. The user selected historical
+Test300 for exploratory evaluation only; fresh generalization is unconfirmed.
+The later attempt2 passed its new authorization and startup gates. Historical
+configs/results below are preserved.
 
 The [October19 expansion audit](reports/gepa_single_prompt_extension_audit_20261019/README.md)
 replays all120 Parent/minibatch choices, identifies two non-best-Parent new bests,
@@ -14,7 +40,7 @@ and records training-reference literals in two selected Pareto candidates.
 The proposed budget-driven replacement keeps seed42 and three repeats; it is
 HOLD for engineering and fresh formal authorization. The
 [completed V5 result](reports/gepa_single_prompt_native_v5_results_20261016/README.md)
-remains historical evidence. No expanded experiment has started.
+remains historical evidence. The later startup failure is recorded above.
 
 The October16 user-authorized [V5 scoring repair and sealed-Test continuation](docs/gepa_single_prompt_scoring_continuation_v5.md)
 addresses pathological symbolic expansion using bounded exact separation and

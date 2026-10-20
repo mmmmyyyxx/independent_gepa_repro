@@ -489,3 +489,70 @@ def test_v5_runtime_missing_test_observation_uses_repaired_score_and_paired_cach
     assert rt.snapshot()['cache_hits']==1
     with pytest.raises(Abort,match='CONTINUATION_TEST_SOLVER_ONLY'):
         rt.complete('reflection',[],1,'test')
+
+
+def test_v7_completed_fixture_continuation_preserves_profiles_and_costs(complete_fake,tmp_path):
+    if complete_fake.mode!='mixed':pytest.skip('one full mode suffices for the version binding')
+    import shutil
+    from independent_gepa.single_prompt_math import continuation
+    root=tmp_path/'root';parent=root/'runs/parent';parent.parent.mkdir(parents=True)
+    shutil.copytree(complete_fake.run,parent)
+    # Reconstruct a complete paid profile whose final sidecars were not saved.
+    for name in ('test_result.json','test_predictions.json','test_accounting.json'):
+        (parent/'native_pareto/repeat_1'/name).unlink()
+    (root/'configs').mkdir();shutil.copyfile(ROOT/'configs/gepa_single_prompt_scoring_continuation_v7.yaml',
+        root/'configs/gepa_single_prompt_scoring_continuation_v7.yaml')
+    directory=root/'runs/continued';receipt=root/'prepared.json'
+    prepared=continuation.prepare(root,complete_fake.bundle,parent,directory,receipt,fake_fixture=True,scoring_version='v7',hardlink_immutable=True)
+    import os
+    sample=next((parent/'cache').glob('*.json'))
+    assert os.path.samefile(sample,directory/sample.relative_to(parent))
+    assert not os.path.samefile(parent/'accounting.jsonl',directory/'accounting.jsonl')
+    assert prepared['existing_scores_changed']==0 and len(prepared['reused_test_profiles'])==6
+    assert prepared['scoring_version']=='v7' and not prepared['remaining_test_profiles']
+    frozen={'fake_fixture':True,'preparation_path':'prepared.json','run_root':'runs/continued',
+        'policy':continuation.load_policy(root,'v7'),'parent_attempt_identity':prepared['parent_attempt_identity'],
+        'prepared_last_event_sha256':prepared['prepared_last_event_sha256']}
+    frozen['identity']=digest(frozen);path=root/'freeze.json';write(path,frozen)
+    def forbidden(*args):pytest.fail('all paid profiles must be reused')
+    result=continuation.execute(root,complete_fake.bundle,path,transport_override=forbidden)
+    assert result['status']=='EXECUTION_COMPLETE' and result['additional_physical_attempts']==0
+    assert result['additional_charged_tokens']==0 and result['paired_analysis']['mean_difference']==0
+    assert digest(continuation.inventory(parent))==prepared['parent_inventory_sha256']
+    for source in parent.glob('*/repeat_*/test_result.json'):
+        assert source.read_bytes()==(directory/source.relative_to(parent)).read_bytes()
+
+
+def test_v7_missing_test_draw_keeps_pairing_and_solver_only_scope(tmp_path,config,models,initial):
+    from independent_gepa.single_prompt_math.continuation import TestContinuationRuntime,load_policy
+    calls=[]
+    def transport(role,request):
+        calls.append(role);return response(r'Final answer:2^{5^{43}/3-1/7}')
+    rt=TestContinuationRuntime(tmp_path,config,models,'v7fixture',transport,policy=load_policy(ROOT,'v7'))
+    rt.phase='test';rt.test_release_check=lambda:None;rt.bind_arm('strict_validation')
+    prompt=SystemPrompt.from_dict(initial);rt.register_prompt(prompt,1);row=rows('test',1)[0]
+    observation=rt.prediction(prompt,row,1,'test','final')
+    assert observation['valid'] and not observation['correct'] and calls==['solver']
+    rt.bind_arm('native_pareto');rt.register_prompt(prompt,1)
+    assert rt.prediction(prompt,row,1,'test','final')==observation and calls==['solver']
+    with pytest.raises(Abort,match='CONTINUATION_TEST_SOLVER_ONLY'):
+        rt.complete('reflection',[],1,'test')
+
+
+def test_v7_partial_profile_does_not_recount_imported_logical_observations(tmp_path,config,models,initial):
+    from independent_gepa.single_prompt_math.continuation import TestContinuationRuntime,load_policy,finish_test_profile
+    calls=[]
+    def transport(role,request):calls.append(role);return response('Final answer:1')
+    rt=TestContinuationRuntime(tmp_path,config,models,'partial',transport,policy=load_policy(ROOT,'v7'))
+    rt.phase='test';rt.test_release_check=lambda:None;rt.bind_arm('strict_validation')
+    prompt=SystemPrompt.from_dict(initial);rt.register_prompt(prompt,1);examples=rows('test',2)
+    first=rt.prediction(prompt,examples[0],1,'test','final')
+    rt.imported_test_contexts={('strict_validation',first['key'])}
+    selection={'arm':'strict_validation','repeat_id':1,'selected':initial}
+    profile=finish_test_profile(rt,selection,examples,models,'partial')
+    assert len(profile)==2 and calls==['solver','solver']
+    assert rt.logical['strict_validation:final:test']==2
+    rt.bind_arm('native_pareto');rt.register_prompt(prompt,1)
+    selection={**selection,'arm':'native_pareto'}
+    assert finish_test_profile(rt,selection,examples,models,'partial')==profile
+    assert calls==['solver','solver'] and rt.logical['native_pareto:final:test']==2

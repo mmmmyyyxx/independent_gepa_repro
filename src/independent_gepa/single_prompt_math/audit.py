@@ -22,7 +22,7 @@ from .recovery import retry_local_worker,retry_delay,RetryDecision
 
 
 def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None,
-              scoring_function=None,recovery_policy_config=None,allow_incomplete_test=False) -> dict:
+              scoring_function=None,recovery_policy_config=None,allow_incomplete_test=False,terminal_repair_policy=None) -> dict:
     validate_bundle(bundle);frozen=read(directory/'frozen.json');identity=frozen['identity'];cfg=frozen['config']
     def audit_guard():
         if (directory/'STOP').exists():raise Abort('EXPERIMENT_STOPPED')
@@ -53,16 +53,20 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
     physical=Counter();charged=Counter();previous='0'*64;requests_by_key={};test_open=False
     logical_contexts=set();successes=Counter();logical_by_cell=Counter()
     calls={};awaiting_retry={};ready_retry=set();retry_categories=Counter();role_failures=Counter()
+    from .paid_repair import PaidTerminalRepairs
+    terminal_repairs=PaidTerminalRepairs(terminal_repair_policy)
     allowed_kinds={'OPEN','CANDIDATE_REGISTERED','LOGICAL_SOLVER','RESERVE','FAILURE_CHARGE','RESPONSE_CHARGE',
         'CACHE_HIT','SOLVER_RESOLVED','REFLECTION_TRUNCATION_EXHAUSTED','SAME_PAID_ANSWER_LOCAL_SCORE_TIMEOUT','LOCAL_WORKER_TERMINAL',
-        'SAME_PAID_ANSWER_EXTRACTION_TIMEOUT','SEARCH_ACCOUNTING_CLOSED','TEST_PHASE_OPEN','PROVIDER_RETRY','LOCAL_WORKER_RETRY','REFLECTION_UNAVAILABLE','CONTINUATION_OPEN'}
+        'SAME_PAID_ANSWER_EXTRACTION_TIMEOUT','SEARCH_ACCOUNTING_CLOSED','TEST_PHASE_OPEN','PROVIDER_RETRY','LOCAL_WORKER_RETRY','REFLECTION_UNAVAILABLE','CONTINUATION_OPEN','PAID_TERMINAL_REPAIRED'}
     for line in (directory/'accounting.jsonl').read_bytes().splitlines():
         event=json.loads(line);value=dict(event);sha=value.pop('event_sha256')
         if digest(value)!=sha or value['previous_event_sha256']!=previous:
             raise ProtocolViolation('AUDIT_ACCOUNTING_HASH_CHAIN')
         previous=sha;kind=event['kind']
         if kind not in allowed_kinds:raise ProtocolViolation('AUDIT_UNKNOWN_EVENT')
-        if kind=='LOCAL_WORKER_TERMINAL':raise ProtocolViolation('AUDIT_UNRESOLVED_LOCAL_COMPUTATION')
+        if kind=='LOCAL_WORKER_TERMINAL':
+            terminal_repairs.terminal(event,requests_by_key.get(event['key']),logical_contexts,resolved)
+        if kind=='PAID_TERMINAL_REPAIRED':terminal_repairs.repaired(event,resolved,directory)
         if kind=='OPEN' and event['attempt_identity']!=identity:raise ProtocolViolation('AUDIT_ATTEMPT_IDENTITY')
         if kind=='CONTINUATION_OPEN':
             continuation=read(directory/'continuation_frozen.json');content=dict(continuation);cid=content.pop('identity')
@@ -97,6 +101,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
             logical[f'{arm}:{event["kind_of_evaluation"]}:{split}']+=1
             logical_by_cell[(arm,repeat,event['kind_of_evaluation'])]+=1
         elif kind=='RESERVE':
+            terminal_repairs.reservation(event['logical_key'])
             number=event['number'];receipt=read(directory/'requests'/f'{number:06d}.json');request=receipt['request']
             if number in pending or digest(request)!=event['request_sha256'] or any(receipt[k]!=event[k] for k in ('arm','repeat','phase','split','role','bound','logical_key','transport_call_id','attempt_index')):
                 raise ProtocolViolation('AUDIT_WIRE_RESERVATION')
@@ -191,6 +196,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
         elif kind=='CACHE_HIT':
             if event['key'] not in resolved or (event['arm'],event['key']) not in logical_contexts:raise ProtocolViolation('AUDIT_CACHE_WITHOUT_PAID_REALIZATION')
             hits+=1
+    terminal_repairs.close()
     if pending or awaiting_retry or ready_retry:raise ProtocolViolation('AUDIT_INFLIGHT_RESERVATIONS')
     if set(resolved)!=seen:raise ProtocolViolation('AUDIT_UNRESOLVED_LOGICAL_EVALUATIONS')
     recovery_lock=threading.Lock()
@@ -278,7 +284,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
         'pending_physical_attempts':0,'cache_hits':hits,'logical_evaluations':dict(logical),'resolved_observations':len(resolved),
         'charged_tokens_by_phase_arm_role':{f'{p}:{a}:{r}':n for (p,a,r),n in charged.items()},
         'physical_attempts_by_phase_arm_role':{f'{p}:{a}:{r}':n for (p,a,r),n in physical.items()},
-        'last_event_sha256':previous,'new_model_calls_by_audit':0}
+        'last_event_sha256':previous,'new_model_calls_by_audit':0,'paid_terminal_repairs':terminal_repairs.count}
 
 
 def candidate_hash_for(candidate):

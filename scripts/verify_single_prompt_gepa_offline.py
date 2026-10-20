@@ -46,10 +46,15 @@ def main():
     v6_passed=sum(1 for s in suites for case in s.findall('testcase')
                   if 'test_single_prompt_v6' in case.get('classname','') and case.find('skipped') is None
                   and case.find('failure') is None and case.find('error') is None)
+    v7_passed=sum(1 for s in suites for case in s.findall('testcase')
+                  if ('test_single_prompt_scoring_v7' in case.get('classname','') or 'v7' in case.get('name',''))
+                  and case.find('skipped') is None and case.find('failure') is None and case.find('error') is None)
     if not a.focused and v6_passed<30:raise RuntimeError('COMPLETE_V6_ENGINEERING_CASES_REQUIRED')
+    if not a.focused and v7_passed<10:raise RuntimeError('COMPLETE_V7_SCORING_CASES_REQUIRED')
     if source_inventory(ROOT)!=starting_inventory:raise RuntimeError('SOURCE_CHANGED_DURING_OFFLINE_GATES')
     evidence=preflight(ROOT,a.bundle.resolve())
     public=[ROOT/'docs/gepa_single_prompt_math_v1.md',ROOT/'docs/gepa_single_prompt_semantic_review_v2.md',ROOT/'docs/gepa_single_prompt_recovery_v3.md',ROOT/'docs/gepa_single_prompt_native_guard_v4.md',ROOT/'docs/gepa_single_prompt_scoring_continuation_v5.md',ROOT/'docs/gepa_single_prompt_math_v6.md',ROOT/'docs/gepa_single_prompt_compute_v6.md',ROOT/'docs/gepa_single_prompt_analysis_v6.md']
+    public.append(ROOT/'docs/gepa_single_prompt_scoring_continuation_v7.md')
     if audit_public_paths(public):raise RuntimeError('PUBLIC_PROTOCOL_SANITIZATION_FAILED')
     subprocess.run(['git','diff','--check'],cwd=ROOT,check=True)
     evidence.update(status='FOCUSED_DEBUG_PASS' if a.focused else 'PASS',pytest_passed=passed,
@@ -59,6 +64,7 @@ def main():
         historical_5346_parity='NOT_REQUIRED_FOR_FOCUSED_DEBUG' if a.focused else 'PASS',
         historical_score_replay_sha256=None if a.focused else file_hash(a.score_replay),
         v6_engineering_tests_passed=v6_passed,money_calculated=False,
+        v7_engineering_tests_passed=v7_passed,
         historical_private_replay_suite='NOT_RUN; sibling remains read-only',
         source_inventory_sha256=digest(source_inventory(ROOT)))
     write(a.output.resolve(),evidence)

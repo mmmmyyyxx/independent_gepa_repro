@@ -2,28 +2,31 @@
 
 Updated: 2026-10-20
 
-## V7 Test scoring repair and bounded continuation in progress
+## V7 Test scoring repair and continuation completed
 
-The final current-source offline suite passed367 tests, with31 V7 cases and
-two explicitly skipped duplicate integration scenarios. The
-[offline acceptance](reports/gepa_single_prompt_v7_preparation_20261020/README.md)
-is separate from the still-running real-parent grade/import gate. No new model
-calls are permitted until that gate and the fresh exact freeze succeed.
+All six selected winners completed historical exploratory Test300. Strict scores
+are227/224/227; Pareto scores220/229/222, a mean difference of-0.78 percentage
+points (Pareto minus strict), with one paired win and two losses. The final
+independent audit passed18,060 resolved observations, full Test accounting and
+the single explicit paid terminal repair. See the
+[completed results](reports/gepa_single_prompt_v7_test_results_20261020/README.md).
 
-V6 attempt2 completed all six searches and passed its sealed search audit. Its
-native budgets sum17624/18000. Strict Test profiles227/224/227 are complete;
-Pareto repeat1 stopped on unresolved local symbolic grading. The original
-attempt and all paid observations are preserved. Its accounting records20415
-physical attempts and30872155 charged tokens, including conservative failed
-request bounds; these are not new continuation calls.
+Execution used local source00be3132, the frozen seed42/bundle/winners, and only
+Test/Solver access. All17,459 old grades were unchanged; one stalled paid response
+was repaired locally. Four profiles were reused and two missing Pareto profiles
+completed with672 new requests and657,304 accounted tokens. No new search or
+Reflection occurred. Original parent evidence and previously completed strict
+Test files remain byte-identical. Total V6 attempt2 plus continuation accounting
+is31,529,459 tokens, including original failed-request bounds. The two-hour
+monitor is disabled after execution completion; consumed scope is not reusable.
 
-The user requested repair and Test completion and authorized a local commit,
-without a push. V7 adds a bounded exact lower-exponent certificate, keeping
-pinned parsing/fallback and the V5 algorithm unchanged. The stalled paid
-observation now grades locally in under a second;17 dedicated tests pass.
-Full offline gates and pointwise parent-score reconciliation are in progress.
-Only missing Test/Solver observations may be acquired after exact freeze;
-no search, Reflection, winner selection or paid-response resampling is allowed.
+The unchanged source passed367 offline tests with two explicitly skipped duplicate
+integration scenarios, compilation and deterministic governance checks. These
+checks are reused for reports-only integration. This Test-motivated scoring
+amendment, exposed historical Test, fixed search seed and two selected prompts
+flagged by automatic content review limit conclusions; no semantic certification
+or stable superiority claim is made. The user authorized local commits and Test,
+without push. Historical milestone sections below retain their creation context.
 
 ## V6 attempt2 authorized and running
 

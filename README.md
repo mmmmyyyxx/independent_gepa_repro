@@ -1,11 +1,14 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
-The user requested a [V7 Test scoring repair](docs/gepa_single_prompt_scoring_continuation_v7.md)
-after V6 attempt2 completed all six searches but aborted on a local Test
-computation. Offline verification and paid-response import are in progress.
-The repair retains all final winners, completed Test profiles and original
-request identities; it permits only missing Test/Solver observations. A local
-commit is authorized, while a push and new search are not.
+The [V7 Test scoring repair and continuation](reports/gepa_single_prompt_v7_test_results_20261020/README.md)
+is complete. Final integrity reconciliation passed; all six frozen winners have
+Test300 results. Strict Validation scored227/224/227 and native Pareto220/229/222,
+averaging75.33% and74.56%. These historical exploratory observations do not
+establish a stable Pareto advantage. The repair preserved all17,459 old grades,
+resolved one paid observation locally and acquired only672 missing Test/Solver
+responses,657,304 tokens. No search or winner selection was rerun. Two final
+prompts carry automatic content-review flags; semantic legitimacy is not
+certified. Local commits are authorized; no push was performed.
 
 [V6 attempt2](reports/gepa_single_prompt_v6_attempt2_launch_20261019/README.md)
 was started after a new explicit user authorization on2026-10-19

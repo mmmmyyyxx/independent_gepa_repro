@@ -1,0 +1,53 @@
+{
+  "boundary": {
+    "correctness_contract_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34",
+    "legacy_class_errors": [],
+    "legacy_dependency_errors": [],
+    "model_api_calls": 0,
+    "retired_modules_in_static_closure": "Metadata inspection imports retained; presence in closure does not authorize execution.",
+    "retired_policy_metadata_unchanged": true,
+    "status": "PASS",
+    "two_repo_core_parity": true
+  },
+  "cleanup": {
+    "multi_dataset_diverse_rl/benchmarks/math_interval_certificate.py": {
+      "after_sha256": "7da7d2270cfc44a8574e8698d37d5baa835b076c1a6394f5aa8688995d4a1135",
+      "archive_matches": [
+        "additional_source.zip",
+        "source.zip"
+      ],
+      "before_sha256": "79d5c2162105c25c76c616f76dd70ba72e6cde12aca8db4c406fa5967cb3ab9d",
+      "recovery_source": "5ba04f83ed75931944d4968b8bdd77745141ba3f"
+    },
+    "multi_dataset_diverse_rl/benchmarks/math_power_certificate.py": {
+      "after_sha256": "3aa03eb0b632e0cdb4240b4d4eed701c9a8ecb695bd07b22c55d3feaa1494b55",
+      "archive_matches": [
+        "additional_source.zip",
+        "source.zip"
+      ],
+      "before_sha256": "1fb75c53de8ab948ee047e7e6610d71561ae46d316df039b57384d7d1724b076",
+      "recovery_source": "5ba04f83ed75931944d4968b8bdd77745141ba3f"
+    }
+  },
+  "current_contract": "cevolve_hendrycks_math_v1",
+  "experiments_started": 0,
+  "identity": "SOLE_MATH_SCORER_RESIDUAL_AUDIT_V1",
+  "model_api_calls": 0,
+  "publication_authorization": "User explicitly requested publication after the residual cleanup was verified.",
+  "scope": "Current MATH correctness in both repositories; historical evidence and gold-blind aggregation retained.",
+  "tests": {
+    "gepa": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 95
+    },
+    "multi": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 167
+    }
+  },
+  "verification_snapshot_precedes_publication": true
+}

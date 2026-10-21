@@ -59,3 +59,18 @@ def test_historical_replay_entry_imports_and_fails_closed_without_a_judge(tmp_pa
     with pytest.raises(RuntimeError,match='HISTORICAL_MATH_SCORER_RETIRED'):
         replay(tmp_path,None,None,None,tmp_path/'not_created')
     assert not (tmp_path/'not_created').exists()
+
+
+@pytest.mark.parametrize('module,function,args',[
+    ('scoring_v5','load_policy',()),('scoring_v5','_score',(None,None)),
+    ('scoring_v7','load_policy',()),('scoring_v7','_score',(None,None)),
+    ('scoring_worker_v5','evaluate',()),('scoring_worker_v5','main',()),
+    ('scoring_worker_v7','evaluate',()),('scoring_worker_v7','main',()),
+    ('certified_bounds','definitely_separated',(None,None)),
+    ('certified_bounds_v7','definitely_separated',(None,None)),
+])
+def test_every_retired_worker_and_certificate_surface_is_fail_closed(module,function,args):
+    from importlib import import_module
+    target=import_module('independent_gepa.single_prompt_math.'+module)
+    with pytest.raises(RetiredMathScorerError,match='RETIRED'):
+        getattr(target,function)(*args)

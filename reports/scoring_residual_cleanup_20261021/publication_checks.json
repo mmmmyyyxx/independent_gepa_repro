@@ -1,0 +1,11 @@
+{
+  "category": "Inactive-code cleanup with publication metadata; no active scientific scoring changes",
+  "experiments_started": 0,
+  "lineage_unchanged": true,
+  "model_api_calls": 0,
+  "registered_report_count": 369,
+  "registry_only_secondary_report_added": true,
+  "scorer_core_byte_parity": true,
+  "status": "PASS",
+  "verification_reuse": "Unchanged source and inputs covered by 167 multi-agent and 95 GEPA focused tests; full historical suite not rerun."
+}

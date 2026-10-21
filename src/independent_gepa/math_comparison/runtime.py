@@ -26,8 +26,11 @@ def wire_bytes(request: dict[str,Any]) -> bytes:
 class Runtime:
     def __init__(self, private: Path, config: dict[str,Any], models: dict[str,Any], shell: dict[str,str],
                  identity: str, transport: Callable[[dict[str,Any]],dict[str,Any]]):
+        from ..math_scoring import CONTRACT_ID,contract_sha256,RetiredMathScorerError
+        if config.get('math_scoring_contract')!=CONTRACT_ID or config.get('math_scoring_sha256')!=contract_sha256():
+            raise RetiredMathScorerError('HISTORICAL_OPTIMIZE60_CONFIG_NOT_CURRENT_SCORING')
         self.private=private; self.config=config; self.models=models; self.shell=shell
-        self.identity=identity; self.transport=transport; self.cache: dict[str,dict[str,Any]]={}
+        self.identity=digest(dict(attempt=identity,math_scoring_contract=config['math_scoring_contract'],math_scoring_sha256=config['math_scoring_sha256'])); self.transport=transport; self.cache: dict[str,dict[str,Any]]={}
         self.charged=0; self.reserved=0; self.physical=0; self.successes=0; self.cache_hits=0
         self.role_usage={r:{'physical_attempts':0,'successes':0,'input_tokens':0,'output_tokens':0,
                             'charged_tokens':0} for r in ('solver','reflection')}

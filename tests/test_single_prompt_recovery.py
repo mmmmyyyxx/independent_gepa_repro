@@ -43,7 +43,7 @@ def test_transient_retries_same_request_receipts_and_single_semantic_draw(tmp_pa
         calls.append(deepcopy(request))
         if len(calls)==1:raise error(kind)
         observed_failure.append(read(tmp_path/'failures/000001.json'))
-        return response('Final answer:0')
+        return response(r'\boxed{0}')
     rt=Runtime(tmp_path,config,models,'fake',transport);rt.bind_arm('strict_validation')
     waits,clock=fast_clock(monkeypatch,rt)
     if role=='solver':
@@ -52,7 +52,7 @@ def test_transient_retries_same_request_receipts_and_single_semantic_draw(tmp_pa
         assert value['valid'] and not value['correct']
         assert value['prediction']['semantic_attempt_count']==1 and value['prediction']['transport_retry_attempts']==1
         assert sum(rt.logical.values())==1
-    else:assert rt.reflect('fixture reflection',1)=='Final answer:0'
+    else:assert rt.reflect('fixture reflection',1)==r'\boxed{0}'
     assert calls[0]==calls[1] and waits==[2]
     assert observed_failure[0]['retryable'] is True
     snapshot=rt.snapshot();u=snapshot['roles'][role]
@@ -121,7 +121,7 @@ def test_local_timeouts_reuse_paid_answer_in_every_split(tmp_path,config,models,
     import independent_gepa.single_prompt_math.runtime as runtime
     from independent_gepa.single_prompt_math.math_domain_v2 import current_worker_deadline
     calls=[];deadlines=[]
-    def transport(role,request):calls.append(request);return response('Final answer:1')
+    def transport(role,request):calls.append(request);return response(r'\boxed{1}')
     rt=Runtime(tmp_path,config,models,'fake',transport);rt.bind_arm('strict_validation')
     if phase=='test':rt.test_release_check=lambda:None;rt.enter_test()
     rt.phase=phase;waits,clock=fast_clock(monkeypatch,rt)
@@ -192,7 +192,7 @@ def test_actual_sdk_transport_retries_malformed_200_with_raw_receipt(tmp_path,co
         sent.append(json.loads(request.content))
         if len(sent)==1:
             return httpx.Response(200,text='{"choices":' if payload_kind=='bad_json' else '{}')
-        return httpx.Response(200,json={'id':'fixture','choices':[{'message':{'content':'Final answer:1'},'finish_reason':'stop'}],
+        return httpx.Response(200,json={'id':'fixture','choices':[{'message':{'content':r'\boxed{1}'},'finish_reason':'stop'}],
             'usage':{'prompt_tokens':10,'completion_tokens':4,'completion_tokens_details':{'reasoning_tokens':0}}})
     def client(**kwargs):return original_client(http_client=httpx.Client(transport=httpx.MockTransport(handler)),**kwargs)
     monkeypatch.setattr(openai,'OpenAI',client)
@@ -201,7 +201,7 @@ def test_actual_sdk_transport_retries_malformed_200_with_raw_receipt(tmp_path,co
     transport,clients=real_transport(tmp_path,models)
     try:
         rt=Runtime(tmp_path,config,models,'fake',transport);rt.bind_arm('strict_validation');waits,clock=fast_clock(monkeypatch,rt)
-        assert rt.reflect('fixture',1)=='Final answer:1' and waits==[2]
+        assert rt.reflect('fixture',1)==r'\boxed{1}' and waits==[2]
         assert sent[0]==sent[1] and read(tmp_path/'failures/000001.json')['provider_evidence']
     finally:
         for c in clients.values():c.close()

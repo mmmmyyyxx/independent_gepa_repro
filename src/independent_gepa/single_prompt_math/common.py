@@ -60,10 +60,10 @@ def git(root: Path,*args: str) -> str:
 
 
 def source_inventory(root: Path) -> dict[str,str]:
-    paths=[*root.joinpath('src').rglob('*.py'),*root.joinpath('scripts').glob('*.py'),
+    paths=[*root.joinpath('src').rglob('*.py'),*root.joinpath('src/independent_gepa/math_scoring').glob('*.json'),*root.joinpath('scripts').glob('*.py'),
            *root.joinpath('tests').rglob('*.py'),root/'AGENTS.md',root/'pyproject.toml',
            root/'configs/gepa_single_prompt_math_seed42_repeat3.yaml',
-           root/'configs/gepa_single_prompt_math_v6.yaml',root/'configs/gepa_single_prompt_posthoc_v6.yaml',
+           root/'configs/gepa_single_prompt_hendrycks_v1.yaml',root/'docs/math_scoring_cevolve_hendrycks_v1.md',root/'configs/cevolve_hendrycks_math_v1.json',root/'configs/gepa_single_prompt_posthoc_v6.yaml',
            root/'configs/gepa_single_prompt_scoring_continuation_v7.yaml',root/'docs/gepa_single_prompt_scoring_continuation_v7.md',
            root/'docs/gepa_single_prompt_math_v6.md',root/'docs/gepa_single_prompt_compute_v6.md',
            root/'docs/gepa_single_prompt_analysis_v6.md',

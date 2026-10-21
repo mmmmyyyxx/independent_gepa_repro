@@ -1,4 +1,4 @@
-"""Unchanged pinned mathematical physics with a phase-scoped worker deadline."""
+"""Gold-blind vote equivalence helpers; correctness delegates to the sole scorer."""
 from contextlib import contextmanager
 from contextvars import ContextVar
 from functools import lru_cache
@@ -50,14 +50,9 @@ def domain_matrix(expressions):
 
 
 def require_scorable(reference):
-    if not isinstance(reference,str) or not reference.strip():raise SearchContractError('REFERENCE_UNSCORABLE')
-    value=domain_matrix((reference,))
-    if not value['valid'][0] or not value['equivalence'][0][0]:raise SearchContractError('REFERENCE_UNSCORABLE')
-
+    from ..math_scoring import prepare_ground_truth
+    prepare_ground_truth(reference)
 
 def score(prediction,reference):
-    require_scorable(reference)
-    if not prediction.prediction_valid:return False
-    value=domain_matrix((reference,prediction.answer))
-    if not value['valid'][0]:raise SearchContractError('REFERENCE_UNSCORABLE')
-    return bool(value['valid'][1] and value['equivalence'][0][1])
+    from .scoring import score as current_score
+    return current_score(prediction,reference)

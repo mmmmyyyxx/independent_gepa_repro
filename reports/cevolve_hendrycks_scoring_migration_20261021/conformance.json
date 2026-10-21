@@ -1,0 +1,151 @@
+{
+  "A2_TEST_RESUMED": false,
+  "READY_FOR_NEW_EXPERIMENT": false,
+  "contract": "cevolve_hendrycks_math_v1",
+  "contract_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34",
+  "entrypoint_replay": {
+    "gepa": {
+      "model_api_calls": 0,
+      "real_experiment_execution": false,
+      "routes": {
+        "search_optimize": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        },
+        "search_validation": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        },
+        "team_winner": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        },
+        "test": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        }
+      },
+      "saved_responses": 3492,
+      "status": "PASS"
+    },
+    "multi": {
+      "model_api_calls": 0,
+      "real_experiment_execution": false,
+      "routes": {
+        "MATHBenchmarkAdapter": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        },
+        "MATHBenchmarkAdapterV2": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        },
+        "MATHStructuredSystemBenchmark": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        },
+        "test": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        },
+        "train": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        },
+        "validation": {
+          "correct": 355,
+          "count": 3492,
+          "verdict_sha256": "78ebd91d1fdaab753dbfeb407ade49a6b9fb0b884058a5042e1013cb7c2f5622"
+        }
+      },
+      "saved_responses": 3492,
+      "status": "PASS"
+    }
+  },
+  "gepa_pytest": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 355
+  },
+  "governance": true,
+  "historical_integrity": {
+    "A2_TEST_RESUMED": false,
+    "checks": {
+      "corpus_manifest.json": {
+        "changed": 0,
+        "checked": 3520
+      },
+      "final_evidence_manifest.json": {
+        "changed": 0,
+        "checked": 73
+      },
+      "gepa": {
+        "archive_files_verified": 59,
+        "historical_changes": 0,
+        "immutable_historical_files": 13,
+        "index_unchanged": true
+      },
+      "historical_score_inventory_pin.json": {
+        "changed": 0,
+        "checked": 15
+      },
+      "multi": {
+        "archive_files_verified": 63,
+        "historical_changes": 0,
+        "immutable_historical_files": 250,
+        "index_unchanged": true
+      }
+    },
+    "model_api_calls": 0,
+    "verdict": "PASS"
+  },
+  "model_api_calls": 0,
+  "multi_initial_complete_worktree_pytest": {
+    "errors": 0,
+    "failures": 12,
+    "skipped": 2,
+    "tests": 1180
+  },
+  "multi_published_scope_reconciled": {
+    "basis": "Full classified current run, with all governance cases replaced by focused post-fix rerun of all11 affected assertions; not a second full-suite run.",
+    "counts": {
+      "FAIL": 0,
+      "PASS": 1133,
+      "SKIP": 2
+    },
+    "selected": 1135
+  },
+  "native_gepa_pin_unchanged": true,
+  "nonmath_unchanged_files": 4,
+  "package_smoke": {
+    "isolated_install_scoring": true,
+    "metadata_and_license_packaged": true,
+    "model_api_calls": 0,
+    "status": "PASS",
+    "wheel_sha256": "56dbde0322eaf4dcab2eb3a5bb1ded0f600f5617adf00066286d303d248de4f6"
+  },
+  "publication_authorization": "Explicit user request to finish and push both repositories; verification snapshot precedes publication",
+  "readiness_reason": "No new exact experiment source/phase freeze, handoff or API authorization; a publication commit does not authorize execution.",
+  "two_repo_files": {
+    "HENDRYCKS_LICENSE.txt": "8f6401fb0b1fbfcac17aac8d61e4e1b0d2de9aa190d8aa655fedc5fd783b2ace",
+    "__init__.py": "02f7aa26014b4b30c15bf8ca07cf92fde8c19deb03a466d279d0bba573b540fc",
+    "_hendrycks.py": "9e85c501891e867db4eb27e6b6785cd27ce4f705724959a76e4097133c8aa0a6",
+    "audit.py": "f80ffbe5f68198af2e5f3977bf962c9272f194050c789169b9ff6664ea23a237",
+    "contract.py": "b5613715dd9ab5cc6ec0a37c3f4ff6c7c917a2c3166402a3ea4eebf597ae05a2",
+    "prediction.py": "0698c482d0c4fc2359adcd05bd01302e744b949ace05202df8d7465ced2ddb4d",
+    "score.py": "224903569eb748e06e12c047265b44ecc3731bd6c5a26e65002eb1025ee98162",
+    "upstream.json": "d7f6a3b0750869cc260e3fb06c80da7af78c778997621829a98a8ac524e6b274"
+  },
+  "two_repo_full_row_parity": "PASS",
+  "two_repo_terminal2700_parity": "PASS"
+}

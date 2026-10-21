@@ -1,0 +1,201 @@
+{
+  "A2_test_resumed": false,
+  "committed": false,
+  "external_provider_configuration_variations": 3,
+  "final_byte_bound_campaigns": {
+    "gepa": {
+      "elapsed_seconds": 39.92200000000594,
+      "model_calls": 0,
+      "python_version": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]",
+      "repo": "gepa",
+      "source_inventory": {
+        "configs/math_unified_scoring_v1.json": "229e446104d38bce1f2fd02d291a0e392d54e3c4dd8864f9eba74bd10b7c3c1b",
+        "scripts/audit_math_unified_v1.py": "64c3c03ac07e0d273354c190a831f11748dc7e37f60e613596183a41a0fc7356",
+        "src/independent_gepa/math_scoring/__init__.py": "9957375bd07336a32b82bd36ddbfe3abdf6e17565d869029300773181f0c8154",
+        "src/independent_gepa/math_scoring/api.py": "c2f784dbbbefa3746ebfb4ee09dace049727e9f5fc6415090c6b3f892b9e60e2",
+        "src/independent_gepa/math_scoring/audit.py": "fb450a29605a83e5424ef9d11b1c331b4ed3ea2c09d17ad1d35938b790240e57",
+        "src/independent_gepa/math_scoring/compat_maspo.py": "7930c8654744b1b671a50ec42f85281b84bb8fb08b063c353021f7ce22397113",
+        "src/independent_gepa/math_scoring/extraction.py": "d7c84b8302002180ff142a3d5732283c8225cd1a1899856c7f4c929e45f2e191",
+        "src/independent_gepa/math_scoring/kernel_binding.py": "1e46e45cca965410ceb2735082bdd9efb565ee26db3d97fc2ee3d59387fbf646",
+        "src/independent_gepa/math_scoring/policy.py": "f753abe72f377e847ecf057527452e4ab287483d66d2574aa3329784a26969e4",
+        "src/independent_gepa/math_scoring/semantic.py": "56eb61702a0625e560d9342218444fa971edaa36d316bb8cf0ca450be3826e1e",
+        "src/independent_gepa/math_scoring/supervisor.py": "e88f719caa012788d1a991aee4684a213f45c29e4112151f3070e4a09a38d26f",
+        "src/independent_gepa/math_scoring/worker.py": "b0abda85ad30d62716d5cd6ab6a5b6115799d69f97bb6b20ba48849bb645178a",
+        "tests/test_math_unified_scoring.py": "47065cde28563835b39dbfb414818e1da082383c37952f3dbe1a4f7f6649aece"
+      },
+      "status": "PASS",
+      "steps": [
+        {
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "seconds": 0.14100000000325963,
+          "status": 0,
+          "step": "compile"
+        },
+        {
+          "log_sha256": "843dc468b1210e79252fd82c7f90e5deaa71119e09865e7fe3fe22d06b889efb",
+          "seconds": 4.561999999990803,
+          "status": 0,
+          "step": "focused"
+        },
+        {
+          "log_sha256": "2b126b68230120a70d9f73bb0a1f27875e81cfbf8cf9c14dd22b23481eff26fa",
+          "seconds": 18.89100000000326,
+          "status": 0,
+          "step": "replay"
+        },
+        {
+          "log_sha256": "17f3e4bdef21bd28f982b229174982ac415b9705223755031605907802e7f1fc",
+          "seconds": 16.312000000005355,
+          "status": 0,
+          "step": "slow"
+        }
+      ]
+    },
+    "multi": {
+      "elapsed_seconds": 41.992482199988444,
+      "model_calls": 0,
+      "python_version": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+      "repo": "multi",
+      "source_inventory": {
+        "configs/math_unified_scoring_v1.json": "229e446104d38bce1f2fd02d291a0e392d54e3c4dd8864f9eba74bd10b7c3c1b",
+        "multi_dataset_diverse_rl/math_scoring/__init__.py": "9957375bd07336a32b82bd36ddbfe3abdf6e17565d869029300773181f0c8154",
+        "multi_dataset_diverse_rl/math_scoring/api.py": "c2f784dbbbefa3746ebfb4ee09dace049727e9f5fc6415090c6b3f892b9e60e2",
+        "multi_dataset_diverse_rl/math_scoring/audit.py": "fb450a29605a83e5424ef9d11b1c331b4ed3ea2c09d17ad1d35938b790240e57",
+        "multi_dataset_diverse_rl/math_scoring/compat_maspo.py": "7930c8654744b1b671a50ec42f85281b84bb8fb08b063c353021f7ce22397113",
+        "multi_dataset_diverse_rl/math_scoring/extraction.py": "d7c84b8302002180ff142a3d5732283c8225cd1a1899856c7f4c929e45f2e191",
+        "multi_dataset_diverse_rl/math_scoring/kernel_binding.py": "76cb8c03278ee878e756f746891872176d5fbbd29e33c1481626f8abb3a44d6b",
+        "multi_dataset_diverse_rl/math_scoring/policy.py": "f753abe72f377e847ecf057527452e4ab287483d66d2574aa3329784a26969e4",
+        "multi_dataset_diverse_rl/math_scoring/semantic.py": "56eb61702a0625e560d9342218444fa971edaa36d316bb8cf0ca450be3826e1e",
+        "multi_dataset_diverse_rl/math_scoring/supervisor.py": "e88f719caa012788d1a991aee4684a213f45c29e4112151f3070e4a09a38d26f",
+        "multi_dataset_diverse_rl/math_scoring/worker.py": "b0abda85ad30d62716d5cd6ab6a5b6115799d69f97bb6b20ba48849bb645178a",
+        "scripts/audit_math_unified_v1.py": "ae238aeb45c94f70a3191e3fea6f61f56717a526335c925be0c8c0068ea7c223",
+        "tests/current/test_math_unified_scoring.py": "bfc194949324f09fc7f60af0e3977eb10eaad0cd0e719b458b5465b628096385"
+      },
+      "status": "PASS",
+      "steps": [
+        {
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "seconds": 0.13958800000546034,
+          "status": 0,
+          "step": "compile"
+        },
+        {
+          "log_sha256": "6affcfd2cf06389fae105749b4f32dd81d02c08e69165ff8e9858a02d1c4587e",
+          "seconds": 4.732017899994389,
+          "status": 0,
+          "step": "focused"
+        },
+        {
+          "log_sha256": "2b126b68230120a70d9f73bb0a1f27875e81cfbf8cf9c14dd22b23481eff26fa",
+          "seconds": 21.00867970001127,
+          "status": 0,
+          "step": "replay"
+        },
+        {
+          "log_sha256": "ff8df097417258ffd4cf506f997d0a007466117d8d88f045fcab27212d86d082",
+          "seconds": 16.088808799991966,
+          "status": 0,
+          "step": "slow"
+        }
+      ]
+    }
+  },
+  "final_scoring_suite_each_repo": {
+    "includes_real_process_timeout_crash_memory_reap_and_next_input": true,
+    "passed": 100
+  },
+  "formal_default_changed": false,
+  "formal_results_modified": false,
+  "gepa_suite": {
+    "checks": [
+      {
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "returncode": 0,
+        "seconds": 0.5160000000032596,
+        "step": "compileall"
+      },
+      {
+        "log_sha256": "e5fa0948ff4570e32ef6df779fa034d97d4a4e94aee629f9154b5e444cd10543",
+        "returncode": 0,
+        "seconds": 1063.5620000000054,
+        "step": "pytest"
+      }
+    ],
+    "coverage_note": "Prior full-suite evidence reused for unchanged legacy/scientific code; final identity serialization and cache-accounting changes covered by all100 focused tests plus complete byte-bound replay; affected modules recompiled",
+    "passed": 463,
+    "skipped": 2
+  },
+  "manifest_preflight": {
+    "classification": "Preexisting staged failure-registry/generated-view mismatch; untouched; no formal-run readiness claimed",
+    "errors": [
+      "generated KNOWN_FAILURES.md is stale"
+    ],
+    "ok": false
+  },
+  "multi_current_suite": {
+    "checks": [
+      {
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "returncode": 0,
+        "seconds": 0.6321706000017002,
+        "step": "compileall"
+      },
+      {
+        "log_sha256": "8583b989e6612c47b4f4a5e5ba457a4664d6540fa6b33466f3ea03f4d4038602",
+        "returncode": 0,
+        "seconds": 3929.202793599994,
+        "step": "pytest"
+      }
+    ],
+    "full_historical_replay_claimed": false,
+    "omitted_historical_modules": 224,
+    "passed": 1393,
+    "selected": 1395,
+    "skipped": 2
+  },
+  "network_guard": "Pre-import socket block; credential-like environment names removed; completed parent campaigns report0 attempts",
+  "preservation": {
+    "frozen_historical_math_source_hashes_unchanged": 58,
+    "gepa_all_preexisting_python_unchanged": 69,
+    "gepa_head_unchanged": true,
+    "gepa_legacy_files_unchanged": 11,
+    "gepa_user_index_unchanged": true,
+    "model_calls": 0,
+    "multi_agent_all_preexisting_python_unchanged": 323,
+    "multi_agent_head_unchanged": true,
+    "multi_agent_legacy_files_unchanged": 39,
+    "multi_agent_user_index_unchanged": true,
+    "no_api_no_formal_activation": true,
+    "no_commit_or_push": true,
+    "old_terminal_bridge": {
+      "answer_drift": 0,
+      "correctness_drift": 0,
+      "matched": 2700,
+      "validity_drift": 0
+    },
+    "original_critical_terminal_result_files_unchanged": 16,
+    "original_final_audit_files_unchanged": 73,
+    "original_successful_response_inputs_unchanged": 3520,
+    "preservation_scope": "All historical math code/evidence unchanged; concurrent external provider/configuration variations disclosed and untouched; configuration values never inspected",
+    "status": "PASS",
+    "vendor_clean": true,
+    "vendor_sha": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920"
+  },
+  "previous_misconfigured_checks": {
+    "DL_environment_for_multi": "Aborted after runtime-identity failures; replaced with selected repository runtime; no guards weakened",
+    "gepa_environment_for_multi": "Collection failed: missing jsonschema; not counted as passing",
+    "incomplete_root_collection": "Aborted because unrestricted pytest root traversed ignored runs; replaced with explicit tests path"
+  },
+  "pushed": false,
+  "real_model_calls": 0,
+  "real_model_tokens": 0,
+  "repository_governance_audit": {
+    "generated_views_checked": true,
+    "lineage_edges": 310,
+    "ok": true,
+    "real_execution_ready": false,
+    "registry_nodes": 393
+  },
+  "source_identity": "Local reviewed worktree, not a new committed/frozen experiment; exact new module bytes and policy hashes preserved",
+  "status": "OFFLINE_IMPLEMENTATION_AND_REPLAY_PASS_NOT_ACTIVATED"
+}

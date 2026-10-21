@@ -1,0 +1,15 @@
+{
+  "identity": "RETIRED_MULTI_POLICY_MODULES_V1",
+  "paths": [
+    "src/independent_gepa/math_scoring/api.py",
+    "src/independent_gepa/math_scoring/audit.py",
+    "src/independent_gepa/math_scoring/compat_maspo.py",
+    "src/independent_gepa/math_scoring/extraction.py",
+    "src/independent_gepa/math_scoring/kernel_binding.py",
+    "src/independent_gepa/math_scoring/policy.py",
+    "src/independent_gepa/math_scoring/semantic.py",
+    "src/independent_gepa/math_scoring/supervisor.py",
+    "src/independent_gepa/math_scoring/worker.py"
+  ],
+  "action": "Archived byte-for-byte then removed from current package"
+}

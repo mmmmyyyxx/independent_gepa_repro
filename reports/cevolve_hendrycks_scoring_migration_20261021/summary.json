@@ -1,0 +1,134 @@
+{
+  "historical_integrity": {
+    "A2_TEST_RESUMED": false,
+    "checks": {
+      "corpus_manifest.json": {
+        "changed": 0,
+        "checked": 3520
+      },
+      "final_evidence_manifest.json": {
+        "changed": 0,
+        "checked": 73
+      },
+      "gepa": {
+        "archive_files_verified": 59,
+        "historical_changes": 0,
+        "immutable_historical_files": 13,
+        "index_unchanged": true
+      },
+      "historical_score_inventory_pin.json": {
+        "changed": 0,
+        "checked": 15
+      },
+      "multi": {
+        "archive_files_verified": 63,
+        "historical_changes": 0,
+        "immutable_historical_files": 250,
+        "index_unchanged": true
+      }
+    },
+    "model_api_calls": 0,
+    "verdict": "PASS"
+  },
+  "regrading": {
+    "contract": "cevolve_hendrycks_math_v1",
+    "contract_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34",
+    "correct": 355,
+    "count": 3492,
+    "former_semantic_unresolved44": {
+      "count": 44,
+      "outcomes": {
+        "False": 44
+      },
+      "reasons": {
+        "extraction_failure": 44
+      }
+    },
+    "historical_writes": 0,
+    "incorrect": 3137,
+    "model_api_calls": 0,
+    "old_counts": {
+      "V7": {
+        "False": 1248,
+        "None": 1,
+        "True": 2243
+      },
+      "maspo_compat_v1": {
+        "False": 3148,
+        "True": 344
+      },
+      "math_semantic_v1": {
+        "False": 829,
+        "None": 44,
+        "True": 2619
+      },
+      "paper_extracted_exact_v1": {
+        "False": 1161,
+        "True": 2331
+      }
+    },
+    "output_sha256": "5b5adffedce8fc33ff792a307069e3b24a9d70f2d7cc1c095a098b52df634acc",
+    "reasons": {
+      "extraction_failure": 2985,
+      "normalized_match": 355,
+      "normalized_mismatch": 152
+    },
+    "sources": {
+      "corpus": "6c88e11cf92c4886f58e28c6cad0390a08d7fc2510c7b3368b66d3fcf15657b6",
+      "terminal": "24e3b595273319c67c78e16a3d6003e344851a0f1283933057baaa64760d7f93",
+      "v1": "4fda6c2ec83ca1203dcf36da24f56575c3a029810e1da0bbdec77f8ac66368a9",
+      "v7": "78d6f627f1864c17aa89949e843d2e8c73c266641e2375070ec512d5361963a2"
+    },
+    "terminal2700": {
+      "count": 2700,
+      "new_correct": 148,
+      "old_correct": 2028,
+      "transitions": {
+        "False->False": 647,
+        "False->True": 25,
+        "True->False": 1905,
+        "True->True": 123
+      }
+    },
+    "transitions": {
+      "V7": {
+        "False->False": 1035,
+        "False->True": 213,
+        "None->False": 1,
+        "True->False": 2101,
+        "True->True": 142
+      },
+      "maspo_compat_v1": {
+        "False->False": 3135,
+        "False->True": 13,
+        "True->False": 2,
+        "True->True": 342
+      },
+      "math_semantic_v1": {
+        "False->False": 824,
+        "False->True": 5,
+        "None->False": 44,
+        "True->False": 2269,
+        "True->True": 350
+      },
+      "paper_extracted_exact_v1": {
+        "False->False": 1154,
+        "False->True": 7,
+        "True->False": 1983,
+        "True->True": 348
+      }
+    },
+    "unresolved": 0
+  },
+  "status": {
+    "A2_TEST_RESUMED": "NO",
+    "HENDRYCKS_PARITY": "PASS",
+    "HISTORICAL_ARTIFACT_INTEGRITY": "PASS",
+    "IMPLEMENTATION": "COMPLETE",
+    "OFFLINE_REGRESSION": "PASS",
+    "ONLINE_SCORER_REPLACEMENT": "COMPLETE",
+    "READY_FOR_NEW_EXPERIMENT": "NO",
+    "REAL_API_CALLS": 0,
+    "TWO_REPO_PARITY": "PASS"
+  }
+}

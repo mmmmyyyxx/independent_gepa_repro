@@ -1,0 +1,17 @@
+{
+  "artifact_manifest_sha256": "3ad22432a3ede1a35003a67c1fbcf5dabcb460b5a359d6cd99098740118afca4",
+  "case_records": 3492,
+  "common_core_hashes_match": true,
+  "formal_readiness": false,
+  "git_diff_check": true,
+  "links_checked": 7,
+  "local_binding_hash_matches": true,
+  "output_sanitization": true,
+  "policy_hashes_match": true,
+  "real_model_calls": 0,
+  "report_arithmetic": true,
+  "scope": "New math scorer source, config, docs and sanitized local report; independent external provider edits excluded from source parity",
+  "source_and_report_files_checked": 24,
+  "status": "PASS",
+  "task_new_file_whitespace": true
+}

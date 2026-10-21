@@ -1,0 +1,1513 @@
+{
+  "evidence_hashes": {
+    "gepa_compile_completion.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gepa_completion.xml": "6898bd4efa03e3a2685e087933afba739155579b570c2473e8da537c5e106eb4",
+    "governance_release.json": "9709ea267adfc41301a3b13797338d8b636e2d52f5898e5a3bf2b94fa195c7a1",
+    "manifest_release.log": "4de2c9a2f93acf7512b89fc0e08e5dcc16c472331e0d120a447964c7180457b6",
+    "multi_compile_completion.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "multi_completion.xml": "b1e3c4937f8f1d632e3724ed879fd54fb71cef4095f835dad3f0c7d4e758bbd4",
+    "multi_finish_targeted.xml": "3114b782d6bc7bf63ce3a3a6cdf616b111187e8baed7dcd42d55d5130ec263d3",
+    "multi_governance_fix.xml": "2c87814e1d8fb3883b6154836fb4b23e68a1479427fe17b2dee4ebdc2d37eecd",
+    "multi_governance_focused.log": "489d0cad18b4dfee7e5144b94edf37e1ee8a58ade8dcf2e71e108bacf61d8aca"
+  },
+  "gepa_current": {
+    "counts": {
+      "FAIL": 0,
+      "PASS": 355,
+      "SKIP": 0
+    },
+    "deselected_cases": 18,
+    "omitted_modules": [
+      "test_single_prompt_scoring_v5.py",
+      "test_single_prompt_scoring_v7.py",
+      "test_math_comparison.py",
+      "test_math_v4_lifecycle.py"
+    ],
+    "selected": 355
+  },
+  "governance": "PASS",
+  "historical_replay_claimed": false,
+  "historical_terminal_sha256": "b77b0f1c433a6454ca5523185270525ba0ad592926023a254434860107a36ca5",
+  "identity": "CEVOLVE_HENDRYCKS_OFFLINE_COMPLETION_V1",
+  "manifest_preflight": "PASS",
+  "model_api_calls": 0,
+  "model_scoring_core_unchanged_after_regression": true,
+  "multi_full_worktree_run": {
+    "counts": {
+      "FAIL": 12,
+      "PASS": 1166,
+      "SKIP": 2
+    },
+    "evidence_sha256": "b1e3c4937f8f1d632e3724ed879fd54fb71cef4095f835dad3f0c7d4e758bbd4",
+    "selected": 1180
+  },
+  "multi_governance_metadata_correction": {
+    "change": "Fresh scoring preparation replaces retired preparation as sole active draft; old manifest unchanged.",
+    "counts": {
+      "FAIL": 0,
+      "PASS": 11,
+      "SKIP": 0
+    },
+    "evidence_sha256": "2c87814e1d8fb3883b6154836fb4b23e68a1479427fe17b2dee4ebdc2d37eecd",
+    "selected": 11
+  },
+  "multi_omitted_modules": [
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_full_error_test_resume.py",
+      "replay_source": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "scope_note": "Retired pre-Hendrycks scoring or exact paid Test continuation; fresh current scoring is tested separately."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_ab_test_continuation.py",
+      "replay_source": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "scope_note": "Retired pre-Hendrycks scoring or exact paid Test continuation; fresh current scoring is tested separately."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_math_power_certificate.py",
+      "replay_source": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "scope_note": "Retired pre-Hendrycks scoring or exact paid Test continuation; fresh current scoring is tested separately."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_ablation_test_certified.py",
+      "replay_source": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "scope_note": "Retired pre-Hendrycks scoring or exact paid Test continuation; fresh current scoring is tested separately."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_math_interval_certificate.py",
+      "replay_source": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "scope_note": "Retired pre-Hendrycks scoring or exact paid Test continuation; fresh current scoring is tested separately."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_ablation_test_deadline.py",
+      "replay_source": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "scope_note": "Retired pre-Hendrycks scoring or exact paid Test continuation; fresh current scoring is tested separately."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_ablation_test_resume.py",
+      "replay_source": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "scope_note": "Retired pre-Hendrycks scoring or exact paid Test continuation; fresh current scoring is tested separately."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_scoped_experience_layer1.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "scope_note": "Superseded V2.8 six-chain/panel/abstention conformance; shared contracts ported to current V2.9 tests."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_math_flexible_answer.py",
+      "replay_source": "ad10b68077bebb4edc93a96e8c41e3104d646b19",
+      "scope_note": "Retired multi-policy diagnostic or permissive extraction contract; new sole-scoring integration and oracle tests replace active coverage."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_math_baseline_followup.py",
+      "replay_source": "ad10b68077bebb4edc93a96e8c41e3104d646b19",
+      "scope_note": "Retired multi-policy diagnostic or permissive extraction contract; new sole-scoring integration and oracle tests replace active coverage."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_math_calibration_execution.py",
+      "replay_source": "ad10b68077bebb4edc93a96e8c41e3104d646b19",
+      "scope_note": "Retired multi-policy diagnostic or permissive extraction contract; new sole-scoring integration and oracle tests replace active coverage."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_math_baseline_calibration.py",
+      "replay_source": "ad10b68077bebb4edc93a96e8c41e3104d646b19",
+      "scope_note": "Retired multi-policy diagnostic or permissive extraction contract; new sole-scoring integration and oracle tests replace active coverage."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_accepted_local_mutation_team_transfer_v1.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "path": "tests/test_accepted_local_mutation_team_transfer_v2.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_accepted_local_mutation_team_transfer_v2_execution.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_accepted_mutation_compositional_state_graph_v1.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_accepted_mutation_exact_state_graph_v2.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_agent_clustering_analysis.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_answer_formats.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_api_retry.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_artifact_writer_long_paths.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_attribution_and_responsibility.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_audit_v16_module2_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_categorical_profile_persistence.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_checkpoint_peer_state.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_cli_progress.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_common_contract_seed77_p1_e2e.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_common_contract_seed77_sensitivity.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "path": "tests/test_common_solver_contract_replay.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_common_solver_contract_v1.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_competence_constrained_selection.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_config_and_presets.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_contract_adapted_rg_gepa_fixed_parent_pilot_v2.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_critic_calibration_replay.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_cross_method_cost_accounting.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_cross_repo_p0_parity_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_dataset_format.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_deterministic_member_aware_system_smoke.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_diagnosis_aggregation.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_diversity_matrix_combined_validation.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_diversity_matrix_d0_d5.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_diversity_matrix_split_balance.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_diversity_writeback_cost_mechanism.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_endpoint_identifiability.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_execution_harness_refreeze_artifacts.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_execution_harness_refreeze_v2.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_experimental_contract_adapted_rg_gepa.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_experimental_rg_gepa.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_experimental_v16_module2_context.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_final_layer2_semantics.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_final_method_pipeline.py",
+      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_final_saturation_preregistration.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_final_state_protocol_v10.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_final_summary_member_aware.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_fixed_probe_protection_diagnostics_v4.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_formal_trajectory.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_formal_v3_attempt2_gate.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_formal_v3_concurrent_local_batch.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_formal_v3_execution_json_boundary.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_formal_v3_full_fake.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_formal_v4_epoch_semantics.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_gepa_candidate_breadth_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_gepa_candidate_breadth_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_gepa_critic_gate_failure_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_gepa_native_feed.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_gepa_proposal_contract_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_layer2_owned_evidence.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_layer2_raw_responsibility.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_level_b_gepa_local_acceptance_rate_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_level_b_gepa_real_canary.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_level_b_gepa_real_canary_v2.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_local_gepa_acceptance_rate_preparation.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "path": "tests/test_local_gepa_phase_b_v2_freeze.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_local_optimizer_execution_runtime.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_mars_native_feed.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_matched_gpt4omini_pilot_script.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_member_objectives.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_model_headroom_screening.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_mutable_prompt_contract.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_native_feed_boundary.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_online_transfer_diagnostic.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_online_transfer_full_fake.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_owner_policy_replay.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_package_v16_responsibility_reports.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_parent_acquisition.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_peer_state.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_peer_state_integration.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_persistent_solver_cache.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_pre_run_faults.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_pre_run_filesystem_hardening.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_preflight_member_aware.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_prepare_responsibility_guided_gepa_fixed_parent_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_primary_responsibility_scheduler.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_production_architecture.py",
+      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_prompt_question_semantics.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_proposal_memory.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_provider_credentials.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_real_api_smoke_scripts.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_repairability_adjusted_v13.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_repairability_freeze.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_residual_diagnosis_module2_variants.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_responsibility_conditioned_tcs.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_responsibility_contribution.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_rg_gepa_execution_ledger.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_rg_gepa_hypothesis_interface_v2_qualification.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_run_identity.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_run_lifecycle.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_sanitized_pilot_report.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_saturation_mode.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_seed78_gepa_differential_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_seed78_gepa_teamminibatch_postmortem.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_seed78_primary_responsibility_ab.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_sequential_symmetry_breaking_online_pilot_v1.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_shadow_gated_evolution.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_single_service_routing.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_solver_headroom_multimodel.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_solver_headroom_screening.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_solver_output_validity.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_solver_stage_attribution.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_source_freeze_hash.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_stage_a_multichannel.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_startup_identity_chain.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_static_checkpoint_restore.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_student_invalid_recovery_v4.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_symmetry_breaking_trajectory.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_task_manifest.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_task_runner.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_tasks_bbh.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_tasks_mmlu.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_tcs_completion_policy.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_team_differentiation.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_terminal_rejection_streak_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_test_split_isolation.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_trajectory_termination.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_two_layer_ledger.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_two_layer_optimizer_architecture.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_unified_backend_runtime.py",
+      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_unified_bbh_replay.py",
+      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_unified_benchmark_migration.py",
+      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_unified_execution_governance.py",
+      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_unified_search_architecture.py",
+      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v16_fixed_parent_generation_probe.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "path": "tests/test_v16_generic_m20_fixed_parent_probe.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "path": "tests/test_v16_m20_collateral_structure_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "path": "tests/test_v16_m20_m2e_fixed_parent_probe.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v16_m2f_critical_competence_exchange.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v16_m2f_feedback_necessity_probe.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v16_m2f_online_mechanism_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v16_m2f_probe.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v16_module2_compute_matched_efficacy.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v16_responsibility_coherence_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v17_conversion_priority_hybrid.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v17_conversion_target2_differentiation.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v17_failure_decomposition.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v17_formal_experiment.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v17_hybrid_recovered_update_conversion.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v17_hybrid_recovered_update_conversion_report.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "path": "tests/test_v17_hybrid_target_allocation_phase_a.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v17_hybrid_target_allocation_report.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_PRIVATE_ARTIFACT",
+      "path": "tests/test_v17_module1_2x2_phase_a.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v17_w1_target_allocation_audit.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_critic_safety_only_counterfactual.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_harmful_commit_m2f_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_historical_teacher_safety.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_hybrid_online_accumulation.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_m2f_trigger_extension_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_no_semantic_critic_candidate_ranking.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_no_semantic_critic_online.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_no_semantic_critic_transfer.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_qwen3_8b_light_replication.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_qwen3_8b_light_replication_analysis.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_revision_parity_semantics.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_safety_only_critic_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_scientific_analysis_admission.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_scientific_report.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_shadow_raw_critic_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_teacher_critic_pipeline.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_trajectory_gain_loss_decomposition.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v18_writeback_quality.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v3_preexecution_fault_campaign.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v3_scientific_blocker_decision_closure.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v4_attempt3_semantics.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v4_bounded_feasibility.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_v6_matched_comparison_records.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_validation_member_aware.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_vote.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_vote_aligned_confirmatory_replication.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_vote_aligned_generic_shadow_pilot.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_vote_aligned_scheduler.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_vote_aligned_seed75_static_control.py",
+      "replay_source": null,
+      "scope_note": null
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_gradient_canary_diagnostic.py",
+      "replay_source": "7342d85a877880717b00cd19ddc4ab6e598e81e4",
+      "scope_note": "Original frozen method/compatibility fixture uses retired construction or execution; replay at original source. Current V23 solver, admission, evidence flow, accounting and production-entrypoint checks are independently retained or ported."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_structured_optimization_evidence.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "scope_note": "Superseded V2.8 six-chain/panel/abstention conformance; shared contracts ported to current V2.9 tests."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_structured_system_contract.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "scope_note": "Superseded V2.8 six-chain/panel/abstention conformance; shared contracts ported to current V2.9 tests."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_v25_repair_contract.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "scope_note": "Superseded V2.8 six-chain/panel/abstention conformance; shared contracts ported to current V2.9 tests."
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_matched_realization.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "CURRENT_CONTRACT",
+      "path": "tests/current/test_optimization_evidence_v23.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_visible_solver_trajectories.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_pattern_cluster_output_limit.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_v22_operational_pilot.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_transition_reachability_v22.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_manual_capacity_probe.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_partition_completion.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_operational_persistence.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_numeric_provenance.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_identical_initial_team.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_gradient_pilot_audit.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_gradient_pilot.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_current_runtime.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_unified_semantic_contract.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_unified_search_v2.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_preexecution.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_answer_domain_v2.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_token_accounting.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_v21_binding.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_solver_decoding.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_prediction_validity.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_output_reuse.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_terminal_recovery.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_optimizer_generation.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_low_cost.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_layer1_responsibility_search.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_math_layer1_binding.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_layer1_action_memory.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_rolling_risk_memory.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_pattern_responsibility.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/test_gradient_patterns.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_gradient_contract_recovery.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_numeric_calibration.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "HISTORICAL_REPLAY",
+      "path": "tests/current/test_pilot_terminal_execution.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "CURRENT_ZERO_API_E2E",
+      "path": "tests/current/test_v23_solver_contract.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "CURRENT_ZERO_API_E2E",
+      "path": "tests/current/test_v23_admission.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "CURRENT_ZERO_API_E2E",
+      "path": "tests/current/test_v23_generation.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "CURRENT_ZERO_API_E2E",
+      "path": "tests/current/test_v23_only_runtime.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "CURRENT_ZERO_API_E2E",
+      "path": "tests/current/test_v23_production_entrypoint.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    },
+    {
+      "classification": "CURRENT_CONTRACT",
+      "path": "tests/current/test_v23_math_domains.py",
+      "replay_source": "4119d75f135537ed610edae3919f5203116b91e3",
+      "scope_note": "Retired method test; recover together with original source from Git; not a current PASS"
+    }
+  ],
+  "multi_published_scope_reconciled": {
+    "basis": "Full classified current run, with all governance cases replaced by focused post-fix rerun of all11 affected assertions; not a second full-suite run.",
+    "counts": {
+      "FAIL": 0,
+      "PASS": 1133,
+      "SKIP": 2
+    },
+    "selected": 1135
+  },
+  "multi_retired_git_only_test_cases": [
+    {
+      "path": "tests/current/test_optimizer_output_contract_feedback.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "test": "test_reflection_feedback_consumes_existing_slots_and_clears_after_valid_output"
+    },
+    {
+      "path": "tests/current/test_parallel_compact.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "test": "test_actual_gradient_and_reflection_boundaries_have_direct_readable_evidence"
+    },
+    {
+      "path": "tests/current/test_generated_output_recovery.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "test": "test_truncated_reflection_is_charged_and_keeps_prior_successful_candidates"
+    },
+    {
+      "path": "tests/current/test_current_admission.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "test": "test_target_only_teamprobe_signal_reaches_full_with_ceiling_two"
+    },
+    {
+      "path": "tests/current/test_local_promotion_feasibility_audit.py",
+      "replay_source": "905268bad94fa9a70fb9b719c0c68d6588cd7d9d",
+      "test": "test_probe_replay_matches_production_and_floor_removal_retains_risk_bound"
+    }
+  ],
+  "source_metadata_addendum": "Only fresh preparation registry/frontier and equivalent JSON formatting/current identity documentation changed after complete run; focused governance rerun and final preflight cover this correction.",
+  "unrelated_unpublished_baseline": {
+    "counts": {
+      "FAIL": 1,
+      "PASS": 44,
+      "SKIP": 0
+    },
+    "disposition": "Preserved local work; not part of scoring migration or publication; SDK construction is fake and failed before any network access.",
+    "failure": "test_smoke_plan_is_offline_and_real_requires_exact_scope",
+    "module": "tests/current/test_siliconflow_provider.py"
+  }
+}

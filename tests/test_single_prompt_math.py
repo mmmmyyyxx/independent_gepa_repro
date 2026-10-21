@@ -96,7 +96,7 @@ class Fake:
         if self.mode=='no_local_gain':correct=changed and 'validation' in request['messages'][1]['content']
         elif self.mode=='val_tie':correct=changed and 'optimize' in request['messages'][1]['content']
         else:correct=changed and self.mode=='mixed'
-        return response('Working is permitted.\nFinal answer: '+('1' if correct else '0'))
+        return response('Working is permitted.\n'+r'\boxed{'+('1' if correct else '0')+'}')
 
 
 def fixture_bundle(path,models,initial):
@@ -118,7 +118,7 @@ def complete_fake(request,tmp_path_factory,config,models,initial):
     # Warm only the numeric fixtures, avoiding an artificial cold-start stampede
     # from an instant fake transport under production Solver32 concurrency.
     from independent_gepa.single_prompt_math.scoring import score
-    for answer in ('0','1'):score(classify_prediction('Final answer: '+answer),'1')
+    for answer in ('0','1'):score(classify_prediction(r'\boxed{'+answer+'}'),'1')
     bundle=tmp_path/'bundle';manifest=fixture_bundle(bundle,models,initial)
     frozen={'config':config,'bundle_hash':manifest['bundle_hash'],'fake_only_fixture':True}
     frozen['identity']=digest(frozen);freeze=tmp_path/'freeze.json';write(freeze,frozen)
@@ -253,7 +253,7 @@ def test_arm_approval_precedes_shared_cache_and_repeat_isolation(tmp_path,config
 
 
 def test_wrong_valid_output_stops_and_truncation_recovers_capacity(tmp_path,config,models,initial):
-    replies=iter([response('Final answer:0'),response('partial','length'),response('Final answer:1')]);calls=[]
+    replies=iter([response(r'\boxed{0}'),response('partial','length'),response(r'\boxed{1}')]);calls=[]
     def transport(role,request):calls.append(request);return next(replies)
     rt=Runtime(tmp_path,config,models,'fake',transport);rt.bind_arm('strict_validation');p=SystemPrompt.from_dict(initial);rt.register_prompt(p,1)
     data=rows('optimize',2)
@@ -401,7 +401,7 @@ def test_native_only_candidate_policy_has_no_reference_filter(tmp_path,config,mo
             assert 'never copy example-specific' not in request['messages'][0]['content']
             return response('```\n'+text+'\n```')
         requests.append(deepcopy(request))
-        return response('Final answer:'+('1' if request['messages'][0]['content']!=root_system else '0'))
+        return response(r'\boxed{'+('1' if request['messages'][0]['content']!=root_system else '0')+'}')
     rt=Runtime(tmp_path,cfg,models,'fake',transport);rt.bind_arm('strict_validation')
     result=run_repeat(rt,cfg,initial,rows('optimize',3),rows('validation',3),tmp_path/'cell',1)
     proposals=read(tmp_path/'cell/proposals.json')
@@ -416,7 +416,7 @@ def test_exhausted_reflection_uses_native_no_proposal_instead_of_empty_child(tmp
     cfg=deepcopy(config);cfg['max_native_proposals']=2;counts={'reflection':0,'solver':0}
     def transport(role,request):
         counts[role]+=1
-        return response('unfinished','length') if role=='reflection' else response('Final answer:0')
+        return response('unfinished','length') if role=='reflection' else response(r'\boxed{0}')
     rt=Runtime(tmp_path,cfg,models,'fake',transport);rt.bind_arm('native_pareto')
     result=run_repeat(rt,cfg,initial,rows('optimize',3),rows('validation',3),tmp_path/'cell',1)
     assert result['native_iterations']==2 and result['generated']==0 and result['selected']==initial
@@ -440,7 +440,7 @@ def test_content_filtered_reflection_skips_native_opportunity_without_aborting(t
     cfg=deepcopy(config);cfg['max_native_proposals']=2;calls=[]
     def transport(role,request):
         calls.append(role)
-        return response('','content_filter') if role=='reflection' else response('Final answer:0')
+        return response('','content_filter') if role=='reflection' else response(r'\boxed{0}')
     rt=Runtime(tmp_path,cfg,models,'fake',transport);rt.bind_arm('strict_validation')
     result=run_repeat(rt,cfg,initial,rows('optimize',3),rows('validation',3),tmp_path/'cell',1)
     assert result['generated']==0 and result['native_iterations']==2 and not rt.failed.is_set()
@@ -478,7 +478,7 @@ def test_v5_runtime_missing_test_observation_uses_repaired_score_and_paired_cach
     from independent_gepa.single_prompt_math.continuation import TestContinuationRuntime,load_policy
     calls=[]
     def transport(role,request):
-        calls.append(role);return response(r'Final answer:(2+\sqrt{2})^{3^{77}-1}')
+        calls.append(role);return response(r'\boxed{(2+\sqrt{2})^{3^{77}-1}}')
     rt=TestContinuationRuntime(tmp_path,config,models,'fixture',transport,policy=load_policy(ROOT))
     rt.phase='test';rt.test_release_check=lambda:None;rt.bind_arm('strict_validation')
     prompt=SystemPrompt.from_dict(initial);rt.register_prompt(prompt,1);row=rows('test',1)[0]
@@ -542,7 +542,7 @@ def test_v7_missing_test_draw_keeps_pairing_and_solver_only_scope(tmp_path,confi
 def test_v7_partial_profile_does_not_recount_imported_logical_observations(tmp_path,config,models,initial):
     from independent_gepa.single_prompt_math.continuation import TestContinuationRuntime,load_policy,finish_test_profile
     calls=[]
-    def transport(role,request):calls.append(role);return response('Final answer:1')
+    def transport(role,request):calls.append(role);return response(r'\boxed{1}')
     rt=TestContinuationRuntime(tmp_path,config,models,'partial',transport,policy=load_policy(ROOT,'v7'))
     rt.phase='test';rt.test_release_check=lambda:None;rt.bind_arm('strict_validation')
     prompt=SystemPrompt.from_dict(initial);rt.register_prompt(prompt,1);examples=rows('test',2)

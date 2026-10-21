@@ -1,0 +1,27 @@
+{
+  "commit": "985bdc1696e88e8643f081a0ff4719da39f2ae2a",
+  "files": {
+    "LICENSE": {
+      "sha256": "8f6401fb0b1fbfcac17aac8d61e4e1b0d2de9aa190d8aa655fedc5fd783b2ace",
+      "url": "https://github.com/hendrycks/math/blob/985bdc1696e88e8643f081a0ff4719da39f2ae2a/LICENSE"
+    },
+    "README.md": {
+      "sha256": "ea2a34912f19c4e98dfb76a99578daa42b195d5b15a71c359147cf440c6eb018",
+      "url": "https://github.com/hendrycks/math/blob/985bdc1696e88e8643f081a0ff4719da39f2ae2a/README.md"
+    },
+    "modeling/dataset/util.py": {
+      "sha256": "9183a9ea7bce3c126ac33f993d21bf85cffbdb7bab10088216d286699c9e084a",
+      "url": "https://github.com/hendrycks/math/blob/985bdc1696e88e8643f081a0ff4719da39f2ae2a/modeling/dataset/util.py"
+    },
+    "modeling/eval_math_gpt.py": {
+      "sha256": "e0a70061d1be9d37681dd07f632d19d177beffc1ee17a10148008d1c95877ead",
+      "url": "https://github.com/hendrycks/math/blob/985bdc1696e88e8643f081a0ff4719da39f2ae2a/modeling/eval_math_gpt.py"
+    },
+    "modeling/math_equivalence.py": {
+      "sha256": "c4101b1f51a2bb65665194aecd9f761d668c0c248a0350f196c2950e87488527",
+      "url": "https://github.com/hendrycks/math/blob/985bdc1696e88e8643f081a0ff4719da39f2ae2a/modeling/math_equivalence.py"
+    }
+  },
+  "new_model_calls": 0,
+  "repository": "https://github.com/hendrycks/math"
+}

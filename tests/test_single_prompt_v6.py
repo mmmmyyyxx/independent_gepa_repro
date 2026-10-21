@@ -86,7 +86,7 @@ def test_budget_wrapper_preserves_native_prefix_when_cap_does_not_bind(tmp_path,
 def test_more_than_twenty_opportunities_and_no_candidate_paths(tmp_path,config,models,initial,mode):
     def transport(role,request):
         if role=='reflection':return response('```\nCheck arithmetic carefully.\n```')
-        return response('Final answer:'+('1' if mode=='perfect' else '0'))
+        return response(r'\boxed{'+('1' if mode=='perfect' else '0')+'}')
     cfg={**config,'native_logical_budget':300,'max_native_proposals':1000}
     rt=Runtime(tmp_path,cfg,models,'fake',transport);rt.bind_arm('strict_validation')
     result=run_repeat(rt,cfg,initial,rows('optimize',6),rows('validation',4),tmp_path/'cell',1)
@@ -123,7 +123,7 @@ def test_native_3000_call_bound_with_repeated_full_batches(tmp_path):
 
 
 def test_shared_observation_attribution_has_no_second_arm_free_advantage(tmp_path,config,models,initial):
-    rt=Runtime(tmp_path,config,models,'fake',lambda *a:response('Final answer:1'))
+    rt=Runtime(tmp_path,config,models,'fake',lambda *a:response(r'\boxed{1}'))
     prompt=SystemPrompt.from_dict(initial);row=rows('optimize',1)[0]
     for arm in config['arms']:
         rt.bind_arm(arm);rt.register_prompt(prompt,1)
@@ -136,7 +136,7 @@ def test_shared_observation_attribution_has_no_second_arm_free_advantage(tmp_pat
 
 
 def test_diagnostic_token_components_are_separate_from_native_and_test(tmp_path,config,models,initial):
-    rt=Runtime(tmp_path,config,models,'fake',lambda *a:response('Final answer:1'))
+    rt=Runtime(tmp_path,config,models,'fake',lambda *a:response(r'\boxed{1}'))
     rt.bind_arm('strict_validation');p=SystemPrompt.from_dict(initial);rt.register_prompt(p,1)
     data=rows('optimize',3)
     for row,kind in zip(data,['initial_diagnostic','native','selected_diagnostic']):rt.prediction(p,row,1,'optimize',kind)
@@ -151,7 +151,7 @@ def test_failed_request_bounds_and_success_tokens_are_separate(tmp_path,config,m
     def transport(*args):
         attempts.append(True)
         if len(attempts)==1:raise APIConnectionError(request=httpx.Request('POST','https://fixture.invalid'))
-        return response('Final answer:1')
+        return response(r'\boxed{1}')
     rt=Runtime(tmp_path,config,models,'fake',transport);rt.bind_arm('strict_validation')
     monkeypatch.setattr(rt,'wait_provider',lambda role:None)
     # Cooldown is consumed by wait_provider in production; isolate deterministic retry here.
@@ -230,7 +230,7 @@ def test_same_v5_repair_is_bound_to_every_runtime_phase_and_audit(tmp_path,confi
     from independent_gepa.single_prompt_math import runtime,audit,scoring
     assert runtime.score is audit.score is scoring.score
     assert config['local_timeout_attempts_at_ceiling']==2
-    rt=Runtime(tmp_path,config,models,'fake',lambda *a:response(r'Final answer:(2+\sqrt{2})^{3^{77}-1}'))
+    rt=Runtime(tmp_path,config,models,'fake',lambda *a:response(r'\boxed{(2+\sqrt{2})^{3^{77}-1}}'))
     rt.phase=phase;rt.test_release_check=lambda:None;rt.bind_arm('strict_validation')
     prompt=SystemPrompt.from_dict(initial);rt.register_prompt(prompt,1)
     result=rt.prediction(prompt,rows(split,1)[0],1,split)

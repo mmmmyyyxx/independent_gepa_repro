@@ -1,0 +1,78 @@
+{
+  "historical_V7__maspo_compat_v1": {
+    "agree": 770,
+    "both_resolved": 2700,
+    "counts": {
+      "FF": 647,
+      "FT": 25,
+      "TF": 1905,
+      "TT": 123
+    },
+    "disagree": 1930,
+    "one_or_both_unresolved": 0,
+    "total": 2700
+  },
+  "historical_V7__math_semantic_v1": {
+    "agree": 2621,
+    "both_resolved": 2675,
+    "counts": {
+      "FF": 602,
+      "FT": 54,
+      "TT": 2019
+    },
+    "disagree": 54,
+    "one_or_both_unresolved": 25,
+    "total": 2700
+  },
+  "historical_V7__paper_extracted_exact_v1": {
+    "agree": 2465,
+    "both_resolved": 2700,
+    "counts": {
+      "FF": 636,
+      "FT": 36,
+      "TF": 199,
+      "TT": 1829
+    },
+    "disagree": 235,
+    "one_or_both_unresolved": 0,
+    "total": 2700
+  },
+  "maspo_compat_v1__math_semantic_v1": {
+    "agree": 746,
+    "both_resolved": 2675,
+    "counts": {
+      "FF": 600,
+      "FT": 1927,
+      "TF": 2,
+      "TT": 146
+    },
+    "disagree": 1929,
+    "one_or_both_unresolved": 25,
+    "total": 2700
+  },
+  "paper_extracted_exact_v1__maspo_compat_v1": {
+    "agree": 979,
+    "both_resolved": 2700,
+    "counts": {
+      "FF": 833,
+      "FT": 2,
+      "TF": 1719,
+      "TT": 146
+    },
+    "disagree": 1721,
+    "one_or_both_unresolved": 0,
+    "total": 2700
+  },
+  "paper_extracted_exact_v1__math_semantic_v1": {
+    "agree": 2467,
+    "both_resolved": 2675,
+    "counts": {
+      "FF": 602,
+      "FT": 208,
+      "TT": 1865
+    },
+    "disagree": 208,
+    "one_or_both_unresolved": 25,
+    "total": 2700
+  }
+}

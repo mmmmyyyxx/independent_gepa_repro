@@ -1,0 +1,46 @@
+{
+  "prior_exact_witness_335": {
+    "maspo_compat_v1": {
+      "CORRECT": 26,
+      "INCORRECT": 309
+    },
+    "math_semantic_v1": {
+      "CORRECT": 325,
+      "UNSUPPORTED": 10
+    },
+    "paper_extracted_exact_v1": {
+      "CORRECT": 134,
+      "INCORRECT": 201
+    }
+  },
+  "prior_extraction_associated_243": {
+    "maspo_compat_v1": {
+      "CORRECT": 1,
+      "INCORRECT": 242
+    },
+    "math_semantic_v1": {
+      "CORRECT": 243
+    },
+    "paper_extracted_exact_v1": {
+      "CORRECT": 198,
+      "INCORRECT": 45
+    }
+  },
+  "prior_unconfirmed_72": {
+    "maspo_compat_v1": {
+      "CORRECT": 5,
+      "INCORRECT": 67
+    },
+    "math_semantic_v1": {
+      "CORRECT": 38,
+      "INCORRECT": 25,
+      "INVALID_OUTPUT": 1,
+      "UNSUPPORTED": 8
+    },
+    "paper_extracted_exact_v1": {
+      "CORRECT": 22,
+      "INCORRECT": 49,
+      "INVALID_OUTPUT": 1
+    }
+  }
+}

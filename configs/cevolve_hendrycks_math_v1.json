@@ -1,0 +1,22 @@
+{
+  "identity": "cevolve_hendrycks_math_v1",
+  "upstream_commit": "985bdc1696e88e8643f081a0ff4719da39f2ae2a",
+  "source_files": {
+    "contract.py": "b5613715dd9ab5cc6ec0a37c3f4ff6c7c917a2c3166402a3ea4eebf597ae05a2",
+    "_hendrycks.py": "9e85c501891e867db4eb27e6b6785cd27ce4f705724959a76e4097133c8aa0a6",
+    "score.py": "224903569eb748e06e12c047265b44ecc3731bd6c5a26e65002eb1025ee98162",
+    "upstream.json": "d7f6a3b0750869cc260e3fb06c80da7af78c778997621829a98a8ac524e6b274"
+  },
+  "extraction": "last_boxed_only_string_then_remove_boxed",
+  "comparison": "Hendrycks_is_equiv_normalized_string_equality",
+  "normalization_exception": "upstream_literal_string_equality_only",
+  "invalid_reference": "error_never_model_score",
+  "missing_prediction": "binary_zero_extraction_failure",
+  "finish_reason": "metadata_only_no_extra_stop_or_truncation_gate",
+  "response_limit": 1048576,
+  "reference_limit": 65536,
+  "symbolic_evaluator": false,
+  "policy_selection": false,
+  "aggregation": "separate_existing_plurality_contract_not_C_EVOLVE_aggregation",
+  "contract_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34"
+}

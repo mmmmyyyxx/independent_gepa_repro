@@ -1,0 +1,856 @@
+{
+  "examples": [
+    {
+      "case_id_sha256": "9763483426249fc53b143e2f267a8148cf7dedf3eaa1af4dccd0e810034bc474",
+      "category": "extracted_payload_changed_not_necessarily_decision",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed formatting/spacing and matrix boundaries; changed payload bytes alone do not imply changed verdicts.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "1fcc390b69f11050ad0ca1f4f7df4e8c33fea5af47fc95d63061b6474c65b9ed",
+      "category": "extracted_payload_changed_not_necessarily_decision",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed formatting/spacing and matrix boundaries; changed payload bytes alone do not imply changed verdicts.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "6b293d9ddef0ee4dce5c1dd4ae0c8a9727f1373b1c76f089e3b9e487727c47a5",
+      "category": "extracted_payload_changed_not_necessarily_decision",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed formatting/spacing and matrix boundaries; changed payload bytes alone do not imply changed verdicts.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "2aa092872ff8c9f87b087b29e6b7678b72202a335fcef9367382d32934db0f93",
+      "category": "extracted_payload_changed_not_necessarily_decision",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed formatting/spacing and matrix boundaries; changed payload bytes alone do not imply changed verdicts.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "7da337c760f513e7bb45dab8dc2a41b4f79824709bf367f0d55a3550fbd2a419",
+      "category": "format_invalid_but_prior_mathematical_positive_not_new_correct",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": true,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "CORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed trailing-unit/unlabelled explanation and split natural-language conclusion cases; a correct mathematical fragment can coexist with a rejected final-output contract. This remains a documented conservative boundary, not proof the mathematics is wrong.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "2f543ea5c62865f21013af4ab6e754a831692663afe52cfe6c473c114c514433",
+      "category": "format_invalid_but_prior_mathematical_positive_not_new_correct",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": true,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "CORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed trailing-unit/unlabelled explanation and split natural-language conclusion cases; a correct mathematical fragment can coexist with a rejected final-output contract. This remains a documented conservative boundary, not proof the mathematics is wrong.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "fbd2a50ad4b510b53611f8e330f58a1f3f5c5a83bd9129315ee56833b7364ac2",
+      "category": "format_invalid_but_prior_mathematical_positive_not_new_correct",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": true,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "CORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed trailing-unit/unlabelled explanation and split natural-language conclusion cases; a correct mathematical fragment can coexist with a rejected final-output contract. This remains a documented conservative boundary, not proof the mathematics is wrong.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "176ac7226840fca325cf1abf3485f40ebc86f4f7738dac6ed8586f7286173329",
+      "category": "format_invalid_but_prior_mathematical_positive_not_new_correct",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed trailing-unit/unlabelled explanation and split natural-language conclusion cases; a correct mathematical fragment can coexist with a rejected final-output contract. This remains a documented conservative boundary, not proof the mathematics is wrong.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "190f0eae4f05b103c84b5330fac28e4b9da353e839addbf70d9afe40b3209afb",
+      "category": "historical_unresolved_no_false_imputation",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "INCORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": null,
+      "prior_status": "TIMEOUT",
+      "review_note": "Reviewed the unique earlier timeout. New bounded native result is a counterfactual verdict, not a correction to the old unknown; the saved huge-exponent fixture is independently bounded and stable.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "7da337c760f513e7bb45dab8dc2a41b4f79824709bf367f0d55a3550fbd2a419",
+      "category": "maspo_accept_semantic_reject_review_required",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": true,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "CORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed examples show extractor choice/output framing and relation-versus-scalar differences. These are not evidence of unsafe interval normalization in this corpus. Unsafe MASPO bracket/case/list rules are demonstrated separately by synthetic controls.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "2f543ea5c62865f21013af4ab6e754a831692663afe52cfe6c473c114c514433",
+      "category": "maspo_accept_semantic_reject_review_required",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": true,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "CORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed examples show extractor choice/output framing and relation-versus-scalar differences. These are not evidence of unsafe interval normalization in this corpus. Unsafe MASPO bracket/case/list rules are demonstrated separately by synthetic controls.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "fbd2a50ad4b510b53611f8e330f58a1f3f5c5a83bd9129315ee56833b7364ac2",
+      "category": "maspo_accept_semantic_reject_review_required",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": true,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "CORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "MISSING_EXPLICIT_FINAL_ANSWER",
+          "status": "INVALID_OUTPUT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed examples show extractor choice/output framing and relation-versus-scalar differences. These are not evidence of unsafe interval normalization in this corpus. Unsafe MASPO bracket/case/list rules are demonstrated separately by synthetic controls.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "edf0829fc18c1184cd440097690df0c18feb349bede8c94d06def8cb97fa1121",
+      "category": "maspo_accept_semantic_reject_review_required",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": true,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "CORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": false,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "INCORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "OK",
+      "review_note": "Reviewed examples show extractor choice/output framing and relation-versus-scalar differences. These are not evidence of unsafe interval normalization in this corpus. Unsafe MASPO bracket/case/list rules are demonstrated separately by synthetic controls.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "b8fa61cf9f5020e282e2c0c5ed599d877b036fc8098103d012f02b6ba2c89001",
+      "category": "new_mathematics_unresolved",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": null,
+          "reason": "PINNED_PARSE_UNSUPPORTED",
+          "status": "UNSUPPORTED"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed Unicode-infinity spelling, unit-bearing float references and textual labels versus numbers. Policy C preserves unknowns rather than granting exact numeric equivalence or forcing False.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "2f63998053ea2fe699b2a7c381c6c9ff68a74813252ac12689fef0caf3136d3a",
+      "category": "new_mathematics_unresolved",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": null,
+          "reason": "PINNED_PARSE_UNSUPPORTED",
+          "status": "UNSUPPORTED"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed Unicode-infinity spelling, unit-bearing float references and textual labels versus numbers. Policy C preserves unknowns rather than granting exact numeric equivalence or forcing False.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "5f6fa8d4a84360b8289cb07066bbacdfd9dddcff19b6d89940b0e05554a6fd37",
+      "category": "new_mathematics_unresolved",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": null,
+          "reason": "FLOAT_EXPRESSION_NOT_EXACTLY_CERTIFIED",
+          "status": "UNSUPPORTED"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed Unicode-infinity spelling, unit-bearing float references and textual labels versus numbers. Policy C preserves unknowns rather than granting exact numeric equivalence or forcing False.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "4241e0bd77e61af3242793b03a3ae0fceda899f7d49fd4570e7377d553329058",
+      "category": "new_mathematics_unresolved",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": null,
+          "reason": "FLOAT_EXPRESSION_NOT_EXACTLY_CERTIFIED",
+          "status": "UNSUPPORTED"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "OK",
+      "review_note": "Reviewed Unicode-infinity spelling, unit-bearing float references and textual labels versus numbers. Policy C preserves unknowns rather than granting exact numeric equivalence or forcing False.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "867068ce97bef5aba56e8873975ccea6297b93557ad725c723cf01b7adfd9266",
+      "category": "new_semantic_correct_exact_mismatch",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed equivalent fraction spellings and representation wrappers; exact-string rejection is a metric difference, not by itself a mathematics error.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "f264ad7ef2161cbd924f8f64ffce0a45f703f6ad647764ff269be46a4a5f5ba8",
+      "category": "new_semantic_correct_exact_mismatch",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed equivalent fraction spellings and representation wrappers; exact-string rejection is a metric difference, not by itself a mathematics error.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "df1ffbe93d58b8f1c871b6d58fd93b7178b776b8c9eb1ce70af0e5c60fe5ee05",
+      "category": "new_semantic_correct_exact_mismatch",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed equivalent fraction spellings and representation wrappers; exact-string rejection is a metric difference, not by itself a mathematics error.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "96e0927a90f85939ef0df5513b59f3208bc39eded9af3ec9d81806f1628eb380",
+      "category": "new_semantic_correct_exact_mismatch",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed equivalent fraction spellings and representation wrappers; exact-string rejection is a metric difference, not by itself a mathematics error.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "df1ffbe93d58b8f1c871b6d58fd93b7178b776b8c9eb1ce70af0e5c60fe5ee05",
+      "category": "old_to_new_semantic_status_or_decision_changed",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed old framing exclusion and new final-boundary selection; some differences become unsupported rather than correct. No new model answer was requested.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "730bef7868a66a94a5c7c0b01834c690d35b760b50f34d1e33304c0add610030",
+      "category": "old_to_new_semantic_status_or_decision_changed",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed old framing exclusion and new final-boundary selection; some differences become unsupported rather than correct. No new model answer was requested.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "b8fa61cf9f5020e282e2c0c5ed599d877b036fc8098103d012f02b6ba2c89001",
+      "category": "old_to_new_semantic_status_or_decision_changed",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": null,
+          "reason": "PINNED_PARSE_UNSUPPORTED",
+          "status": "UNSUPPORTED"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed old framing exclusion and new final-boundary selection; some differences become unsupported rather than correct. No new model answer was requested.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "2f63998053ea2fe699b2a7c381c6c9ff68a74813252ac12689fef0caf3136d3a",
+      "category": "old_to_new_semantic_status_or_decision_changed",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": null,
+          "reason": "PINNED_PARSE_UNSUPPORTED",
+          "status": "UNSUPPORTED"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": false,
+      "prior_status": "INVALID",
+      "review_note": "Reviewed old framing exclusion and new final-boundary selection; some differences become unsupported rather than correct. No new model answer was requested.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "867068ce97bef5aba56e8873975ccea6297b93557ad725c723cf01b7adfd9266",
+      "category": "prior_confirmed_equivalence_different_string",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed exact rational-equivalence and reference-wrapping examples against old proof witness categories; the original204 witnesses are reused, not expanded to all mismatches.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "f264ad7ef2161cbd924f8f64ffce0a45f703f6ad647764ff269be46a4a5f5ba8",
+      "category": "prior_confirmed_equivalence_different_string",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed exact rational-equivalence and reference-wrapping examples against old proof witness categories; the original204 witnesses are reused, not expanded to all mismatches.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "96e0927a90f85939ef0df5513b59f3208bc39eded9af3ec9d81806f1628eb380",
+      "category": "prior_confirmed_equivalence_different_string",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed exact rational-equivalence and reference-wrapping examples against old proof witness categories; the original204 witnesses are reused, not expanded to all mismatches.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "5f6fa8d4a84360b8289cb07066bbacdfd9dddcff19b6d89940b0e05554a6fd37",
+      "category": "prior_confirmed_equivalence_different_string",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": null,
+          "reason": "FLOAT_EXPRESSION_NOT_EXACTLY_CERTIFIED",
+          "status": "UNSUPPORTED"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": false,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "INCORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed exact rational-equivalence and reference-wrapping examples against old proof witness categories; the original204 witnesses are reused, not expanded to all mismatches.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "3076b3b105e5b92396a0460fe3e51be57647ac4ad565940624bd0a6809e167df",
+      "category": "prior_confirmed_latex_surface_only",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed spacing, dfrac/tfrac and display-wrapper examples; safe surface normalization removes these without changing mathematical objects.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "f130508256ea626a42d0ba81768932239db37a440e0cb98fcee8edae1f644c85",
+      "category": "prior_confirmed_latex_surface_only",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed spacing, dfrac/tfrac and display-wrapper examples; safe surface normalization removes these without changing mathematical objects.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "b070c0e3ab82a692e14b7ed71830ee4504ea0ce4475703322c5f4d605067d392",
+      "category": "prior_confirmed_latex_surface_only",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed spacing, dfrac/tfrac and display-wrapper examples; safe surface normalization removes these without changing mathematical objects.",
+      "reviewed": true
+    },
+    {
+      "case_id_sha256": "a6745f65a7b095ed3c83994ebd1f8f2df52ca411eff474709b68b66d1c1de0a1",
+      "category": "prior_confirmed_latex_surface_only",
+      "policies": {
+        "maspo_compat_v1": {
+          "correct": false,
+          "reason": "MASPO_ORIGINAL_STRING_RULES_REFERENCE_ONLY",
+          "status": "INCORRECT"
+        },
+        "math_semantic_v1": {
+          "correct": true,
+          "reason": "TYPED_EXACT_OR_PINNED_KERNEL",
+          "status": "CORRECT"
+        },
+        "paper_extracted_exact_v1": {
+          "correct": true,
+          "reason": "NORMALIZED_STRING_EQUALITY_NOT_MATH_EQUIVALENCE",
+          "status": "CORRECT"
+        }
+      },
+      "prior_correct": true,
+      "prior_status": "OK",
+      "review_note": "Reviewed spacing, dfrac/tfrac and display-wrapper examples; safe surface normalization removes these without changing mathematical objects.",
+      "reviewed": true
+    }
+  ],
+  "summary": {
+    "absent_observation_categories": [
+      "New parser/infrastructure exceptions:0; synthetic fault tests cover them",
+      "Old resolved V7 positive to new C false:0 in joint resolved cases",
+      "Whole-corpus new false-positive/false-negative oracle:unavailable"
+    ],
+    "notes": {
+      "extracted_payload_changed_not_necessarily_decision": "Reviewed formatting/spacing and matrix boundaries; changed payload bytes alone do not imply changed verdicts.",
+      "format_invalid_but_prior_mathematical_positive_not_new_correct": "Reviewed trailing-unit/unlabelled explanation and split natural-language conclusion cases; a correct mathematical fragment can coexist with a rejected final-output contract. This remains a documented conservative boundary, not proof the mathematics is wrong.",
+      "historical_unresolved_no_false_imputation": "Reviewed the unique earlier timeout. New bounded native result is a counterfactual verdict, not a correction to the old unknown; the saved huge-exponent fixture is independently bounded and stable.",
+      "maspo_accept_semantic_reject_review_required": "Reviewed examples show extractor choice/output framing and relation-versus-scalar differences. These are not evidence of unsafe interval normalization in this corpus. Unsafe MASPO bracket/case/list rules are demonstrated separately by synthetic controls.",
+      "new_mathematics_unresolved": "Reviewed Unicode-infinity spelling, unit-bearing float references and textual labels versus numbers. Policy C preserves unknowns rather than granting exact numeric equivalence or forcing False.",
+      "new_semantic_correct_exact_mismatch": "Reviewed equivalent fraction spellings and representation wrappers; exact-string rejection is a metric difference, not by itself a mathematics error.",
+      "old_to_new_semantic_status_or_decision_changed": "Reviewed old framing exclusion and new final-boundary selection; some differences become unsupported rather than correct. No new model answer was requested.",
+      "prior_confirmed_equivalence_different_string": "Reviewed exact rational-equivalence and reference-wrapping examples against old proof witness categories; the original204 witnesses are reused, not expanded to all mismatches.",
+      "prior_confirmed_latex_surface_only": "Reviewed spacing, dfrac/tfrac and display-wrapper examples; safe surface normalization removes these without changing mathematical objects."
+    },
+    "residual_limits": [
+      "A rejects mathematically equivalent distinct strings by definition",
+      "C can reject a mathematically correct fragment under conservative output framing",
+      "C has44 unresolved raw responses and25 unresolved terminal observations",
+      "Pinned Math-Verify is not an independent formal proof oracle; no universal absence-of-false-positives claim"
+    ],
+    "reviewed_rows": 33,
+    "status": "TYPICAL_CASE_REVIEW_COMPLETE_NOT_EXHAUSTIVE_GROUND_TRUTH",
+    "unique_case_hashes": 23
+  }
+}

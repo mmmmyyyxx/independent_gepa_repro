@@ -1,0 +1,195 @@
+{
+  "A2_test_continuation_authorized": false,
+  "activation": "OFFLINE_ONLY_NOT_CURRENT_BINDING",
+  "c_evolve": {
+    "section": "Appendix B.2 MATH",
+    "status": "paper_description_only",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2026/file/3f1351a10a3f904e6f3845a94275a909-Paper-Conference.pdf"
+  },
+  "experimental_primary": null,
+  "historical_v7": "UNCHANGED_CALLABLE_NOT_OVERRIDDEN",
+  "identity": "UNIFIED_MATH_SCORING_POLICIES_V1",
+  "local_kernel_binding_files": {
+    "gepa": "1e46e45cca965410ceb2735082bdd9efb565ee26db3d97fc2ee3d59387fbf646",
+    "multi_agent": "76cb8c03278ee878e756f746891872176d5fbbd29e33c1481626f8abb3a44d6b"
+  },
+  "policies": {
+    "maspo_compat_v1": {
+      "policy": {
+        "cache_entries": 4096,
+        "comparison_direction": "gold_first_prediction_second",
+        "computational_failure": "one_attempt_return_typed_unknown_no_model_sampling",
+        "dependencies": {
+          "antlr4-python3-runtime": "4.13.2",
+          "latex2sympy2_extended": "1.0.9",
+          "math-verify": "0.6.0",
+          "mpmath": "1.3.0",
+          "sympy": "1.14.0"
+        },
+        "extraction_id": "MATH_GOLD_BLIND_DECLARATIONS_V1",
+        "finish_reason": "stop_only_except_original_MASPO_reference_semantics",
+        "kernel_internal_timeout": "disabled_only_in_supervised_child; external_wall_and_memory_limits",
+        "maspo": "isolated_original_extraction_and_normalization_reference_only_not_shared_extractor",
+        "maspo_source_commit": "90e8c6fcc08c1e8f9a61740b296d4fab9e09e2d2",
+        "max_container_items": 32,
+        "max_declarations": 32,
+        "max_expression_characters": 2048,
+        "max_expression_nodes": 512,
+        "max_integer_digits": 256,
+        "max_literal_exponent": 10000,
+        "max_nesting": 32,
+        "max_raw_characters": 65536,
+        "memory_megabytes": 1024,
+        "normalization": "no_interval_conversion_no_casefold_no_sort_no_algebra",
+        "normalization_id": "MATH_PRESENTATION_ONLY_V1",
+        "policy_id": "maspo_compat_v1",
+        "scoring_component_sha256": {
+          "api.py": "c2f784dbbbefa3746ebfb4ee09dace049727e9f5fc6415090c6b3f892b9e60e2",
+          "compat_maspo.py": "7930c8654744b1b671a50ec42f85281b84bb8fb08b063c353021f7ce22397113",
+          "extraction.py": "d7c84b8302002180ff142a3d5732283c8225cd1a1899856c7f4c929e45f2e191",
+          "pinned_local_kernel": "140e1994463d4e9bfe98c3c583791eeef85f4df951b5d549ae6cf92afe7f9d26",
+          "pinned_local_normalization": "8b3092bffd7ef4afa2c3b99c45e19838eb79ba4020676be76bdc6f3516b954ba",
+          "pinned_local_settings": "4abc7cf513d2df5ea05018f3f7f24f164226c468ebcc1ddec13283165eacaad7",
+          "policy.py": "f753abe72f377e847ecf057527452e4ab287483d66d2574aa3329784a26969e4",
+          "semantic.py": "56eb61702a0625e560d9342218444fa971edaa36d316bb8cf0ca450be3826e1e",
+          "supervisor.py": "e88f719caa012788d1a991aee4684a213f45c29e4112151f3070e4a09a38d26f",
+          "worker.py": "b0abda85ad30d62716d5cd6ab6a5b6115799d69f97bb6b20ba48849bb645178a"
+        },
+        "semantic_id": "MATH_TYPED_PINNED_KERNEL_V1",
+        "semantic_kernel": "pinned_existing_worker_math_verify_no_fallback; explicit_typed_containers; no_new_power_certificates",
+        "startup_seconds": 10.0,
+        "two_component_parentheses": "ambiguous_without_explicit_frozen_type_hint; never_infer_from_gold_match",
+        "unresolved_correct": null,
+        "vote": "separate_symmetric_both_directions",
+        "wall_seconds": 8.0
+      },
+      "sha256": "7ab42a23aaf582d40ffe896f055d216bca267e5abda4358ece8c82997c50f273"
+    },
+    "math_semantic_v1": {
+      "policy": {
+        "cache_entries": 4096,
+        "comparison_direction": "gold_first_prediction_second",
+        "computational_failure": "one_attempt_return_typed_unknown_no_model_sampling",
+        "dependencies": {
+          "antlr4-python3-runtime": "4.13.2",
+          "latex2sympy2_extended": "1.0.9",
+          "math-verify": "0.6.0",
+          "mpmath": "1.3.0",
+          "sympy": "1.14.0"
+        },
+        "extraction_id": "MATH_GOLD_BLIND_DECLARATIONS_V1",
+        "finish_reason": "stop_only_except_original_MASPO_reference_semantics",
+        "kernel_internal_timeout": "disabled_only_in_supervised_child; external_wall_and_memory_limits",
+        "maspo": "isolated_original_extraction_and_normalization_reference_only_not_shared_extractor",
+        "maspo_source_commit": "90e8c6fcc08c1e8f9a61740b296d4fab9e09e2d2",
+        "max_container_items": 32,
+        "max_declarations": 32,
+        "max_expression_characters": 2048,
+        "max_expression_nodes": 512,
+        "max_integer_digits": 256,
+        "max_literal_exponent": 10000,
+        "max_nesting": 32,
+        "max_raw_characters": 65536,
+        "memory_megabytes": 1024,
+        "normalization": "no_interval_conversion_no_casefold_no_sort_no_algebra",
+        "normalization_id": "MATH_PRESENTATION_ONLY_V1",
+        "policy_id": "math_semantic_v1",
+        "scoring_component_sha256": {
+          "api.py": "c2f784dbbbefa3746ebfb4ee09dace049727e9f5fc6415090c6b3f892b9e60e2",
+          "compat_maspo.py": "7930c8654744b1b671a50ec42f85281b84bb8fb08b063c353021f7ce22397113",
+          "extraction.py": "d7c84b8302002180ff142a3d5732283c8225cd1a1899856c7f4c929e45f2e191",
+          "pinned_local_kernel": "140e1994463d4e9bfe98c3c583791eeef85f4df951b5d549ae6cf92afe7f9d26",
+          "pinned_local_normalization": "8b3092bffd7ef4afa2c3b99c45e19838eb79ba4020676be76bdc6f3516b954ba",
+          "pinned_local_settings": "4abc7cf513d2df5ea05018f3f7f24f164226c468ebcc1ddec13283165eacaad7",
+          "policy.py": "f753abe72f377e847ecf057527452e4ab287483d66d2574aa3329784a26969e4",
+          "semantic.py": "56eb61702a0625e560d9342218444fa971edaa36d316bb8cf0ca450be3826e1e",
+          "supervisor.py": "e88f719caa012788d1a991aee4684a213f45c29e4112151f3070e4a09a38d26f",
+          "worker.py": "b0abda85ad30d62716d5cd6ab6a5b6115799d69f97bb6b20ba48849bb645178a"
+        },
+        "semantic_id": "MATH_TYPED_PINNED_KERNEL_V1",
+        "semantic_kernel": "pinned_existing_worker_math_verify_no_fallback; explicit_typed_containers; no_new_power_certificates",
+        "startup_seconds": 10.0,
+        "two_component_parentheses": "ambiguous_without_explicit_frozen_type_hint; never_infer_from_gold_match",
+        "unresolved_correct": null,
+        "vote": "separate_symmetric_both_directions",
+        "wall_seconds": 8.0
+      },
+      "sha256": "24e9cbc64aa1ff09057bb4b25f73d9681227a7efe607e68bbed4d248a958022f"
+    },
+    "paper_extracted_exact_v1": {
+      "policy": {
+        "cache_entries": 4096,
+        "comparison_direction": "gold_first_prediction_second",
+        "computational_failure": "one_attempt_return_typed_unknown_no_model_sampling",
+        "dependencies": {
+          "antlr4-python3-runtime": "4.13.2",
+          "latex2sympy2_extended": "1.0.9",
+          "math-verify": "0.6.0",
+          "mpmath": "1.3.0",
+          "sympy": "1.14.0"
+        },
+        "extraction_id": "MATH_GOLD_BLIND_DECLARATIONS_V1",
+        "finish_reason": "stop_only_except_original_MASPO_reference_semantics",
+        "kernel_internal_timeout": "disabled_only_in_supervised_child; external_wall_and_memory_limits",
+        "maspo": "isolated_original_extraction_and_normalization_reference_only_not_shared_extractor",
+        "maspo_source_commit": "90e8c6fcc08c1e8f9a61740b296d4fab9e09e2d2",
+        "max_container_items": 32,
+        "max_declarations": 32,
+        "max_expression_characters": 2048,
+        "max_expression_nodes": 512,
+        "max_integer_digits": 256,
+        "max_literal_exponent": 10000,
+        "max_nesting": 32,
+        "max_raw_characters": 65536,
+        "memory_megabytes": 1024,
+        "normalization": "no_interval_conversion_no_casefold_no_sort_no_algebra",
+        "normalization_id": "MATH_PRESENTATION_ONLY_V1",
+        "policy_id": "paper_extracted_exact_v1",
+        "scoring_component_sha256": {
+          "api.py": "c2f784dbbbefa3746ebfb4ee09dace049727e9f5fc6415090c6b3f892b9e60e2",
+          "compat_maspo.py": "7930c8654744b1b671a50ec42f85281b84bb8fb08b063c353021f7ce22397113",
+          "extraction.py": "d7c84b8302002180ff142a3d5732283c8225cd1a1899856c7f4c929e45f2e191",
+          "pinned_local_kernel": "140e1994463d4e9bfe98c3c583791eeef85f4df951b5d549ae6cf92afe7f9d26",
+          "pinned_local_normalization": "8b3092bffd7ef4afa2c3b99c45e19838eb79ba4020676be76bdc6f3516b954ba",
+          "pinned_local_settings": "4abc7cf513d2df5ea05018f3f7f24f164226c468ebcc1ddec13283165eacaad7",
+          "policy.py": "f753abe72f377e847ecf057527452e4ab287483d66d2574aa3329784a26969e4",
+          "semantic.py": "56eb61702a0625e560d9342218444fa971edaa36d316bb8cf0ca450be3826e1e",
+          "supervisor.py": "e88f719caa012788d1a991aee4684a213f45c29e4112151f3070e4a09a38d26f",
+          "worker.py": "b0abda85ad30d62716d5cd6ab6a5b6115799d69f97bb6b20ba48849bb645178a"
+        },
+        "semantic_id": "MATH_TYPED_PINNED_KERNEL_V1",
+        "semantic_kernel": "pinned_existing_worker_math_verify_no_fallback; explicit_typed_containers; no_new_power_certificates",
+        "startup_seconds": 10.0,
+        "two_component_parentheses": "ambiguous_without_explicit_frozen_type_hint; never_infer_from_gold_match",
+        "unresolved_correct": null,
+        "vote": "separate_symmetric_both_directions",
+        "wall_seconds": 8.0
+      },
+      "sha256": "3f9bf8ef70a9ce57a1c79b6722dabd131e43ef794cdc30ef35b48e34d3e9305e"
+    }
+  },
+  "provenance": {
+    "commit": "90e8c6fcc08c1e8f9a61740b296d4fab9e09e2d2",
+    "files": {
+      "LICENSE": {
+        "http_status": 404
+      },
+      "data_loaders.py": "4b8976fbea273592d2febc957cea0c7667e977a5d16a479b9b4057cc8ea54c06",
+      "optimizers.py": "1ca1fd68744049af3afab09f4d982b77142ee1adf6ff3ad3fc1c3060e1884d9e",
+      "run_maspo.py": "9f3049fea1173a4d1f2e188a3435288ae29ca0a79a6841364afe283b6463db09",
+      "utils.py": "e3c4e8ba46ea7619b5a0abae4bc9b762e840aecc209eee165cad4623596d8955"
+    }
+  },
+  "real_model_calls_authorized": false,
+  "shared_core_files": {
+    "__init__.py": "9957375bd07336a32b82bd36ddbfe3abdf6e17565d869029300773181f0c8154",
+    "api.py": "c2f784dbbbefa3746ebfb4ee09dace049727e9f5fc6415090c6b3f892b9e60e2",
+    "audit.py": "fb450a29605a83e5424ef9d11b1c331b4ed3ea2c09d17ad1d35938b790240e57",
+    "compat_maspo.py": "7930c8654744b1b671a50ec42f85281b84bb8fb08b063c353021f7ce22397113",
+    "extraction.py": "d7c84b8302002180ff142a3d5732283c8225cd1a1899856c7f4c929e45f2e191",
+    "policy.py": "f753abe72f377e847ecf057527452e4ab287483d66d2574aa3329784a26969e4",
+    "semantic.py": "56eb61702a0625e560d9342218444fa971edaa36d316bb8cf0ca450be3826e1e",
+    "supervisor.py": "e88f719caa012788d1a991aee4684a213f45c29e4112151f3070e4a09a38d26f",
+    "worker.py": "b0abda85ad30d62716d5cd6ab6a5b6115799d69f97bb6b20ba48849bb645178a"
+  }
+}

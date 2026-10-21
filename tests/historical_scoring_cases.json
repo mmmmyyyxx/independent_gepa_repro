@@ -1,0 +1,15 @@
+{
+  "test_single_prompt_math.py": [
+    "test_flexible_parser_matches_reference_source_process",
+    "test_copied_scoring_and_rendering_algorithms_match_frozen_reference_ast",
+    "test_v5_completed_paid_fixture_continuation_requires_no_new_model_calls",
+    "test_v5_runtime_missing_test_observation_uses_repaired_score_and_paired_cache",
+    "test_v7_completed_fixture_continuation_preserves_profiles_and_costs",
+    "test_v7_missing_test_draw_keeps_pairing_and_solver_only_scope",
+    "test_v7_partial_profile_does_not_recount_imported_logical_observations"
+  ],
+  "test_single_prompt_recovery.py": [
+    "test_payload_timeout_not_cached_as_invalid_and_completed_invalid_is_cached",
+    "test_worker_launch_resource_failure_is_typed"
+  ]
+}

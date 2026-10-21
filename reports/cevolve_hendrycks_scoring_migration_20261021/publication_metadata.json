@@ -1,0 +1,58 @@
+{
+  "active_preparation": "cevolve_hendrycks_scoring_v1_preparation_20261021",
+  "config_tombstones_execution_allowed": false,
+  "historical_evidence_and_core_git_blob_parity": {
+    "exact_working_to_git_blob_files": 39,
+    "status": "PASS"
+  },
+  "historical_report_registered_inactive": true,
+  "lineage_nodes": 395,
+  "model_api_calls": 0,
+  "poststage_integrity": {
+    "A2_TEST_RESUMED": false,
+    "authorized_index_changes": true,
+    "checks": {
+      "corpus_manifest.json": {
+        "changed": 0,
+        "checked": 3520
+      },
+      "final_evidence_manifest.json": {
+        "changed": 0,
+        "checked": 73
+      },
+      "gepa": {
+        "archive_files_verified": 59,
+        "historical_changes": 0,
+        "immutable_historical_files": 13,
+        "index_unchanged": false
+      },
+      "historical_score_inventory_pin.json": {
+        "changed": 0,
+        "checked": 15
+      },
+      "multi": {
+        "archive_files_verified": 63,
+        "historical_changes": 0,
+        "immutable_historical_files": 250,
+        "index_unchanged": false
+      }
+    },
+    "model_api_calls": 0,
+    "verdict": "PASS"
+  },
+  "registry_nodes": 395,
+  "report_paths": 368,
+  "runtime_source_changes_after_regression": false,
+  "scope": "Publication metadata addendum only; source/scoring and manifest verification reused from governance_release and manifest_release.",
+  "staged_core_digest_probe": {
+    "gepa": {
+      "contract_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34",
+      "status": "PASS"
+    },
+    "multi": {
+      "contract_sha256": "c4a1166c3ab181bd7b4c92302584f20a40ba92e6bf7db2061d1f9c2fa6ac1b34",
+      "status": "PASS"
+    }
+  },
+  "status": "PASS"
+}

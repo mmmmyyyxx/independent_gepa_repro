@@ -1,0 +1,258 @@
+{
+  "upstream_commit": "985bdc1696e88e8643f081a0ff4719da39f2ae2a",
+  "normalization": [
+    {
+      "value": "2",
+      "normalized": "2",
+      "error": null
+    },
+    {
+      "value": "02",
+      "normalized": "02",
+      "error": null
+    },
+    {
+      "value": "0.5",
+      "normalized": "\\frac{1}{2}",
+      "error": null
+    },
+    {
+      "value": "0.25",
+      "normalized": "0.25",
+      "error": null
+    },
+    {
+      "value": "1/2",
+      "normalized": "\\frac{1}{2}",
+      "error": null
+    },
+    {
+      "value": "2/4",
+      "normalized": "\\frac{2}{4}",
+      "error": null
+    },
+    {
+      "value": "\\frac12",
+      "normalized": "\\frac{1}{2}",
+      "error": null
+    },
+    {
+      "value": "\\frac{1}{2}",
+      "normalized": "\\frac{1}{2}",
+      "error": null
+    },
+    {
+      "value": "\\dfrac12",
+      "normalized": "\\frac{1}{2}",
+      "error": null
+    },
+    {
+      "value": "\\tfrac12",
+      "normalized": "\\frac{1}{2}",
+      "error": null
+    },
+    {
+      "value": "\\sqrt3",
+      "normalized": "\\sqrt{3}",
+      "error": null
+    },
+    {
+      "value": "\\sqrt{3}",
+      "normalized": "\\sqrt{3}",
+      "error": null
+    },
+    {
+      "value": "\\left(2\\right)",
+      "normalized": "(2)",
+      "error": null
+    },
+    {
+      "value": "90^{\\circ}",
+      "normalized": "90",
+      "error": null
+    },
+    {
+      "value": "90^\\circ",
+      "normalized": "90",
+      "error": null
+    },
+    {
+      "value": "12\\%",
+      "normalized": "12",
+      "error": null
+    },
+    {
+      "value": "\\$2",
+      "normalized": "2",
+      "error": null
+    },
+    {
+      "value": "2\\text{ cm}",
+      "normalized": "2",
+      "error": null
+    },
+    {
+      "value": "2\\text{ cm}\\text{ x}",
+      "normalized": null,
+      "error": "AssertionError"
+    },
+    {
+      "value": "\\frac",
+      "normalized": null,
+      "error": "IndexError"
+    },
+    {
+      "value": "\\sqrt",
+      "normalized": null,
+      "error": "IndexError"
+    },
+    {
+      "value": "x=2",
+      "normalized": "2",
+      "error": null
+    },
+    {
+      "value": "xy=2",
+      "normalized": "2",
+      "error": null
+    },
+    {
+      "value": "xyz=2",
+      "normalized": "xyz=2",
+      "error": null
+    },
+    {
+      "value": " x =2",
+      "normalized": "x=2",
+      "error": null
+    },
+    {
+      "value": "x + x",
+      "normalized": "x+x",
+      "error": null
+    },
+    {
+      "value": "2x",
+      "normalized": "2x",
+      "error": null
+    },
+    {
+      "value": "2\n",
+      "normalized": "2",
+      "error": null
+    },
+    {
+      "value": " .5",
+      "normalized": "\\frac{1}{2}",
+      "error": null
+    },
+    {
+      "value": "{.5}",
+      "normalized": "{0.5}",
+      "error": null
+    },
+    {
+      "value": "",
+      "normalized": "",
+      "error": null
+    },
+    {
+      "value": "\\\\frac12",
+      "normalized": "\\frac{1}{2}",
+      "error": null
+    },
+    {
+      "value": "\\!2",
+      "normalized": "2",
+      "error": null
+    },
+    {
+      "value": "1.00000001",
+      "normalized": "1.00000001",
+      "error": null
+    },
+    {
+      "value": "1",
+      "normalized": "1",
+      "error": null
+    }
+  ],
+  "extraction": [
+    {
+      "raw": "",
+      "extracted": null
+    },
+    {
+      "raw": "answer is 2",
+      "extracted": null
+    },
+    {
+      "raw": "Final Answer: 2",
+      "extracted": null
+    },
+    {
+      "raw": "\\boxed{2}",
+      "extracted": "2"
+    },
+    {
+      "raw": "\\boxed{\\frac{1}{2}}",
+      "extracted": "\\frac{1}{2}"
+    },
+    {
+      "raw": "\\boxed{3} then \\boxed{2}",
+      "extracted": "2"
+    },
+    {
+      "raw": "\\boxed{2} then \\boxed{",
+      "extracted": null
+    },
+    {
+      "raw": "\\boxed{}",
+      "extracted": ""
+    },
+    {
+      "raw": "\\fbox{2}",
+      "extracted": null
+    },
+    {
+      "raw": "\\boxed{2} then \\fbox{3}",
+      "extracted": "2"
+    },
+    {
+      "raw": "\\boxed{a{b}c}",
+      "extracted": "a{b}c"
+    },
+    {
+      "raw": "\\boxed{\\boxed{2}}",
+      "extracted": "2"
+    },
+    {
+      "raw": "\\boxed 2",
+      "extracted": null
+    },
+    {
+      "raw": "\\boxed{{2}}",
+      "extracted": "{2}"
+    }
+  ],
+  "helper_asts": {
+    "last_boxed_only_string": "FunctionDef(name='last_boxed_only_string', args=arguments(posonlyargs=[], args=[arg(arg='string')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='idx', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='rfind', ctx=Load()), args=[Constant(value='\\\\boxed')], keywords=[])), If(test=Compare(left=Name(id='idx', ctx=Load()), ops=[Lt()], comparators=[Constant(value=0)]), body=[Assign(targets=[Name(id='idx', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='rfind', ctx=Load()), args=[Constant(value='\\\\fbox')], keywords=[])), If(test=Compare(left=Name(id='idx', ctx=Load()), ops=[Lt()], comparators=[Constant(value=0)]), body=[Return(value=Constant(value=None))], orelse=[])], orelse=[]), Assign(targets=[Name(id='i', ctx=Store())], value=Name(id='idx', ctx=Load())), Assign(targets=[Name(id='right_brace_idx', ctx=Store())], value=Constant(value=None)), Assign(targets=[Name(id='num_left_braces_open', ctx=Store())], value=Constant(value=0)), While(test=Compare(left=Name(id='i', ctx=Load()), ops=[Lt()], comparators=[Call(func=Name(id='len', ctx=Load()), args=[Name(id='string', ctx=Load())], keywords=[])]), body=[If(test=Compare(left=Subscript(value=Name(id='string', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load()), ops=[Eq()], comparators=[Constant(value='{')]), body=[AugAssign(target=Name(id='num_left_braces_open', ctx=Store()), op=Add(), value=Constant(value=1))], orelse=[]), If(test=Compare(left=Subscript(value=Name(id='string', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load()), ops=[Eq()], comparators=[Constant(value='}')]), body=[AugAssign(target=Name(id='num_left_braces_open', ctx=Store()), op=Sub(), value=Constant(value=1)), If(test=Compare(left=Name(id='num_left_braces_open', ctx=Load()), ops=[Eq()], comparators=[Constant(value=0)]), body=[Assign(targets=[Name(id='right_brace_idx', ctx=Store())], value=Name(id='i', ctx=Load())), Break()], orelse=[])], orelse=[]), AugAssign(target=Name(id='i', ctx=Store()), op=Add(), value=Constant(value=1))], orelse=[]), If(test=Compare(left=Name(id='right_brace_idx', ctx=Load()), ops=[Eq()], comparators=[Constant(value=None)]), body=[Assign(targets=[Name(id='retval', ctx=Store())], value=Constant(value=None))], orelse=[Assign(targets=[Name(id='retval', ctx=Store())], value=Subscript(value=Name(id='string', ctx=Load()), slice=Slice(lower=Name(id='idx', ctx=Load()), upper=BinOp(left=Name(id='right_brace_idx', ctx=Load()), op=Add(), right=Constant(value=1))), ctx=Load()))]), Return(value=Name(id='retval', ctx=Load()))], decorator_list=[])",
+    "_fix_fracs": "FunctionDef(name='_fix_fracs', args=arguments(posonlyargs=[], args=[arg(arg='string')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='substrs', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='\\\\frac')], keywords=[])), Assign(targets=[Name(id='new_str', ctx=Store())], value=Subscript(value=Name(id='substrs', ctx=Load()), slice=Constant(value=0), ctx=Load())), If(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='substrs', ctx=Load())], keywords=[]), ops=[Gt()], comparators=[Constant(value=1)]), body=[Assign(targets=[Name(id='substrs', ctx=Store())], value=Subscript(value=Name(id='substrs', ctx=Load()), slice=Slice(lower=Constant(value=1)), ctx=Load())), For(target=Name(id='substr', ctx=Store()), iter=Name(id='substrs', ctx=Load()), body=[AugAssign(target=Name(id='new_str', ctx=Store()), op=Add(), value=Constant(value='\\\\frac')), If(test=Compare(left=Subscript(value=Name(id='substr', ctx=Load()), slice=Constant(value=0), ctx=Load()), ops=[Eq()], comparators=[Constant(value='{')]), body=[AugAssign(target=Name(id='new_str', ctx=Store()), op=Add(), value=Name(id='substr', ctx=Load()))], orelse=[Try(body=[Assert(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='substr', ctx=Load())], keywords=[]), ops=[GtE()], comparators=[Constant(value=2)]))], handlers=[ExceptHandler(body=[Return(value=Name(id='string', ctx=Load()))])], orelse=[], finalbody=[]), Assign(targets=[Name(id='a', ctx=Store())], value=Subscript(value=Name(id='substr', ctx=Load()), slice=Constant(value=0), ctx=Load())), Assign(targets=[Name(id='b', ctx=Store())], value=Subscript(value=Name(id='substr', ctx=Load()), slice=Constant(value=1), ctx=Load())), If(test=Compare(left=Name(id='b', ctx=Load()), ops=[NotEq()], comparators=[Constant(value='{')]), body=[If(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='substr', ctx=Load())], keywords=[]), ops=[Gt()], comparators=[Constant(value=2)]), body=[Assign(targets=[Name(id='post_substr', ctx=Store())], value=Subscript(value=Name(id='substr', ctx=Load()), slice=Slice(lower=Constant(value=2)), ctx=Load())), AugAssign(target=Name(id='new_str', ctx=Store()), op=Add(), value=BinOp(left=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Constant(value='{'), op=Add(), right=Name(id='a', ctx=Load())), op=Add(), right=Constant(value='}{')), op=Add(), right=Name(id='b', ctx=Load())), op=Add(), right=Constant(value='}')), op=Add(), right=Name(id='post_substr', ctx=Load())))], orelse=[AugAssign(target=Name(id='new_str', ctx=Store()), op=Add(), value=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Constant(value='{'), op=Add(), right=Name(id='a', ctx=Load())), op=Add(), right=Constant(value='}{')), op=Add(), right=Name(id='b', ctx=Load())), op=Add(), right=Constant(value='}')))])], orelse=[If(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='substr', ctx=Load())], keywords=[]), ops=[Gt()], comparators=[Constant(value=2)]), body=[Assign(targets=[Name(id='post_substr', ctx=Store())], value=Subscript(value=Name(id='substr', ctx=Load()), slice=Slice(lower=Constant(value=2)), ctx=Load())), AugAssign(target=Name(id='new_str', ctx=Store()), op=Add(), value=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Constant(value='{'), op=Add(), right=Name(id='a', ctx=Load())), op=Add(), right=Constant(value='}')), op=Add(), right=Name(id='b', ctx=Load())), op=Add(), right=Name(id='post_substr', ctx=Load())))], orelse=[AugAssign(target=Name(id='new_str', ctx=Store()), op=Add(), value=BinOp(left=BinOp(left=BinOp(left=Constant(value='{'), op=Add(), right=Name(id='a', ctx=Load())), op=Add(), right=Constant(value='}')), op=Add(), right=Name(id='b', ctx=Load())))])])])], orelse=[])], orelse=[]), Assign(targets=[Name(id='string', ctx=Store())], value=Name(id='new_str', ctx=Load())), Return(value=Name(id='string', ctx=Load()))], decorator_list=[])",
+    "_fix_a_slash_b": "FunctionDef(name='_fix_a_slash_b', args=arguments(posonlyargs=[], args=[arg(arg='string')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[If(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='/')], keywords=[])], keywords=[]), ops=[NotEq()], comparators=[Constant(value=2)]), body=[Return(value=Name(id='string', ctx=Load()))], orelse=[]), Assign(targets=[Name(id='a', ctx=Store())], value=Subscript(value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='/')], keywords=[]), slice=Constant(value=0), ctx=Load())), Assign(targets=[Name(id='b', ctx=Store())], value=Subscript(value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='/')], keywords=[]), slice=Constant(value=1), ctx=Load())), Try(body=[Assign(targets=[Name(id='a', ctx=Store())], value=Call(func=Name(id='int', ctx=Load()), args=[Name(id='a', ctx=Load())], keywords=[])), Assign(targets=[Name(id='b', ctx=Store())], value=Call(func=Name(id='int', ctx=Load()), args=[Name(id='b', ctx=Load())], keywords=[])), Assert(test=Compare(left=Name(id='string', ctx=Load()), ops=[Eq()], comparators=[Call(func=Attribute(value=Constant(value='{}/{}'), attr='format', ctx=Load()), args=[Name(id='a', ctx=Load()), Name(id='b', ctx=Load())], keywords=[])])), Assign(targets=[Name(id='new_string', ctx=Store())], value=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Constant(value='\\\\frac{'), op=Add(), right=Call(func=Name(id='str', ctx=Load()), args=[Name(id='a', ctx=Load())], keywords=[])), op=Add(), right=Constant(value='}{')), op=Add(), right=Call(func=Name(id='str', ctx=Load()), args=[Name(id='b', ctx=Load())], keywords=[])), op=Add(), right=Constant(value='}'))), Return(value=Name(id='new_string', ctx=Load()))], handlers=[ExceptHandler(body=[Return(value=Name(id='string', ctx=Load()))])], orelse=[], finalbody=[])], decorator_list=[])",
+    "_remove_right_units": "FunctionDef(name='_remove_right_units', args=arguments(posonlyargs=[], args=[arg(arg='string')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[If(test=Compare(left=Constant(value='\\\\text{ '), ops=[In()], comparators=[Name(id='string', ctx=Load())]), body=[Assign(targets=[Name(id='splits', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='\\\\text{ ')], keywords=[])), Assert(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='splits', ctx=Load())], keywords=[]), ops=[Eq()], comparators=[Constant(value=2)])), Return(value=Subscript(value=Name(id='splits', ctx=Load()), slice=Constant(value=0), ctx=Load()))], orelse=[Return(value=Name(id='string', ctx=Load()))])], decorator_list=[])",
+    "_fix_sqrt": "FunctionDef(name='_fix_sqrt', args=arguments(posonlyargs=[], args=[arg(arg='string')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[If(test=Compare(left=Constant(value='\\\\sqrt'), ops=[NotIn()], comparators=[Name(id='string', ctx=Load())]), body=[Return(value=Name(id='string', ctx=Load()))], orelse=[]), Assign(targets=[Name(id='splits', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='\\\\sqrt')], keywords=[])), Assign(targets=[Name(id='new_string', ctx=Store())], value=Subscript(value=Name(id='splits', ctx=Load()), slice=Constant(value=0), ctx=Load())), For(target=Name(id='split', ctx=Store()), iter=Subscript(value=Name(id='splits', ctx=Load()), slice=Slice(lower=Constant(value=1)), ctx=Load()), body=[If(test=Compare(left=Subscript(value=Name(id='split', ctx=Load()), slice=Constant(value=0), ctx=Load()), ops=[NotEq()], comparators=[Constant(value='{')]), body=[Assign(targets=[Name(id='a', ctx=Store())], value=Subscript(value=Name(id='split', ctx=Load()), slice=Constant(value=0), ctx=Load())), Assign(targets=[Name(id='new_substr', ctx=Store())], value=BinOp(left=BinOp(left=BinOp(left=Constant(value='\\\\sqrt{'), op=Add(), right=Name(id='a', ctx=Load())), op=Add(), right=Constant(value='}')), op=Add(), right=Subscript(value=Name(id='split', ctx=Load()), slice=Slice(lower=Constant(value=1)), ctx=Load())))], orelse=[Assign(targets=[Name(id='new_substr', ctx=Store())], value=BinOp(left=Constant(value='\\\\sqrt'), op=Add(), right=Name(id='split', ctx=Load())))]), AugAssign(target=Name(id='new_string', ctx=Store()), op=Add(), value=Name(id='new_substr', ctx=Load()))], orelse=[]), Return(value=Name(id='new_string', ctx=Load()))], decorator_list=[])",
+    "_strip_string": "FunctionDef(name='_strip_string', args=arguments(posonlyargs=[], args=[arg(arg='string')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='\\n'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='\\\\!'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='\\\\\\\\'), Constant(value='\\\\')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='tfrac'), Constant(value='frac')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='dfrac'), Constant(value='frac')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='\\\\left'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='\\\\right'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='^{\\\\circ}'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='^\\\\circ'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='\\\\$'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Name(id='_remove_right_units', ctx=Load()), args=[Name(id='string', ctx=Load())], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='\\\\%'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='\\\\%'), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value=' .'), Constant(value=' 0.')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value='{.'), Constant(value='{0.')], keywords=[])), If(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='string', ctx=Load())], keywords=[]), ops=[Eq()], comparators=[Constant(value=0)]), body=[Return(value=Name(id='string', ctx=Load()))], orelse=[]), If(test=Compare(left=Subscript(value=Name(id='string', ctx=Load()), slice=Constant(value=0), ctx=Load()), ops=[Eq()], comparators=[Constant(value='.')]), body=[Assign(targets=[Name(id='string', ctx=Store())], value=BinOp(left=Constant(value='0'), op=Add(), right=Name(id='string', ctx=Load())))], orelse=[]), If(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='=')], keywords=[])], keywords=[]), ops=[Eq()], comparators=[Constant(value=2)]), body=[If(test=Compare(left=Call(func=Name(id='len', ctx=Load()), args=[Subscript(value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='=')], keywords=[]), slice=Constant(value=0), ctx=Load())], keywords=[]), ops=[LtE()], comparators=[Constant(value=2)]), body=[Assign(targets=[Name(id='string', ctx=Store())], value=Subscript(value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='split', ctx=Load()), args=[Constant(value='=')], keywords=[]), slice=Constant(value=1), ctx=Load()))], orelse=[])], orelse=[]), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Name(id='_fix_sqrt', ctx=Load()), args=[Name(id='string', ctx=Load())], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Attribute(value=Name(id='string', ctx=Load()), attr='replace', ctx=Load()), args=[Constant(value=' '), Constant(value='')], keywords=[])), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Name(id='_fix_fracs', ctx=Load()), args=[Name(id='string', ctx=Load())], keywords=[])), If(test=Compare(left=Name(id='string', ctx=Load()), ops=[Eq()], comparators=[Constant(value='0.5')]), body=[Assign(targets=[Name(id='string', ctx=Store())], value=Constant(value='\\\\frac{1}{2}'))], orelse=[]), Assign(targets=[Name(id='string', ctx=Store())], value=Call(func=Name(id='_fix_a_slash_b', ctx=Load()), args=[Name(id='string', ctx=Load())], keywords=[])), Return(value=Name(id='string', ctx=Load()))], decorator_list=[])",
+    "is_equiv": "FunctionDef(name='is_equiv', args=arguments(posonlyargs=[], args=[arg(arg='str1'), arg(arg='str2'), arg(arg='verbose')], kwonlyargs=[], kw_defaults=[], defaults=[Constant(value=False)]), body=[If(test=BoolOp(op=And(), values=[Compare(left=Name(id='str1', ctx=Load()), ops=[Is()], comparators=[Constant(value=None)]), Compare(left=Name(id='str2', ctx=Load()), ops=[Is()], comparators=[Constant(value=None)])]), body=[Expr(value=Call(func=Name(id='print', ctx=Load()), args=[Constant(value='WARNING: Both None')], keywords=[])), Return(value=Constant(value=True))], orelse=[]), If(test=BoolOp(op=Or(), values=[Compare(left=Name(id='str1', ctx=Load()), ops=[Is()], comparators=[Constant(value=None)]), Compare(left=Name(id='str2', ctx=Load()), ops=[Is()], comparators=[Constant(value=None)])]), body=[Return(value=Constant(value=False))], orelse=[]), Try(body=[Assign(targets=[Name(id='ss1', ctx=Store())], value=Call(func=Name(id='_strip_string', ctx=Load()), args=[Name(id='str1', ctx=Load())], keywords=[])), Assign(targets=[Name(id='ss2', ctx=Store())], value=Call(func=Name(id='_strip_string', ctx=Load()), args=[Name(id='str2', ctx=Load())], keywords=[])), If(test=Name(id='verbose', ctx=Load()), body=[Expr(value=Call(func=Name(id='print', ctx=Load()), args=[Name(id='ss1', ctx=Load()), Name(id='ss2', ctx=Load())], keywords=[]))], orelse=[]), Return(value=Compare(left=Name(id='ss1', ctx=Load()), ops=[Eq()], comparators=[Name(id='ss2', ctx=Load())]))], handlers=[ExceptHandler(body=[Return(value=Compare(left=Name(id='str1', ctx=Load()), ops=[Eq()], comparators=[Name(id='str2', ctx=Load())]))])], orelse=[], finalbody=[])], decorator_list=[])",
+    "remove_boxed": "FunctionDef(name='remove_boxed', args=arguments(posonlyargs=[], args=[arg(arg='s')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='left', ctx=Store())], value=Constant(value='\\\\boxed{')), Try(body=[Assert(test=Compare(left=Subscript(value=Name(id='s', ctx=Load()), slice=Slice(upper=Call(func=Name(id='len', ctx=Load()), args=[Name(id='left', ctx=Load())], keywords=[])), ctx=Load()), ops=[Eq()], comparators=[Name(id='left', ctx=Load())])), Assert(test=Compare(left=Subscript(value=Name(id='s', ctx=Load()), slice=UnaryOp(op=USub(), operand=Constant(value=1)), ctx=Load()), ops=[Eq()], comparators=[Constant(value='}')])), Return(value=Subscript(value=Name(id='s', ctx=Load()), slice=Slice(lower=Call(func=Name(id='len', ctx=Load()), args=[Name(id='left', ctx=Load())], keywords=[]), upper=UnaryOp(op=USub(), operand=Constant(value=1))), ctx=Load()))], handlers=[ExceptHandler(body=[Return(value=Constant(value=None))])], orelse=[], finalbody=[])], decorator_list=[])"
+  },
+  "helper_source": {
+    "last_boxed_only_string": "def last_boxed_only_string(string):\n    idx = string.rfind(\"\\\\boxed\")\n    if idx < 0:\n        idx = string.rfind(\"\\\\fbox\")\n        if idx < 0:\n            return None\n\n    i = idx\n    right_brace_idx = None\n    num_left_braces_open = 0\n    while i < len(string):\n        if string[i] == \"{\":\n            num_left_braces_open += 1\n        if string[i] == \"}\":\n            num_left_braces_open -= 1\n            if num_left_braces_open == 0:\n                right_brace_idx = i\n                break\n        i += 1\n    \n    if right_brace_idx == None:\n        retval = None\n    else:\n        retval = string[idx:right_brace_idx + 1]\n    \n    return retval",
+    "_fix_fracs": "def _fix_fracs(string):\n    substrs = string.split(\"\\\\frac\")\n    new_str = substrs[0]\n    if len(substrs) > 1:\n        substrs = substrs[1:]\n        for substr in substrs:\n            new_str += \"\\\\frac\"\n            if substr[0] == \"{\":\n                new_str += substr\n            else:\n                try:\n                    assert len(substr) >= 2\n                except:\n                    return string\n                a = substr[0]\n                b = substr[1]\n                if b != \"{\":\n                    if len(substr) > 2:\n                        post_substr = substr[2:]\n                        new_str += \"{\" + a + \"}{\" + b + \"}\" + post_substr\n                    else:\n                        new_str += \"{\" + a + \"}{\" + b + \"}\"\n                else:\n                    if len(substr) > 2:\n                        post_substr = substr[2:]\n                        new_str += \"{\" + a + \"}\" + b + post_substr\n                    else:\n                        new_str += \"{\" + a + \"}\" + b\n    string = new_str\n    return string",
+    "_fix_a_slash_b": "def _fix_a_slash_b(string):\n    if len(string.split(\"/\")) != 2:\n        return string\n    a = string.split(\"/\")[0]\n    b = string.split(\"/\")[1]\n    try:\n        a = int(a)\n        b = int(b)\n        assert string == \"{}/{}\".format(a, b)\n        new_string = \"\\\\frac{\" + str(a) + \"}{\" + str(b) + \"}\"\n        return new_string\n    except:\n        return string",
+    "_remove_right_units": "def _remove_right_units(string):\n    # \"\\\\text{ \" only ever occurs (at least in the val set) when describing units\n    if \"\\\\text{ \" in string:\n        splits = string.split(\"\\\\text{ \")\n        assert len(splits) == 2\n        return splits[0]\n    else:\n        return string",
+    "_fix_sqrt": "def _fix_sqrt(string):\n    if \"\\\\sqrt\" not in string:\n        return string\n    splits = string.split(\"\\\\sqrt\")\n    new_string = splits[0] \n    for split in splits[1:]:\n        if split[0] != \"{\":\n            a = split[0]\n            new_substr = \"\\\\sqrt{\" + a + \"}\" + split[1:]\n        else:\n            new_substr = \"\\\\sqrt\" + split\n        new_string += new_substr\n    return new_string",
+    "_strip_string": "def _strip_string(string):\n    # linebreaks  \n    string = string.replace(\"\\n\", \"\")\n    #print(string)\n\n    # remove inverse spaces\n    string = string.replace(\"\\\\!\", \"\")\n    #print(string)\n\n    # replace \\\\ with \\\n    string = string.replace(\"\\\\\\\\\", \"\\\\\")\n    #print(string)\n\n    # replace tfrac and dfrac with frac\n    string = string.replace(\"tfrac\", \"frac\")\n    string = string.replace(\"dfrac\", \"frac\")\n    #print(string)\n\n    # remove \\left and \\right\n    string = string.replace(\"\\\\left\", \"\")\n    string = string.replace(\"\\\\right\", \"\")\n    #print(string)\n    \n    # Remove circ (degrees)\n    string = string.replace(\"^{\\\\circ}\", \"\")\n    string = string.replace(\"^\\\\circ\", \"\")\n\n    # remove dollar signs\n    string = string.replace(\"\\\\$\", \"\")\n    \n    # remove units (on the right)\n    string = _remove_right_units(string)\n\n    # remove percentage\n    string = string.replace(\"\\\\%\", \"\")\n    string = string.replace(\"\\%\", \"\")\n\n    # \" 0.\" equivalent to \" .\" and \"{0.\" equivalent to \"{.\" Alternatively, add \"0\" if \".\" is the start of the string\n    string = string.replace(\" .\", \" 0.\")\n    string = string.replace(\"{.\", \"{0.\")\n    # if empty, return empty string\n    if len(string) == 0:\n        return string\n    if string[0] == \".\":\n        string = \"0\" + string\n\n    # to consider: get rid of e.g. \"k = \" or \"q = \" at beginning\n    if len(string.split(\"=\")) == 2:\n        if len(string.split(\"=\")[0]) <= 2:\n            string = string.split(\"=\")[1]\n\n    # fix sqrt3 --> sqrt{3}\n    string = _fix_sqrt(string)\n\n    # remove spaces\n    string = string.replace(\" \", \"\")\n\n    # \\frac1b or \\frac12 --> \\frac{1}{b} and \\frac{1}{2}, etc. Even works with \\frac1{72} (but not \\frac{72}1). Also does a/b --> \\\\frac{a}{b}\n    string = _fix_fracs(string)\n\n    # manually change 0.5 --> \\frac{1}{2}\n    if string == \"0.5\":\n        string = \"\\\\frac{1}{2}\"\n\n    # NOTE: X/Y changed to \\frac{X}{Y} in dataset, but in simple cases fix in case the model output is X/Y\n    string = _fix_a_slash_b(string)\n\n    return string",
+    "is_equiv": "def is_equiv(str1, str2, verbose=False):\n    if str1 is None and str2 is None:\n        print(\"WARNING: Both None\")\n        return True\n    if str1 is None or str2 is None:\n        return False\n\n    try:\n        ss1 = _strip_string(str1)\n        ss2 = _strip_string(str2)\n        if verbose:\n            print(ss1, ss2)\n        return ss1 == ss2\n    except:\n        return str1 == str2",
+    "remove_boxed": "def remove_boxed(s):\n    left = \"\\\\boxed{\"\n    try:\n        assert s[:len(left)] == left\n        assert s[-1] == \"}\"\n        return s[len(left):-1]\n    except:\n        return None"
+  }
+}

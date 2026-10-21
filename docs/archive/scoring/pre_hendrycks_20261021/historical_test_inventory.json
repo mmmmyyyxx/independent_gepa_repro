@@ -1,0 +1,6 @@
+{
+  "tests/test_single_prompt_scoring_v5.py": "8fb0cda7bed02944380626b445ab7a0c0b269a9a3a8241b9cf62452159d8faf7",
+  "tests/test_single_prompt_scoring_v7.py": "5200802cce8e4a90a575eaaf4e06a08c95ad79f2f583fca36a63544cbe6bc27a",
+  "tests/test_math_comparison.py": "ede420c954cae11b6ae374a4a1018f4898c08d8969612e62e369b5e92eafb57c",
+  "tests/test_math_v4_lifecycle.py": "a5e8327f2b163458fcd0269d53fb02790b58f0356effbba2700b32e5c7b5f26e"
+}

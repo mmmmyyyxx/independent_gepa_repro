@@ -1,0 +1,428 @@
+{
+  "before_commit_head": "ecbe39c5e8837cfb0237e121e611069edc9174b0",
+  "identity": "AUTHORIZED_SCORING_PUBLICATION_FILES_V1",
+  "paths_included_in_task": [
+    ".gitattributes",
+    "IMPLEMENTATION_STATUS.md",
+    "README.md",
+    "configs/cevolve_hendrycks_math_v1.json",
+    "configs/gepa_single_prompt_hendrycks_v1.yaml",
+    "configs/math_unified_scoring_v1.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/PLAN.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/PROVENANCE_ADDENDUM.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/additional_inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/additional_plan.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/additional_source.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/additional_tombstone.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/historical_test_inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/historical_test_plan.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/historical_test_tombstone.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/math_unified_scoring_v1.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_inventory.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_plan.md",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_source.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_tombstone.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/retired_paths.json",
+    "docs/archive/scoring/pre_hendrycks_20261021/source.zip",
+    "docs/archive/scoring/pre_hendrycks_20261021/tombstone.json",
+    "docs/math_scoring_cevolve_hendrycks_v1.md",
+    "docs/math_unified_scoring_v1.md",
+    "pyproject.toml",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/README.md",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/aggregation_scoring_compatibility.md",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/changed_files.json",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/conformance.json",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/publication_metadata.json",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/summary.json",
+    "reports/cevolve_hendrycks_scoring_migration_20261021/verification.json",
+    "reports/math_unified_scoring_v1_20261021/README.md",
+    "reports/math_unified_scoring_v1_20261021/artifact_manifest.json",
+    "reports/math_unified_scoring_v1_20261021/case_index.jsonl",
+    "reports/math_unified_scoring_v1_20261021/final_checks.json",
+    "reports/math_unified_scoring_v1_20261021/manual_review.json",
+    "reports/math_unified_scoring_v1_20261021/old_evidence_groups.json",
+    "reports/math_unified_scoring_v1_20261021/slow_regression.json",
+    "reports/math_unified_scoring_v1_20261021/summary.json",
+    "reports/math_unified_scoring_v1_20261021/terminal_bridge_index.json",
+    "reports/math_unified_scoring_v1_20261021/terminal_comparison.csv",
+    "reports/math_unified_scoring_v1_20261021/terminal_pairwise.json",
+    "reports/math_unified_scoring_v1_20261021/verification.json",
+    "scripts/audit_math_unified_v1.py",
+    "scripts/continue_single_prompt_gepa.py",
+    "scripts/verify_single_prompt_gepa_offline.py",
+    "src/independent_gepa/math_comparison/benchmark.py",
+    "src/independent_gepa/math_comparison/contract.py",
+    "src/independent_gepa/math_comparison/math_prediction_worker.py",
+    "src/independent_gepa/math_comparison/runtime.py",
+    "src/independent_gepa/math_scoring/HENDRYCKS_LICENSE.txt",
+    "src/independent_gepa/math_scoring/__init__.py",
+    "src/independent_gepa/math_scoring/_hendrycks.py",
+    "src/independent_gepa/math_scoring/audit.py",
+    "src/independent_gepa/math_scoring/contract.py",
+    "src/independent_gepa/math_scoring/prediction.py",
+    "src/independent_gepa/math_scoring/score.py",
+    "src/independent_gepa/math_scoring/upstream.json",
+    "src/independent_gepa/single_prompt_math/audit.py",
+    "src/independent_gepa/single_prompt_math/certified_bounds.py",
+    "src/independent_gepa/single_prompt_math/certified_bounds_v7.py",
+    "src/independent_gepa/single_prompt_math/common.py",
+    "src/independent_gepa/single_prompt_math/continuation.py",
+    "src/independent_gepa/single_prompt_math/math_domain_v2.py",
+    "src/independent_gepa/single_prompt_math/math_flexible_answer.py",
+    "src/independent_gepa/single_prompt_math/math_prediction_validity.py",
+    "src/independent_gepa/single_prompt_math/paid_repair.py",
+    "src/independent_gepa/single_prompt_math/payload.py",
+    "src/independent_gepa/single_prompt_math/replay_scores.py",
+    "src/independent_gepa/single_prompt_math/runner.py",
+    "src/independent_gepa/single_prompt_math/runtime.py",
+    "src/independent_gepa/single_prompt_math/scoring.py",
+    "src/independent_gepa/single_prompt_math/scoring_v5.py",
+    "src/independent_gepa/single_prompt_math/scoring_v7.py",
+    "src/independent_gepa/single_prompt_math/scoring_worker_v5.py",
+    "src/independent_gepa/single_prompt_math/scoring_worker_v7.py",
+    "tests/conftest.py",
+    "tests/fixtures/hendrycks_oracle.json",
+    "tests/historical_scoring_cases.json",
+    "tests/test_cevolve_hendrycks_scoring.py",
+    "tests/test_hendrycks_integration.py",
+    "tests/test_math_candidate_review.py",
+    "tests/test_single_prompt_math.py",
+    "tests/test_single_prompt_recovery.py",
+    "tests/test_single_prompt_v6.py"
+  ],
+  "repository": "gepa",
+  "self_reference_policy": "Migration report files listed without recursive content hashes; other hashes use staged blobs.",
+  "source_and_existing_evidence_blobs": [
+    {
+      "path": ".gitattributes",
+      "staged_blob_sha256": "040a9c8d68282418772c7ccda529767eb3c1c630de235ede325d4b62fc92da87"
+    },
+    {
+      "path": "IMPLEMENTATION_STATUS.md",
+      "staged_blob_sha256": "36e30c559a22faf8f2b7b637016cf904b724218179f2f0388bafada5bf5ba754"
+    },
+    {
+      "path": "README.md",
+      "staged_blob_sha256": "1edcf69effc10106c686444b7ec486f4709473e1ff5b301034a9aedc80b893b3"
+    },
+    {
+      "path": "configs/cevolve_hendrycks_math_v1.json",
+      "staged_blob_sha256": "8282b7a122636f861112d322c3854d6c7c7bf145923d2e768213bef94283e5b1"
+    },
+    {
+      "path": "configs/gepa_single_prompt_hendrycks_v1.yaml",
+      "staged_blob_sha256": "073e1f52d21c2b4dfc32f0347912899b5fe3f26a0a152433f07db1a3807f47b0"
+    },
+    {
+      "path": "configs/math_unified_scoring_v1.json",
+      "staged_blob_sha256": "492fb29d1515dea1273b2e064962a4957bfb29f39511c406e1913b23dc78dd61"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/PLAN.md",
+      "staged_blob_sha256": "6ac4267f5c4d1452e18b7061ff654fbc1fb9f064f3b1be10098622d86d65583f"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/PROVENANCE_ADDENDUM.md",
+      "staged_blob_sha256": "226eb8aaf714dc0c659724889e0fa0ea9c56efac7cfd35efa070fa0fef437a23"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/additional_inventory.json",
+      "staged_blob_sha256": "7e9eaada1fadac4844cb38cda0da7b9f14b4e136e7faf77e8d31dec3a2a914d7"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/additional_plan.md",
+      "staged_blob_sha256": "a57f64681164e7cebf412485c4e08c08aa879308cda2e8638fe071528ec926bf"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/additional_source.zip",
+      "staged_blob_sha256": "99ef3fad5a9045dd373a6640ba215345f606b09daf8a5acdbd99328a555d43d3"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/additional_tombstone.json",
+      "staged_blob_sha256": "9e306134d058520946ef191df2f32ed54972c10c432dcbf4422a05f52e354f11"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/historical_test_inventory.json",
+      "staged_blob_sha256": "13123368bca47f1fb48d4af71a1d33d1e51e08551493932c74e9557233596e15"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/historical_test_plan.md",
+      "staged_blob_sha256": "b78241daae40791ec85b25ea4a27cf9791d349179ad59db52317b4ce83841e4c"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/historical_test_tombstone.json",
+      "staged_blob_sha256": "3b7f9d91631bb1743fc6b42b4cbb6a85737639f4e7a9e6652a3ef25a786e3425"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/historical_tests.zip",
+      "staged_blob_sha256": "1f072fa08aec851224585ed40c4869bd21f11ffde366d5910d0a78b32d3c0da0"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/inventory.json",
+      "staged_blob_sha256": "3bbc41d01dd81e5622df8a3c8c148b355f1c31c32f1e10cd725d3dee9dbfa94a"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/math_unified_scoring_v1.json",
+      "staged_blob_sha256": "229e446104d38bce1f2fd02d291a0e392d54e3c4dd8864f9eba74bd10b7c3c1b"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_inventory.json",
+      "staged_blob_sha256": "f0cf317e252e4d45d017a6864fd688ee72ddc019553d53e8db7d3dcc594464df"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_plan.md",
+      "staged_blob_sha256": "752e3ca20d5d5075e23d423366252c8d805c1e964bec7b124c20d5b27e580920"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_source.zip",
+      "staged_blob_sha256": "ec7df966d28144abbd2bdc0d60995b9361455f967bcdcea2c7ce19e04df900e3"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_cli_tombstone.json",
+      "staged_blob_sha256": "4079c1e3c97b32f150be754fbffd91bf261277cedf5306d2a972cc6e0f950c91"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/retired_paths.json",
+      "staged_blob_sha256": "5bc35ac5ff289055f2e47dc9d0d6aeee97de6628fbfbe0644520a4c8799a7519"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/source.zip",
+      "staged_blob_sha256": "097fc72bbd8db864af20099b5328c8be728988ebf2b17a99c21663ac311f6770"
+    },
+    {
+      "path": "docs/archive/scoring/pre_hendrycks_20261021/tombstone.json",
+      "staged_blob_sha256": "0afba22d9bddd2dbda2096f46a0b40996d060a1778a7358c312c934831feced3"
+    },
+    {
+      "path": "docs/math_scoring_cevolve_hendrycks_v1.md",
+      "staged_blob_sha256": "8d4634d0a624b9a34f1c507683483cfac0ccab6e3afdc78bc6996fc7eeea2486"
+    },
+    {
+      "path": "docs/math_unified_scoring_v1.md",
+      "staged_blob_sha256": "c542647db9b29f8aa2e5241cdfec5772b97528cd2e51d41c873aa008c61f2983"
+    },
+    {
+      "path": "pyproject.toml",
+      "staged_blob_sha256": "cd53fbf86a9a1228d42415d17c0442a337919c43efca431e9a5bd5940e29114a"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/README.md",
+      "staged_blob_sha256": "40cede52b82f84c0e2e03c7adc40855051f272b8e70e8479d850e6583a042695"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/artifact_manifest.json",
+      "staged_blob_sha256": "3ad22432a3ede1a35003a67c1fbcf5dabcb460b5a359d6cd99098740118afca4"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/case_index.jsonl",
+      "staged_blob_sha256": "14183d865ffa9002106a1f76044c2e336994ef0cf9fcff1bcde7573c1a0326d0"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/final_checks.json",
+      "staged_blob_sha256": "53a109c212f238edb901d4bb0df77ab18b47c322a575f91d5fa7fcc0c94ded65"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/manual_review.json",
+      "staged_blob_sha256": "1dce3d715270784c2b2f4c1f312063fe037ccb8284303f9ff6d28e192553ebde"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/old_evidence_groups.json",
+      "staged_blob_sha256": "de4c5e0d6fd762ad90cb327806f63ba55184edf0e57a1d5321c109eea083a226"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/slow_regression.json",
+      "staged_blob_sha256": "54fe9c3bfd8438d6fa94cc914dd1f11602290a5fe1a280950fdceb43ab48691d"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/summary.json",
+      "staged_blob_sha256": "fefd759ed5cd2c9cc35052ab20805182348f7186da1a6e9cc68a635b664f8ace"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/terminal_bridge_index.json",
+      "staged_blob_sha256": "5467b4adf64c26f7e92534c09e8677861e0693965cdc9cef03fc68bcce36af76"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/terminal_comparison.csv",
+      "staged_blob_sha256": "479847abbd2df04a6652ad26cfc553858b99cd21722275b183e04fd4d620435b"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/terminal_pairwise.json",
+      "staged_blob_sha256": "2727416c39441b0e6fa6bd70e142be0ebdec972a932cf931f7644316069317ea"
+    },
+    {
+      "path": "reports/math_unified_scoring_v1_20261021/verification.json",
+      "staged_blob_sha256": "b1fa4f4c577f523aa097ba05858c39ba46e6d50c2db558f799693701f0b73f6e"
+    },
+    {
+      "path": "scripts/audit_math_unified_v1.py",
+      "staged_blob_sha256": "eff20e86255ceaa06a9c1d3e3c67a079aae0f72942d0ec03b42ca28c6e26ab16"
+    },
+    {
+      "path": "scripts/continue_single_prompt_gepa.py",
+      "staged_blob_sha256": "f9ca9547ee60c10663132a6db047643f977bd71155f5864d291459bec74b4605"
+    },
+    {
+      "path": "scripts/verify_single_prompt_gepa_offline.py",
+      "staged_blob_sha256": "c9d6e01a707f4783c237f9902338c372fee49efcd11badb8c9f1f04dc4f66742"
+    },
+    {
+      "path": "src/independent_gepa/math_comparison/benchmark.py",
+      "staged_blob_sha256": "f29aa6be040797412b0dae9f09635ab99af51c16ee02b2c1293aa016145082f4"
+    },
+    {
+      "path": "src/independent_gepa/math_comparison/contract.py",
+      "staged_blob_sha256": "5f30daa9b4ac3b25b3dce55f64d4ae585c7ec99c4aa75160697fa448071ac67f"
+    },
+    {
+      "path": "src/independent_gepa/math_comparison/math_prediction_worker.py",
+      "staged_blob_sha256": "a56437c074687139fb5bb0373e61f03c13a46f8c718ee7f39357d503d775d212"
+    },
+    {
+      "path": "src/independent_gepa/math_comparison/runtime.py",
+      "staged_blob_sha256": "a76f3f3045338292a8b04861b1ef8bf676a2e11bacecb3966dad838799d97241"
+    },
+    {
+      "path": "src/independent_gepa/math_scoring/HENDRYCKS_LICENSE.txt",
+      "staged_blob_sha256": "8f6401fb0b1fbfcac17aac8d61e4e1b0d2de9aa190d8aa655fedc5fd783b2ace"
+    },
+    {
+      "path": "src/independent_gepa/math_scoring/__init__.py",
+      "staged_blob_sha256": "02f7aa26014b4b30c15bf8ca07cf92fde8c19deb03a466d279d0bba573b540fc"
+    },
+    {
+      "path": "src/independent_gepa/math_scoring/_hendrycks.py",
+      "staged_blob_sha256": "9e85c501891e867db4eb27e6b6785cd27ce4f705724959a76e4097133c8aa0a6"
+    },
+    {
+      "path": "src/independent_gepa/math_scoring/audit.py",
+      "staged_blob_sha256": "f80ffbe5f68198af2e5f3977bf962c9272f194050c789169b9ff6664ea23a237"
+    },
+    {
+      "path": "src/independent_gepa/math_scoring/contract.py",
+      "staged_blob_sha256": "b5613715dd9ab5cc6ec0a37c3f4ff6c7c917a2c3166402a3ea4eebf597ae05a2"
+    },
+    {
+      "path": "src/independent_gepa/math_scoring/prediction.py",
+      "staged_blob_sha256": "0698c482d0c4fc2359adcd05bd01302e744b949ace05202df8d7465ced2ddb4d"
+    },
+    {
+      "path": "src/independent_gepa/math_scoring/score.py",
+      "staged_blob_sha256": "224903569eb748e06e12c047265b44ecc3731bd6c5a26e65002eb1025ee98162"
+    },
+    {
+      "path": "src/independent_gepa/math_scoring/upstream.json",
+      "staged_blob_sha256": "d7f6a3b0750869cc260e3fb06c80da7af78c778997621829a98a8ac524e6b274"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/audit.py",
+      "staged_blob_sha256": "24d4201479000acc55c696bc3107396ea74136202daebe3fae818d159a24e7bc"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/certified_bounds.py",
+      "staged_blob_sha256": "0cdc49ec9e307f9c9e6910b14069ad729b2a6565e12bcc21dd634891eb90f416"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/certified_bounds_v7.py",
+      "staged_blob_sha256": "0cdc49ec9e307f9c9e6910b14069ad729b2a6565e12bcc21dd634891eb90f416"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/common.py",
+      "staged_blob_sha256": "81f669447dc217efee47d14c9a123e99e0692c96b797ee5bd16b9bc2d8f34cfa"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/continuation.py",
+      "staged_blob_sha256": "237dd85fa169823f906e1ab9dae5d902af5a88ee9b5d9f9d97eede8b9a74c306"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/math_domain_v2.py",
+      "staged_blob_sha256": "b6c64953a00fd26e98752e519fbf4b5dc4e1edb95e3458ed23ce043664bb5cb7"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/math_flexible_answer.py",
+      "staged_blob_sha256": "0eb8a8c0aa22a6e8ddafacd3e707ff672eea5412c556771536d6944aa8c8dc82"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/math_prediction_validity.py",
+      "staged_blob_sha256": "6b7ce57585a623331f55fb9a8a4b43627a576032bf6935bb057a6fcfb6ec6092"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/paid_repair.py",
+      "staged_blob_sha256": "a97cf1a6c4d8a5996e0e8350027076007e32c7581cc5fdc3f50b1e4bc926f3c9"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/payload.py",
+      "staged_blob_sha256": "ea4d6ab2e18d479bf4fdc4ee58ae4a3760132283b90e2fa444a54bb7b0bbca39"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/replay_scores.py",
+      "staged_blob_sha256": "cdd997b2b9aa29aaf4f497a7815b1250491796fc4b862da59ab754b3f4423117"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/runner.py",
+      "staged_blob_sha256": "41c4dfb8ea786c863f9690116aa4c1f7d05d28d9717c72cb22309ed0f6dbfa2e"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/runtime.py",
+      "staged_blob_sha256": "256d2f6b031d6ee4c118eb7935f7b04535dbea92bf0accae58814f40dc90e88f"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/scoring.py",
+      "staged_blob_sha256": "3ed9526aff42bc665970f1c11af8c86ccae9b17a22688936d876786c9d7e6fa1"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/scoring_v5.py",
+      "staged_blob_sha256": "dcf1427b12ef992dca250e5d03c7cb5f90a3deb34c65547a20fec19f25d119fa"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/scoring_v7.py",
+      "staged_blob_sha256": "dcf1427b12ef992dca250e5d03c7cb5f90a3deb34c65547a20fec19f25d119fa"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/scoring_worker_v5.py",
+      "staged_blob_sha256": "0da281a508767c533d70554368961e9aecad6d63e4acf2755f3b581bb674d2ff"
+    },
+    {
+      "path": "src/independent_gepa/single_prompt_math/scoring_worker_v7.py",
+      "staged_blob_sha256": "0da281a508767c533d70554368961e9aecad6d63e4acf2755f3b581bb674d2ff"
+    },
+    {
+      "path": "tests/conftest.py",
+      "staged_blob_sha256": "a286c64588f524a110a112f3eba5edf4ca1452b178944190dc503a9bbb2a21ca"
+    },
+    {
+      "path": "tests/fixtures/hendrycks_oracle.json",
+      "staged_blob_sha256": "3ecc018f0f6fce738ed953d6dc330f386f5612524d19278a78238ccaecaa4c89"
+    },
+    {
+      "path": "tests/historical_scoring_cases.json",
+      "staged_blob_sha256": "79181b90026f7bb865e78dda0bdda24f6351799b814d3ed86810c7ef251bc35a"
+    },
+    {
+      "path": "tests/test_cevolve_hendrycks_scoring.py",
+      "staged_blob_sha256": "db65b220bbf2156e9fa741e52b3d62971025c0e99195087e37aa3145e1175c89"
+    },
+    {
+      "path": "tests/test_hendrycks_integration.py",
+      "staged_blob_sha256": "bca0ab049ef2b1d15b41b9748d15fabbd7e4ea950afd766e8dc3a9bcdbe807c0"
+    },
+    {
+      "path": "tests/test_math_candidate_review.py",
+      "staged_blob_sha256": "8dc7c3bd4b0cd2271b76f9cb829294c1c30f03dffab296575dd2b6afc4f0a060"
+    },
+    {
+      "path": "tests/test_single_prompt_math.py",
+      "staged_blob_sha256": "823165628c5ef72a56b25072d99d31a6a76dbb8aa06ec6d1bf9fdf14acc951e2"
+    },
+    {
+      "path": "tests/test_single_prompt_recovery.py",
+      "staged_blob_sha256": "5e69f4487694a73374583a47442143b45edb9b5fe1fd87dd42167ae5e45dee20"
+    },
+    {
+      "path": "tests/test_single_prompt_v6.py",
+      "staged_blob_sha256": "b9506a365eae043fa1c99dd00acfbba8efe844dca74cfb5fa701d58847b1273e"
+    }
+  ],
+  "unrelated_work": "Provider extension and other diagnostics remain local; mixed root documents and test classification staged selectively."
+}

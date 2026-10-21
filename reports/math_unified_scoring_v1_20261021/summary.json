@@ -1,0 +1,983 @@
+{
+  "all_response_pairs": {
+    "historical_V7__maspo_compat_v1": {
+      "agree": 1188,
+      "both_resolved": 3491,
+      "counts": {
+        "FF": 1046,
+        "FT": 202,
+        "TF": 2101,
+        "TT": 142
+      },
+      "disagree": 2303,
+      "one_or_both_unresolved": 1,
+      "total": 3492
+    },
+    "historical_V7__math_semantic_v1": {
+      "agree": 3061,
+      "both_resolved": 3447,
+      "counts": {
+        "FF": 828,
+        "FT": 386,
+        "TT": 2233
+      },
+      "disagree": 386,
+      "one_or_both_unresolved": 45,
+      "total": 3492
+    },
+    "historical_V7__paper_extracted_exact_v1": {
+      "agree": 2971,
+      "both_resolved": 3491,
+      "counts": {
+        "FF": 944,
+        "FT": 304,
+        "TF": 216,
+        "TT": 2027
+      },
+      "disagree": 520,
+      "one_or_both_unresolved": 1,
+      "total": 3492
+    },
+    "maspo_compat_v1__math_semantic_v1": {
+      "agree": 1163,
+      "both_resolved": 3448,
+      "counts": {
+        "FF": 824,
+        "FT": 2280,
+        "TF": 5,
+        "TT": 339
+      },
+      "disagree": 2285,
+      "one_or_both_unresolved": 44,
+      "total": 3492
+    },
+    "paper_extracted_exact_v1__maspo_compat_v1": {
+      "agree": 1495,
+      "both_resolved": 3492,
+      "counts": {
+        "FF": 1156,
+        "FT": 5,
+        "TF": 1992,
+        "TT": 339
+      },
+      "disagree": 1997,
+      "one_or_both_unresolved": 0,
+      "total": 3492
+    },
+    "paper_extracted_exact_v1__math_semantic_v1": {
+      "agree": 3160,
+      "both_resolved": 3448,
+      "counts": {
+        "FF": 829,
+        "FT": 288,
+        "TT": 2331
+      },
+      "disagree": 288,
+      "one_or_both_unresolved": 44,
+      "total": 3492
+    }
+  },
+  "all_response_stats": {
+    "historical_V7": {
+      "fixed_n_bounds": [
+        0.6423253150057274,
+        0.6426116838487973
+      ],
+      "known_correct": 2243,
+      "n": 3492,
+      "statuses": {
+        "INVALID": 588,
+        "OK": 2903,
+        "TIMEOUT": 1
+      },
+      "unresolved": 1
+    },
+    "maspo_compat_v1": {
+      "fixed_n_bounds": [
+        0.09851088201603665,
+        0.09851088201603665
+      ],
+      "known_correct": 344,
+      "n": 3492,
+      "statuses": {
+        "CORRECT": 344,
+        "INCORRECT": 3148
+      },
+      "unresolved": 0
+    },
+    "math_semantic_v1": {
+      "fixed_n_bounds": [
+        0.75,
+        0.7626002290950744
+      ],
+      "known_correct": 2619,
+      "n": 3492,
+      "statuses": {
+        "CORRECT": 2619,
+        "INCORRECT": 811,
+        "INVALID_OUTPUT": 18,
+        "UNSUPPORTED": 44
+      },
+      "unresolved": 44
+    },
+    "paper_extracted_exact_v1": {
+      "fixed_n_bounds": [
+        0.6675257731958762,
+        0.6675257731958762
+      ],
+      "known_correct": 2331,
+      "n": 3492,
+      "statuses": {
+        "CORRECT": 2331,
+        "INCORRECT": 1143,
+        "INVALID_OUTPUT": 18
+      },
+      "unresolved": 0
+    }
+  },
+  "categories": {
+    "extracted_payload_changed_not_necessarily_decision": 887,
+    "format_invalid_but_prior_mathematical_positive_not_new_correct": 4,
+    "historical_unresolved_no_false_imputation": 1,
+    "maspo_accept_semantic_reject_review_required": 5,
+    "new_mathematics_unresolved": 44,
+    "new_semantic_correct_exact_mismatch": 288,
+    "old_to_new_semantic_status_or_decision_changed": 430,
+    "prior_confirmed_equivalence_different_string": 204,
+    "prior_confirmed_latex_surface_only": 131
+  },
+  "corpus_sha256": "6c88e11cf92c4886f58e28c6cad0390a08d7fc2510c7b3368b66d3fcf15657b6",
+  "cross_repository_decisive_fields_equal": 10476,
+  "denominators": {
+    "A2_partial_raw": 350,
+    "all_successful_responses": 3492,
+    "network_failures_excluded": 19,
+    "previously_resolved_three_way": 3491,
+    "prior_three_way_agree": 2680,
+    "prior_unknown": 1,
+    "terminal_subset": 2700
+  },
+  "evidence_hashes": {
+    "analysis.json": "e61fd98852d198674b8a051c155fb3d5af2f6157c703c54ed7e0b0405096c788",
+    "corpus_manifest.json": "04f2cfaa1c99fa86dd3f6a972ff08e365a5dddcfda95ce72ebf8e924f098a3c5",
+    "final_evidence_manifest.json": "bff2051eeca9194c7a4fbe50fb84343b66d08f870d3ae93ba618ef9f7394feeb",
+    "historical_terminal_detailed.json": "a603e0c9be873a576c03a45acf3269d7d27751f2d350339e04f95c61222b196e",
+    "integrity_verification.json": "3d5ec96483b64f5ce0d3ef61a80300f133fcf3a1d8ef71882b2f45c70d1410e7",
+    "v7_results.jsonl": "78d6f627f1864c17aa89949e843d2e8c73c266641e2375070ec512d5361963a2"
+  },
+  "historical_terminal_bridge": {
+    "answer_drift": 0,
+    "correctness_drift": 0,
+    "matched": 2700,
+    "selection": "prior_audit_first_sorted_raw_identity_all_matching_candidates_same_decisive_fields",
+    "validity_drift": 0
+  },
+  "invalid_reasons": {
+    "FINAL_PAYLOAD_CONTAINS_PROSE": 5,
+    "MISSING_EXPLICIT_FINAL_ANSWER": 6,
+    "OUTPUT_TRUNCATED": 7
+  },
+  "lifecycle": {
+    "gepa": {
+      "actual_workers_started": 12,
+      "all_workers_closed": true,
+      "launchers_reaped": 12,
+      "launchers_spawned": 12,
+      "supervisors": 12
+    },
+    "multi": {
+      "actual_workers_started": 12,
+      "all_workers_closed": true,
+      "launchers_reaped": 12,
+      "launchers_spawned": 12,
+      "supervisors": 12
+    }
+  },
+  "limitations": [
+    "Historical_V7_frozen_evidence_reused_not_new_full_V7_execution",
+    "Old_cold_worker_and_new_persistent_worker_timings_not_algorithm_only_comparison",
+    "Raw_responses_include_earlier_invalid_attempts_terminal_is_subset",
+    "MASPO_fallback_not_compatible_with_reference_Final_answer_output_protocol",
+    "No_unseen_test_or_statistical_method_comparison",
+    "Exact_mismatch_not_mathematical_false"
+  ],
+  "maspo": {
+    "all_response_oracle_matches": 3492,
+    "pure_AST_match": true,
+    "source_sha256": "e3c4e8ba46ea7619b5a0abae4bc9b762e840aecc209eee165cad4623596d8955"
+  },
+  "new_model_calls": 0,
+  "new_model_tokens": 0,
+  "old_evidence_facts": {
+    "confirmed_string_rejections": 335,
+    "extraction_associated": 243,
+    "latex_surface_only": 131,
+    "other_exact_equivalence": 204,
+    "slow_response_links": 8,
+    "slow_unique_pairs": 2,
+    "unconfirmed_string_rejections": 72
+  },
+  "performance": {
+    "gepa": {
+      "maspo_compat_v1": {
+        "count": 3492,
+        "fixed_denominator_accuracy_bounds": [
+          0.09851088201603665,
+          0.09851088201603665
+        ],
+        "known_correct": 344,
+        "known_network_attempts": 0,
+        "maximum_ms": 139.99999999941792,
+        "mean_ms": 5.286655211920045,
+        "p95_ms": 16.00000000325963,
+        "p99_ms": 16.00000000325963,
+        "statuses": {
+          "CORRECT": 344,
+          "INCORRECT": 3148
+        },
+        "symbolic_parse_calls": 0,
+        "symbolic_verify_calls": 0,
+        "uncompleted_worker_network_witnesses": 0,
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "count": 3492,
+        "fixed_denominator_accuracy_bounds": [
+          0.75,
+          0.7626002290950744
+        ],
+        "known_correct": 2619,
+        "known_network_attempts": 0,
+        "maximum_ms": 4358.99999999674,
+        "mean_ms": 10.692439862481415,
+        "p95_ms": 16.00000000325963,
+        "p99_ms": 32.00000000651926,
+        "statuses": {
+          "CORRECT": 2619,
+          "INCORRECT": 811,
+          "INVALID_OUTPUT": 18,
+          "UNSUPPORTED": 44
+        },
+        "symbolic_parse_calls": 577,
+        "symbolic_verify_calls": 500,
+        "uncompleted_worker_network_witnesses": 0,
+        "unresolved": 44
+      },
+      "paper_extracted_exact_v1": {
+        "count": 3492,
+        "fixed_denominator_accuracy_bounds": [
+          0.6675257731958762,
+          0.6675257731958762
+        ],
+        "known_correct": 2331,
+        "known_network_attempts": 0,
+        "maximum_ms": 125.0,
+        "mean_ms": 4.938717067636987,
+        "p95_ms": 16.00000000325963,
+        "p99_ms": 16.00000000325963,
+        "statuses": {
+          "CORRECT": 2331,
+          "INCORRECT": 1143,
+          "INVALID_OUTPUT": 18
+        },
+        "symbolic_parse_calls": 0,
+        "symbolic_verify_calls": 0,
+        "uncompleted_worker_network_witnesses": 0,
+        "unresolved": 0
+      }
+    },
+    "multi": {
+      "maspo_compat_v1": {
+        "count": 3492,
+        "fixed_denominator_accuracy_bounds": [
+          0.09851088201603665,
+          0.09851088201603665
+        ],
+        "known_correct": 344,
+        "known_network_attempts": 0,
+        "maximum_ms": 135.61240000126418,
+        "mean_ms": 5.819501374626291,
+        "p95_ms": 7.574400005978532,
+        "p99_ms": 8.536100009223446,
+        "statuses": {
+          "CORRECT": 344,
+          "INCORRECT": 3148
+        },
+        "symbolic_parse_calls": 0,
+        "symbolic_verify_calls": 0,
+        "uncompleted_worker_network_witnesses": 0,
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "count": 3492,
+        "fixed_denominator_accuracy_bounds": [
+          0.75,
+          0.7626002290950744
+        ],
+        "known_correct": 2619,
+        "known_network_attempts": 0,
+        "maximum_ms": 4371.352500005742,
+        "mean_ms": 11.756704925484417,
+        "p95_ms": 14.647500007413328,
+        "p99_ms": 35.272699999040924,
+        "statuses": {
+          "CORRECT": 2619,
+          "INCORRECT": 811,
+          "INVALID_OUTPUT": 18,
+          "UNSUPPORTED": 44
+        },
+        "symbolic_parse_calls": 584,
+        "symbolic_verify_calls": 499,
+        "uncompleted_worker_network_witnesses": 0,
+        "unresolved": 44
+      },
+      "paper_extracted_exact_v1": {
+        "count": 3492,
+        "fixed_denominator_accuracy_bounds": [
+          0.6675257731958762,
+          0.6675257731958762
+        ],
+        "known_correct": 2331,
+        "known_network_attempts": 0,
+        "maximum_ms": 143.56889999180567,
+        "mean_ms": 5.785377462617432,
+        "p95_ms": 7.519999999203719,
+        "p99_ms": 8.394100004807115,
+        "statuses": {
+          "CORRECT": 2331,
+          "INCORRECT": 1143,
+          "INVALID_OUTPUT": 18
+        },
+        "symbolic_parse_calls": 0,
+        "symbolic_verify_calls": 0,
+        "uncompleted_worker_network_witnesses": 0,
+        "unresolved": 0
+      }
+    }
+  },
+  "policies": {
+    "maspo_compat_v1": "7ab42a23aaf582d40ffe896f055d216bca267e5abda4358ece8c82997c50f273",
+    "math_semantic_v1": "24e9cbc64aa1ff09057bb4b25f73d9681227a7efe607e68bbed4d248a958022f",
+    "paper_extracted_exact_v1": "3f9bf8ef70a9ce57a1c79b6722dabd131e43ef794cdc30ef35b48e34d3e9305e"
+  },
+  "prior_resolved_stats": {
+    "historical_V7": {
+      "fixed_n_bounds": [
+        0.6425093096533945,
+        0.6425093096533945
+      ],
+      "known_correct": 2243,
+      "n": 3491,
+      "statuses": {
+        "INVALID": 588,
+        "OK": 2903
+      },
+      "unresolved": 0
+    },
+    "maspo_compat_v1": {
+      "fixed_n_bounds": [
+        0.09853910054425666,
+        0.09853910054425666
+      ],
+      "known_correct": 344,
+      "n": 3491,
+      "statuses": {
+        "CORRECT": 344,
+        "INCORRECT": 3147
+      },
+      "unresolved": 0
+    },
+    "math_semantic_v1": {
+      "fixed_n_bounds": [
+        0.7502148381552564,
+        0.7628186765969637
+      ],
+      "known_correct": 2619,
+      "n": 3491,
+      "statuses": {
+        "CORRECT": 2619,
+        "INCORRECT": 810,
+        "INVALID_OUTPUT": 18,
+        "UNSUPPORTED": 44
+      },
+      "unresolved": 44
+    },
+    "paper_extracted_exact_v1": {
+      "fixed_n_bounds": [
+        0.6677169865368089,
+        0.6677169865368089
+      ],
+      "known_correct": 2331,
+      "n": 3491,
+      "statuses": {
+        "CORRECT": 2331,
+        "INCORRECT": 1142,
+        "INVALID_OUTPUT": 18
+      },
+      "unresolved": 0
+    }
+  },
+  "semantic_unknown_reasons": {
+    "FLOAT_EXPRESSION_NOT_EXACTLY_CERTIFIED": 23,
+    "PINNED_PARSE_UNSUPPORTED": 21
+  },
+  "status": "OFFLINE_COUNTERFACTUAL_ANALYSIS_COMPLETE_NOT_FORMAL_SCORES",
+  "terminal_by_cell": {
+    "C0_seed42_repeat01": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.7333333333333333,
+          0.7333333333333333
+        ],
+        "known_correct": 220,
+        "n": 300,
+        "statuses": {
+          "INVALID": 10,
+          "OK": 290
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.04666666666666667,
+          0.04666666666666667
+        ],
+        "known_correct": 14,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 14,
+          "INCORRECT": 286
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.75,
+          0.76
+        ],
+        "known_correct": 225,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 225,
+          "INCORRECT": 72,
+          "UNSUPPORTED": 3
+        },
+        "unresolved": 3
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.66,
+          0.66
+        ],
+        "known_correct": 198,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 198,
+          "INCORRECT": 102
+        },
+        "unresolved": 0
+      }
+    },
+    "C0_seed42_repeat02": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.77,
+          0.77
+        ],
+        "known_correct": 231,
+        "n": 300,
+        "statuses": {
+          "INVALID": 7,
+          "OK": 293
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.02666666666666667,
+          0.02666666666666667
+        ],
+        "known_correct": 8,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 8,
+          "INCORRECT": 292
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.7766666666666666,
+          0.7866666666666666
+        ],
+        "known_correct": 233,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 233,
+          "INCORRECT": 64,
+          "UNSUPPORTED": 3
+        },
+        "unresolved": 3
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.71,
+          0.71
+        ],
+        "known_correct": 213,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 213,
+          "INCORRECT": 87
+        },
+        "unresolved": 0
+      }
+    },
+    "C0_seed42_repeat03": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.7566666666666667,
+          0.7566666666666667
+        ],
+        "known_correct": 227,
+        "n": 300,
+        "statuses": {
+          "INVALID": 10,
+          "OK": 290
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.08,
+          0.08
+        ],
+        "known_correct": 24,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 24,
+          "INCORRECT": 276
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.78,
+          0.79
+        ],
+        "known_correct": 234,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 234,
+          "INCORRECT": 62,
+          "INVALID_OUTPUT": 1,
+          "UNSUPPORTED": 3
+        },
+        "unresolved": 3
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.6766666666666666,
+          0.6766666666666666
+        ],
+        "known_correct": 203,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 203,
+          "INCORRECT": 96,
+          "INVALID_OUTPUT": 1
+        },
+        "unresolved": 0
+      }
+    },
+    "C1_seed42_repeat01": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.72,
+          0.72
+        ],
+        "known_correct": 216,
+        "n": 300,
+        "statuses": {
+          "INVALID": 8,
+          "OK": 292
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.02666666666666667,
+          0.02666666666666667
+        ],
+        "known_correct": 8,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 8,
+          "INCORRECT": 292
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.7366666666666667,
+          0.7433333333333333
+        ],
+        "known_correct": 221,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 221,
+          "INCORRECT": 77,
+          "UNSUPPORTED": 2
+        },
+        "unresolved": 2
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.68,
+          0.68
+        ],
+        "known_correct": 204,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 204,
+          "INCORRECT": 96
+        },
+        "unresolved": 0
+      }
+    },
+    "C1_seed42_repeat02": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.7433333333333333,
+          0.7433333333333333
+        ],
+        "known_correct": 223,
+        "n": 300,
+        "statuses": {
+          "INVALID": 8,
+          "OK": 292
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.03666666666666667,
+          0.03666666666666667
+        ],
+        "known_correct": 11,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 11,
+          "INCORRECT": 289
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.7566666666666667,
+          0.7666666666666667
+        ],
+        "known_correct": 227,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 227,
+          "INCORRECT": 70,
+          "UNSUPPORTED": 3
+        },
+        "unresolved": 3
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.6866666666666666,
+          0.6866666666666666
+        ],
+        "known_correct": 206,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 206,
+          "INCORRECT": 94
+        },
+        "unresolved": 0
+      }
+    },
+    "C1_seed42_repeat03": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.7633333333333333,
+          0.7633333333333333
+        ],
+        "known_correct": 229,
+        "n": 300,
+        "statuses": {
+          "INVALID": 11,
+          "OK": 289
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.056666666666666664,
+          0.056666666666666664
+        ],
+        "known_correct": 17,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 17,
+          "INCORRECT": 283
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.7866666666666666,
+          0.7933333333333333
+        ],
+        "known_correct": 236,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 236,
+          "INCORRECT": 62,
+          "UNSUPPORTED": 2
+        },
+        "unresolved": 2
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.6966666666666667,
+          0.6966666666666667
+        ],
+        "known_correct": 209,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 209,
+          "INCORRECT": 91
+        },
+        "unresolved": 0
+      }
+    },
+    "C2_seed42_repeat01": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.7333333333333333,
+          0.7333333333333333
+        ],
+        "known_correct": 220,
+        "n": 300,
+        "statuses": {
+          "INVALID": 14,
+          "OK": 286
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.11333333333333333,
+          0.11333333333333333
+        ],
+        "known_correct": 34,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 34,
+          "INCORRECT": 266
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.7633333333333333,
+          0.7766666666666666
+        ],
+        "known_correct": 229,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 229,
+          "INCORRECT": 67,
+          "UNSUPPORTED": 4
+        },
+        "unresolved": 4
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.7,
+          0.7
+        ],
+        "known_correct": 210,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 210,
+          "INCORRECT": 90
+        },
+        "unresolved": 0
+      }
+    },
+    "C2_seed42_repeat02": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.7733333333333333,
+          0.7733333333333333
+        ],
+        "known_correct": 232,
+        "n": 300,
+        "statuses": {
+          "INVALID": 5,
+          "OK": 295
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.06333333333333334,
+          0.06333333333333334
+        ],
+        "known_correct": 19,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 19,
+          "INCORRECT": 281
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.78,
+          0.7866666666666666
+        ],
+        "known_correct": 234,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 234,
+          "INCORRECT": 63,
+          "INVALID_OUTPUT": 1,
+          "UNSUPPORTED": 2
+        },
+        "unresolved": 2
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.7333333333333333,
+          0.7333333333333333
+        ],
+        "known_correct": 220,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 220,
+          "INCORRECT": 79,
+          "INVALID_OUTPUT": 1
+        },
+        "unresolved": 0
+      }
+    },
+    "C2_seed42_repeat03": {
+      "historical_V7": {
+        "fixed_n_bounds": [
+          0.7666666666666667,
+          0.7666666666666667
+        ],
+        "known_correct": 230,
+        "n": 300,
+        "statuses": {
+          "INVALID": 7,
+          "OK": 293
+        },
+        "unresolved": 0
+      },
+      "maspo_compat_v1": {
+        "fixed_n_bounds": [
+          0.043333333333333335,
+          0.043333333333333335
+        ],
+        "known_correct": 13,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 13,
+          "INCORRECT": 287
+        },
+        "unresolved": 0
+      },
+      "math_semantic_v1": {
+        "fixed_n_bounds": [
+          0.78,
+          0.79
+        ],
+        "known_correct": 234,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 234,
+          "INCORRECT": 63,
+          "UNSUPPORTED": 3
+        },
+        "unresolved": 3
+      },
+      "paper_extracted_exact_v1": {
+        "fixed_n_bounds": [
+          0.6733333333333333,
+          0.6733333333333333
+        ],
+        "known_correct": 202,
+        "n": 300,
+        "statuses": {
+          "CORRECT": 202,
+          "INCORRECT": 98
+        },
+        "unresolved": 0
+      }
+    }
+  },
+  "terminal_stats": {
+    "historical_V7": {
+      "fixed_n_bounds": [
+        0.7511111111111111,
+        0.7511111111111111
+      ],
+      "known_correct": 2028,
+      "n": 2700,
+      "statuses": {
+        "INVALID": 80,
+        "OK": 2620
+      },
+      "unresolved": 0
+    },
+    "maspo_compat_v1": {
+      "fixed_n_bounds": [
+        0.054814814814814816,
+        0.054814814814814816
+      ],
+      "known_correct": 148,
+      "n": 2700,
+      "statuses": {
+        "CORRECT": 148,
+        "INCORRECT": 2552
+      },
+      "unresolved": 0
+    },
+    "math_semantic_v1": {
+      "fixed_n_bounds": [
+        0.7677777777777778,
+        0.7770370370370371
+      ],
+      "known_correct": 2073,
+      "n": 2700,
+      "statuses": {
+        "CORRECT": 2073,
+        "INCORRECT": 600,
+        "INVALID_OUTPUT": 2,
+        "UNSUPPORTED": 25
+      },
+      "unresolved": 25
+    },
+    "paper_extracted_exact_v1": {
+      "fixed_n_bounds": [
+        0.6907407407407408,
+        0.6907407407407408
+      ],
+      "known_correct": 1865,
+      "n": 2700,
+      "statuses": {
+        "CORRECT": 1865,
+        "INCORRECT": 833,
+        "INVALID_OUTPUT": 2
+      },
+      "unresolved": 0
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "identity": "RETIRED_SCORING_RECOVERY_TOMBSTONE_V1",
+  "inventory_sha256": "3bbc41d01dd81e5622df8a3c8c148b355f1c31c32f1e10cd725d3dee9dbfa94a",
+  "bundle_sha256": "097fc72bbd8db864af20099b5328c8be728988ebf2b17a99c21663ac311f6770",
+  "recovery": "source.zip plus original Git source; never a current runtime option"
+}

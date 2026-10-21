@@ -1,5 +1,12 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
+The sole current MATH scorer is [C-EVOLVE / Hendrycks V1](docs/math_scoring_cevolve_hendrycks_v1.md).
+It replaces all prior selectable scoring policies. The
+[earlier Unified V1 audit](reports/math_unified_scoring_v1_20261021/README.md)
+is historical evidence; its three-policy implementation is retired. New source,
+cache and execution identities must bind the current contract. No historical
+score is overwritten and no old Test continuation can resume under this source.
+
 The [initial-Prompt baseline](reports/initial_prompt_test300_baseline_repeat3_20261020/README.md)
 is complete:231/224/225 on Test300, mean75.56%. One exact initial-Prompt profile
 was reused and two independent repeat scopes added634 Solver requests/434,655

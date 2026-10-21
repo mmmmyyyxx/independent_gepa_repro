@@ -82,7 +82,7 @@ def load_config(path: Path) -> dict[str, Any]:
     return value
 
 def source_inventory(root: Path) -> dict[str,str]:
-    paths = sorted([*root.joinpath('src').rglob('*.py'), *root.joinpath('scripts').glob('*.py'),
+    paths = sorted([*root.joinpath('src').rglob('*.py'),*root.joinpath('src/independent_gepa/math_scoring').glob('*.json'), *root.joinpath('scripts').glob('*.py'),
                     *root.joinpath('tests').rglob('*.py'), root/'AGENTS.md', root/'pyproject.toml',
                     root/'configs/math_a4_matched.yaml', root/'docs/math_a4_comparison_v1.md',
                     root/'configs/math_a4_matched_guard_repair.yaml', root/'docs/math_a4_copy_guard_repair_v1.md',

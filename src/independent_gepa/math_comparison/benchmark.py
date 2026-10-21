@@ -35,53 +35,22 @@ def matrix(expressions: tuple[str,...]) -> dict[str,Any]:
     except (subprocess.TimeoutExpired, OSError, ValueError,KeyError) as exc:
         raise ProtocolViolation('MATH_EVALUATOR_FAILURE') from exc
 
-@lru_cache(maxsize=4096)
-def classify_payload(expression: str) -> str|None:
-    if len(expression)>2048: return 'PAYLOAD_UNSUPPORTED'
-    try:
-        result = subprocess.run([sys.executable,'-m','independent_gepa.math_comparison.math_prediction_worker'],
-            input=json.dumps({'expression':expression}),capture_output=True,text=True,
-            timeout=SETTINGS['process_deadline'],check=False,env=worker_environment())
-    except subprocess.TimeoutExpired:
-        return 'PAYLOAD_PARSE_FAILURE'
-    except OSError as exc:
-        raise ProtocolViolation('MATH_PREDICTION_WORKER_UNAVAILABLE') from exc
-    try:
-        data = json.loads(result.stdout)
-    except ValueError as exc:
-        raise ProtocolViolation('MATH_PREDICTION_WORKER_RESPONSE_INVALID') from exc
-    if result.returncode or set(data)!={'invalid_reason'} or data['invalid_reason'] not in (None,'PAYLOAD_PARSE_FAILURE','PAYLOAD_UNSUPPORTED'):
-        raise ProtocolViolation('MATH_PREDICTION_WORKER_FAILURE')
-    return data['invalid_reason']
+def classify_payload(expression):
+    # Prediction validity is extraction-only, never a symbolic parser decision.
+    return None if isinstance(expression, str) else 'extraction_failure'
 
-def classify(text: str|None, finish_reason: str|None='stop') -> dict[str,Any]:
-    if text is not None and not isinstance(text,str): raise ProtocolViolation('MATH_PREDICTION_SERIALIZATION_INVALID')
-    lines = [line.strip() for line in (text or '').splitlines() if line.strip()]
-    markers = [line for line in lines if line.startswith('FINAL_ANSWER:')]
-    answer = ''
-    if finish_reason in {'length','max_tokens','max_output_tokens'}: reason = 'OUTPUT_TRUNCATED'
-    elif finish_reason!='stop': reason = 'OTHER_PREDICTION_CONTRACT_FAILURE'
-    elif not markers: reason = 'MISSING_FINAL_MARKER'
-    elif len(markers)>1: reason = 'MULTIPLE_FINAL_MARKERS'
-    elif not markers[0].removeprefix('FINAL_ANSWER:').strip(): reason = 'EMPTY_FINAL_PAYLOAD'
-    elif lines[-1]!=markers[0]: reason = 'OTHER_PREDICTION_CONTRACT_FAILURE'
-    else:
-        answer = markers[0].removeprefix('FINAL_ANSWER:').strip()
-        reason = classify_payload(answer)
-    return {'text':text,'finish_reason':finish_reason,'answer':answer if reason is None else '',
-            'prediction_valid':reason is None,'invalid_reason':reason}
+def classify(text, finish_reason='stop'):
+    from dataclasses import asdict
+    from ..single_prompt_math.math_flexible_answer import classify_prediction
+    return asdict(classify_prediction(text, finish_reason))
 
-def require_reference(reference: str) -> None:
-    value = matrix((reference,))
-    if not reference.strip() or not value['valid'][0] or not value['equivalence'][0][0]:
-        raise ProtocolViolation('REFERENCE_UNSCORABLE')
+def require_reference(reference):
+    from ..math_scoring import prepare_ground_truth
+    prepare_ground_truth(reference)
 
-def correct(prediction: dict[str,Any], reference: str) -> bool:
-    require_reference(reference)
-    if not prediction['prediction_valid']: return False
-    value = matrix((reference,prediction['answer']))
-    if not value['valid'][0]: raise ProtocolViolation('REFERENCE_UNSCORABLE')
-    return bool(value['valid'][1] and value['equivalence'][0][1])
+def correct(prediction, reference):
+    from ..math_scoring import score_math_response
+    return score_math_response(prediction.get('text'), reference).correct
 
 def team_vote(predictions: list[dict[str,Any]], reference: str) -> bool:
     if len(predictions)!=5: raise ProtocolViolation('TEAM_REQUIRES_FIVE')

@@ -28,8 +28,12 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
         if (directory/'STOP').exists():raise Abort('EXPERIMENT_STOPPED')
         if check is not None:check()
     audit_guard()
-    score_function=score if scoring_function is None else scoring_function
-    replay_config=cfg if recovery_policy_config is None else recovery_policy_config
+    from ..math_scoring import CONTRACT_ID,contract_sha256,RetiredMathScorerError
+    if (scoring_function is not None or recovery_policy_config is not None or terminal_repair_policy is not None
+        or cfg.get('scoring_policy')!=CONTRACT_ID or cfg.get('math_scoring_sha256')!=contract_sha256()):
+        raise RetiredMathScorerError('CURRENT_AUDIT_REQUIRES_SOLE_HENDRYCKS_SCORER')
+    score_function=score
+    replay_config=cfg
     initial=SystemPrompt.from_dict(read(bundle/'initial.json'));models=read(bundle/'model_contract.json')
     prototype=Runtime.__new__(Runtime);prototype.models=models
     splits={s:load_rows(bundle,s,'search') for s in ('optimize','validation')}
@@ -53,27 +57,16 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
     physical=Counter();charged=Counter();previous='0'*64;requests_by_key={};test_open=False
     logical_contexts=set();successes=Counter();logical_by_cell=Counter()
     calls={};awaiting_retry={};ready_retry=set();retry_categories=Counter();role_failures=Counter()
-    from .paid_repair import PaidTerminalRepairs
-    terminal_repairs=PaidTerminalRepairs(terminal_repair_policy)
     allowed_kinds={'OPEN','CANDIDATE_REGISTERED','LOGICAL_SOLVER','RESERVE','FAILURE_CHARGE','RESPONSE_CHARGE',
-        'CACHE_HIT','SOLVER_RESOLVED','REFLECTION_TRUNCATION_EXHAUSTED','SAME_PAID_ANSWER_LOCAL_SCORE_TIMEOUT','LOCAL_WORKER_TERMINAL',
-        'SAME_PAID_ANSWER_EXTRACTION_TIMEOUT','SEARCH_ACCOUNTING_CLOSED','TEST_PHASE_OPEN','PROVIDER_RETRY','LOCAL_WORKER_RETRY','REFLECTION_UNAVAILABLE','CONTINUATION_OPEN','PAID_TERMINAL_REPAIRED'}
+        'CACHE_HIT','SOLVER_RESOLVED','REFLECTION_TRUNCATION_EXHAUSTED','SAME_PAID_ANSWER_LOCAL_SCORE_TIMEOUT',
+        'SAME_PAID_ANSWER_EXTRACTION_TIMEOUT','SEARCH_ACCOUNTING_CLOSED','TEST_PHASE_OPEN','PROVIDER_RETRY','LOCAL_WORKER_RETRY','REFLECTION_UNAVAILABLE'}
     for line in (directory/'accounting.jsonl').read_bytes().splitlines():
         event=json.loads(line);value=dict(event);sha=value.pop('event_sha256')
         if digest(value)!=sha or value['previous_event_sha256']!=previous:
             raise ProtocolViolation('AUDIT_ACCOUNTING_HASH_CHAIN')
         previous=sha;kind=event['kind']
         if kind not in allowed_kinds:raise ProtocolViolation('AUDIT_UNKNOWN_EVENT')
-        if kind=='LOCAL_WORKER_TERMINAL':
-            terminal_repairs.terminal(event,requests_by_key.get(event['key']),logical_contexts,resolved)
-        if kind=='PAID_TERMINAL_REPAIRED':terminal_repairs.repaired(event,resolved,directory)
         if kind=='OPEN' and event['attempt_identity']!=identity:raise ProtocolViolation('AUDIT_ATTEMPT_IDENTITY')
-        if kind=='CONTINUATION_OPEN':
-            continuation=read(directory/'continuation_frozen.json');content=dict(continuation);cid=content.pop('identity')
-            if (digest(content)!=cid or cid!=event['continuation_identity']
-                or continuation['parent_attempt_identity']!=identity
-                or continuation['prepared_last_event_sha256']!=event['previous_event_sha256']):
-                raise ProtocolViolation('AUDIT_CONTINUATION_IDENTITY')
         if kind=='TEST_PHASE_OPEN':
             if not include_test or not (directory/'SEARCH_COMPLETE.json').exists():raise ProtocolViolation('AUDIT_TEST_ACCESS')
             test_open=True
@@ -93,7 +86,8 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
                 raise ProtocolViolation('AUDIT_LOGICAL_PHASE')
             row=by_id[split][event['example_id']]
             request=prototype.request('solver',solver_messages(prompt,row['content']['problem']))
-            key=digest({'attempt':identity,'repeat':repeat,'phase':phase,'split':split,
+            from ..math_scoring.prediction import cache_identity
+            key=digest({**cache_identity(),'attempt':identity,'repeat':repeat,'phase':phase,'split':split,
                 'prompt_hash':prompt.prompt_hash,'example_id':row['stable_example_id'],
                 'reference_sha256':digest(row['reference_final_answer']),'request':request})
             if key!=event['key']:raise ProtocolViolation('AUDIT_LOGICAL_CACHE_IDENTITY')
@@ -101,7 +95,6 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
             logical[f'{arm}:{event["kind_of_evaluation"]}:{split}']+=1
             logical_by_cell[(arm,repeat,event['kind_of_evaluation'])]+=1
         elif kind=='RESERVE':
-            terminal_repairs.reservation(event['logical_key'])
             number=event['number'];receipt=read(directory/'requests'/f'{number:06d}.json');request=receipt['request']
             if number in pending or digest(request)!=event['request_sha256'] or any(receipt[k]!=event[k] for k in ('arm','repeat','phase','split','role','bound','logical_key','transport_call_id','attempt_index')):
                 raise ProtocolViolation('AUDIT_WIRE_RESERVATION')
@@ -129,7 +122,8 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
                 row=context[4];prompt=prompts[(arm,repeat,context[3])]
                 if request['messages']!=solver_messages(prompt,row['content']['problem']):raise ProtocolViolation('AUDIT_SOLVER_MESSAGE_ROLES')
                 base=prototype.request('solver',request['messages'])
-                expected_key=digest({'attempt':identity,'repeat':repeat,'phase':phase,'split':split,
+                from ..math_scoring.prediction import cache_identity
+                expected_key=digest({**cache_identity(),'attempt':identity,'repeat':repeat,'phase':phase,'split':split,
                     'prompt_hash':prompt.prompt_hash,'example_id':row['stable_example_id'],
                     'reference_sha256':digest(row['reference_final_answer']),'request':base})
                 if key!=expected_key:raise ProtocolViolation('AUDIT_SOLVER_LOGICAL_REQUEST_MISMATCH')
@@ -196,7 +190,6 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
         elif kind=='CACHE_HIT':
             if event['key'] not in resolved or (event['arm'],event['key']) not in logical_contexts:raise ProtocolViolation('AUDIT_CACHE_WITHOUT_PAID_REALIZATION')
             hits+=1
-    terminal_repairs.close()
     if pending or awaiting_retry or ready_retry:raise ProtocolViolation('AUDIT_INFLIGHT_RESERVATIONS')
     if set(resolved)!=seen:raise ProtocolViolation('AUDIT_UNRESOLVED_LOGICAL_EVALUATIONS')
     recovery_lock=threading.Lock()
@@ -284,7 +277,7 @@ def reconcile(directory: Path,bundle: Path,*,include_test: bool=False,check=None
         'pending_physical_attempts':0,'cache_hits':hits,'logical_evaluations':dict(logical),'resolved_observations':len(resolved),
         'charged_tokens_by_phase_arm_role':{f'{p}:{a}:{r}':n for (p,a,r),n in charged.items()},
         'physical_attempts_by_phase_arm_role':{f'{p}:{a}:{r}':n for (p,a,r),n in physical.items()},
-        'last_event_sha256':previous,'new_model_calls_by_audit':0,'paid_terminal_repairs':terminal_repairs.count}
+        'last_event_sha256':previous,'new_model_calls_by_audit':0,'paid_terminal_repairs':0}
 
 
 def candidate_hash_for(candidate):

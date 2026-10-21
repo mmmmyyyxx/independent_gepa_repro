@@ -81,6 +81,9 @@ def validate_response(role,request,result):
 class Runtime:
     def __init__(self,directory: Path,config: dict,models: dict,identity: str,transport: Callable,
                  source_check: Callable=lambda:None,*,open_event: bool=True):
+        from ..math_scoring import CONTRACT_ID, contract_sha256, RetiredMathScorerError
+        if config.get('scoring_policy') != CONTRACT_ID or config.get('math_scoring_sha256') != contract_sha256():
+            raise RetiredMathScorerError('NEW_MATH_SCORING_FROZEN_CONFIG_REQUIRED')
         self.directory=directory;self.config=config;self.models=models;self.identity=identity
         self.transport=transport;self.source_check=source_check
         self.lock=threading.RLock();self.failed=threading.Event();self.phase='search'
@@ -278,7 +281,8 @@ class Runtime:
         if (self.phase=='search' and split not in ('optimize','validation')
             or self.phase=='test' and split!='test'):raise Abort('SOLVER_SPLIT_ACCESS_FORBIDDEN')
         request=self.request('solver',solver_messages(prompt,row['content']['problem']))
-        key=digest({'attempt':self.identity,'repeat':repeat,'phase':self.phase,'split':split,
+        from ..math_scoring.prediction import cache_identity
+        key=digest({**cache_identity(),'attempt':self.identity,'repeat':repeat,'phase':self.phase,'split':split,
                     'prompt_hash':prompt.prompt_hash,'example_id':row['stable_example_id'],
                     'reference_sha256':digest(row['reference_final_answer']),'request':request})
         with self.lock:

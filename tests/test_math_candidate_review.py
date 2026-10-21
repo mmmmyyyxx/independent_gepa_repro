@@ -9,7 +9,18 @@ from independent_gepa.math_comparison.runtime import ExecutionAbort
 from independent_gepa.math_comparison.search import MathAdapter,INITIAL,prompt_hash,run_window,REFLECTION_TEMPLATE
 from independent_gepa.math_comparison.funnel import candidate_funnel
 from independent_gepa.protocol import ProtocolViolation
-from tests.test_math_comparison import Fake,runtime
+from tests.test_math_comparison import Fake as HistoricalFake,models
+from independent_gepa.math_comparison.runtime import Runtime
+from independent_gepa.math_scoring.prediction import cache_identity
+class Fake(HistoricalFake):
+    def __call__(self,request):
+        result=super().__call__(request)
+        if request['model']=='qwen3-8b':result['text']=r'\boxed{'+result['text'].split(': ',1)[1]+'}'
+        return result
+def runtime(path,transport):
+    path.mkdir(parents=True,exist_ok=True)
+    cfg={**load_config(ROOT/'configs/math_a4_matched.yaml'),**cache_identity()}
+    return Runtime(path,cfg,models(),{'system':'immutable formatting','suffix':'\nformat suffix'},'synthetic-attempt',transport)
 
 ROOT=Path(__file__).resolve().parents[1]
 ROWS=[{'example_id':'e1','problem':'A synthetic arithmetic problem.','reference':'1'}]

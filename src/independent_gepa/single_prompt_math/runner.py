@@ -19,14 +19,15 @@ from .audit import reconcile
 from . import heldout,posthoc
 from .analysis import paired,align_tokens
 from .scoring import IDENTITY as SCORING_IDENTITY
+from ..math_scoring import contract_sha256
 
-CONFIG='configs/gepa_single_prompt_math_v6.yaml'
-PROTOCOL='docs/gepa_single_prompt_math_v6.md'
+CONFIG='configs/gepa_single_prompt_hendrycks_v1.yaml'
+PROTOCOL='docs/math_scoring_cevolve_hendrycks_v1.md'
 
 
 def load_config(root: Path):
     cfg=yaml.safe_load((root/CONFIG).read_text(encoding='utf-8'))
-    expected={'schema_version': 'gepa_single_prompt_two_arm_math_v6',
+    expected={'schema_version': 'gepa_single_prompt_two_arm_hendrycks_v1',
      'reference_bundle_hash':'296f22ab723f9574c8e9794f4d7e17801058d16b7e5e40fc52589df5ef005d49',
      'arms': ['strict_validation', 'native_pareto'],
      'cell_order': 'arm_then_repeat_sequential',
@@ -80,7 +81,7 @@ def load_config(root: Path):
      'native_logical_budget': 3000,
      'max_native_proposals': 1000,
      'budget_milestones': [500, 1000, 1500, 2000, 2500, 3000],
-     'scoring_policy': 'V5_EXACT_SCORING_ALL_PHASES_V6',
+     'scoring_policy': SCORING_IDENTITY, 'math_scoring_sha256': contract_sha256(),
      'local_timeout_attempts_at_ceiling': 2,
      'compute_matching': 'matched_solver_evaluations_not_exact_total_compute',
      'cost_axis': 'standalone_attributed_search_input_output_plus_conservative_tokens',
@@ -111,7 +112,8 @@ def preflight(root: Path,bundle: Path):
     if (models['routes']['solver']['model']!='gpt-4o-mini' or models['routes']['solver']['provider_profile']!='openlux'
         or models['routes']['reflection']['model']!='qwen3.7-flash' or models['routes']['reflection']['provider_profile']!='lwj'):
         raise ProtocolViolation('REFERENCE_MODEL_ROUTING_MISMATCH')
-    return {'identity':'SINGLE_PROMPT_GEPA_PREFLIGHT_V6','status':'PASS','READY_TO_RUN':False,
+    return {'identity':'SINGLE_PROMPT_GEPA_HENDRYCKS_PREFLIGHT_V1','status':'PASS','READY_TO_RUN':False,
+        'math_scoring_contract':SCORING_IDENTITY,'math_scoring_sha256':contract_sha256(),
         'config_sha256':file_hash(root/CONFIG),'protocol_sha256':file_hash(root/PROTOCOL),
         'source_inventory_sha256':digest(source_inventory(root)),'bundle_hash':data['bundle_hash'],
         'seed':42,'repeat_ids':cfg['repeat_ids'],'arms':cfg['arms'],'counts':data['counts'],
@@ -162,7 +164,10 @@ def freeze(root,bundle,authorization,gates,output,run_root,*,fresh_heldout=None)
     receipt=preflight(root,bundle);evidence=read(gates);cfg=load_config(root)
     if (evidence.get('status')!='PASS' or evidence.get('source_inventory_sha256')!=receipt['source_inventory_sha256']
         or evidence.get('complete_two_arm_three_repeat_fake_e2e')!='PASS'
-        or evidence.get('historical_5346_parity')!='PASS' or evidence.get('v6_engineering_tests_passed',0)<30):
+        or evidence.get('hendrycks_parity')!='PASS'
+        or evidence.get('math_scoring_sha256')!=contract_sha256()
+        or evidence.get('historical_3492_regraded')!='PASS'
+        or evidence.get('v6_engineering_tests_passed',0)<30):
         raise ProtocolViolation('COMPLETE_CURRENT_OFFLINE_GATES_REQUIRED')
     if git(root,'diff','--name-only') or git(root,'diff','--cached','--name-only'):
         raise ProtocolViolation('COMMITTED_CLEAN_SOURCE_REQUIRED')
@@ -175,7 +180,8 @@ def freeze(root,bundle,authorization,gates,output,run_root,*,fresh_heldout=None)
         require_private(root,fresh_heldout,'data/private_bundles')
         test_contract['fresh_path']=fresh_heldout.relative_to(root).as_posix()
     auth=read(authorization)
-    if (auth.get('identity')!='USER_REQUESTED_SINGLE_PROMPT_GEPA_SCOPE_V6' or auth.get('execute') is not True
+    if (auth.get('identity')!='USER_REQUESTED_SINGLE_PROMPT_GEPA_HENDRYCKS_SCOPE_V1' or auth.get('execute') is not True
+        or auth.get('math_scoring_contract')!=SCORING_IDENTITY or auth.get('math_scoring_sha256')!=contract_sha256()
         or auth.get('authorization_stage')!='POST_SEMANTIC_REVIEW_EXACT_FORMAL_APPROVAL'
         or auth.get('source_sha')!=git(root,'rev-parse','HEAD')
         or auth.get('source_inventory_sha256')!=receipt['source_inventory_sha256']
@@ -191,7 +197,7 @@ def freeze(root,bundle,authorization,gates,output,run_root,*,fresh_heldout=None)
             'resources':'native_3000_per_cell_separate_diagnostics_and_test_uncapped_tokens','seed':42,
             'candidate_guard':'native_only_no_extra_content_length_nonempty_or_noop_filters'}):
         raise ProtocolViolation('EXACT_NEW_USER_SCOPE_REQUIRED')
-    value={'schema_version':'gepa_two_arm_single_prompt_frozen_v6','source_sha':git(root,'rev-parse','HEAD'),
+    value={'schema_version':'gepa_two_arm_single_prompt_frozen_hendrycks_v1','source_sha':git(root,'rev-parse','HEAD'),
         'source_inventory':inventory,'config':cfg,'config_sha256':file_hash(root/CONFIG),
         'protocol_sha256':file_hash(root/PROTOCOL),'bundle_hash':receipt['bundle_hash'],
         'authorization_sha256':file_hash(authorization),'authorization_path':authorization.relative_to(root).as_posix(),
@@ -215,8 +221,8 @@ def execute(root,bundle,frozen_path,run_root,*,transport_override=None):
     frozen=read(frozen_path);check=dict(frozen);identity=check.pop('identity')
     if digest(check)!=identity or validate_bundle(bundle)['bundle_hash']!=frozen['bundle_hash']:
         raise ProtocolViolation('FROZEN_ATTEMPT_OR_BUNDLE_IDENTITY')
-    if frozen['config'].get('schema_version')!='gepa_single_prompt_two_arm_math_v6':
-        raise ProtocolViolation('CURRENT_V6_EXECUTION_IDENTITY_REQUIRED')
+    if frozen['config'].get('schema_version')!='gepa_single_prompt_two_arm_hendrycks_v1':
+        raise ProtocolViolation('CURRENT_HENDRYCKS_EXECUTION_IDENTITY_REQUIRED')
     run_root=run_root.resolve()
     if run_root.exists():raise ProtocolViolation('EXISTING_ATTEMPT_NO_RESUME')
     clients={};fake=transport_override is not None
@@ -330,7 +336,8 @@ def build_summary(result,frozen,audit):
         values={r['arm']:r['correct'] for r in result['test_results'] if r['repeat_id']==repeat}
         paired.append({'repeat_id':repeat,'pareto_minus_strict_correct':values['native_pareto']-values['strict_validation']})
     deltas=[r['pareto_minus_strict_correct'] for r in paired]
-    return {'identity':'GEPA_TWO_ARM_SINGLE_PROMPT_MATH_REPORT_V6',
+    return {'identity':'GEPA_TWO_ARM_SINGLE_PROMPT_HENDRYCKS_REPORT_V1',
+        'math_scoring_contract':SCORING_IDENTITY,'math_scoring_sha256':contract_sha256(),
         'status':'FAKE_ENGINEERING_FIXTURE' if result['fake_provider'] else 'AUDITED_COMPLETE',
         'attempt_identity':frozen['identity'],'source_sha':frozen.get('source_sha'),
         'bundle_hash':frozen['bundle_hash'],'seed':42,'repeat_ids':[1,2,3],

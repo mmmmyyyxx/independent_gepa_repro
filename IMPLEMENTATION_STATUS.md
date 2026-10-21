@@ -1,6 +1,35 @@
 # Implementation status
 
-Updated: 2026-10-20
+Updated: 2026-10-21
+
+Current scoring is exclusively [C-EVOLVE / Hendrycks V1](docs/math_scoring_cevolve_hendrycks_v1.md). The following Unified V1 section records a prior audit, including its then-current test counts; it is not an executable policy choice. Original scores remain intact. See the migration report for current verification and readiness.
+
+## Historical Unified MATH scorer V1 audit (retired implementation)
+
+The [audit](reports/math_unified_scoring_v1_20261021/README.md) documents the
+shared exact-string, pinned MASPO-compatibility and bounded semantic policies.
+The canonical GP package and local GEPA mirror have identical common source bytes
+and policy hashes; only unchanged local legacy-kernel imports differ. Current
+scoring, voting, recovery and historical result files retain their original paths.
+
+Both implementations replay all3,492 frozen responses with identical decisive
+fields for all10,476 policy results. Historical terminal correctness, validity and
+answer hashes match all2,700 records. Semantic policy leaves44 raw/25 terminal
+observations unresolved, with nullable correctness and fixed-denominator bounds.
+MASPO's original Final-answer fallback mismatch and unsafe normalization are
+explicit compatibility limitations, not new mathematical truth claims.
+
+GP current suite:1393 passed,2 skipped; GEPA suite:463 passed,2 skipped;
+final scoring-specific tests:100 passed in each repository. Real Windows process
+deadline, crash, memory, reaping and subsequent-input controls pass. Both saved
+costly pairs complete stably across three fresh workers per repository. The
+repository governance audit passes; the separate historical manifest preflight
+still flags the preexisting stale KNOWN_FAILURES generated view. This is disclosed
+without modifying unrelated staged work or claiming formal-run readiness.
+
+Exact policy hashes, migration decisions and sanitized evidence are recorded in
+the report and `configs/math_unified_scoring_v1.json`. Model API calls/tokens are0.
+No formal activation, A2 Test continuation, historical score rewrite, commit or push.
 
 ## Initial Prompt baseline and scorer/update diagnosis completed
 

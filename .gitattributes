@@ -1,1 +1,12 @@
 * text=auto eol=lf
+
+# Byte-hashed mirrored provenance metadata retains its verified exact bytes.
+src/independent_gepa/math_scoring/upstream.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# Preserve immutable predecessor evidence bytes, including CRLF receipts.
+reports/math_unified_scoring_v1_20261021/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+docs/archive/scoring/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# Verbatim upstream helper whitespace is part of its pinned source receipt.
+src/independent_gepa/math_scoring/_hendrycks.py whitespace=-blank-at-eol

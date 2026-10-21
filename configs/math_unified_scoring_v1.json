@@ -1,0 +1,7 @@
+{
+  "identity": "HISTORICAL_MATH_SCORING_CONFIGURATION_TOMBSTONE_V1",
+  "execution_allowed": false,
+  "archived_configuration": "docs/archive/scoring/pre_hendrycks_20261021/math_unified_scoring_v1.json",
+  "archived_sha256": "229e446104d38bce1f2fd02d291a0e392d54e3c4dd8864f9eba74bd10b7c3c1b",
+  "current_math_scoring_contract": "cevolve_hendrycks_math_v1"
+}

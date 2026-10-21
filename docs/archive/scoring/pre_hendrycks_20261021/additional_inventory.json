@@ -1,0 +1,12 @@
+{
+  "src/independent_gepa/single_prompt_math/scoring_v5.py": "57f6fb85add2068a65b1058c5afbc2c1cee85d95366cb733afc4f33c6a8b1c2d",
+  "src/independent_gepa/single_prompt_math/scoring_v7.py": "df00aef29c77f19bb1fcaaf78995a5d8c97531547efc17c5533953d1cc48d6fc",
+  "src/independent_gepa/single_prompt_math/scoring_worker_v5.py": "73452ead3b9fc4864a15b6882b4bfbee81acad0d11b995ebc4753ffd8e0a0098",
+  "src/independent_gepa/single_prompt_math/scoring_worker_v7.py": "221ac2159710ecabd97283f53daf89d1979bbb8516cdda9255e792ee46bfcffb",
+  "src/independent_gepa/single_prompt_math/certified_bounds.py": "1ee07610b5a856dd69845ebee9205ebe4f2accc8bc5a29ee5c5e87ac4c0d09f9",
+  "src/independent_gepa/single_prompt_math/certified_bounds_v7.py": "a71139b3edd134c5c28d453b71ebcc2463c735782f9da35153afb7e98f41f43f",
+  "src/independent_gepa/single_prompt_math/paid_repair.py": "60ff869bcc6bf0b5a0e67ca3b6576ca70b6adb84bbb81a8d3dadbf2df83dc76b",
+  "src/independent_gepa/single_prompt_math/continuation.py": "a7baaff00001b6cf272918805ebfe2a8b4cffe565d0fad5d2d9cf88f29bb75a7",
+  "src/independent_gepa/single_prompt_math/replay_scores.py": "70fe448c5c4ecb622e30a49ebf0d15b8e86ea9622d7232afd5019da1beccee7f",
+  "tests/test_math_unified_scoring.py": "47065cde28563835b39dbfb414818e1da082383c37952f3dbe1a4f7f6649aece"
+}

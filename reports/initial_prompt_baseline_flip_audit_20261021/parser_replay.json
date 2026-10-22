@@ -1,0 +1,76 @@
+{
+  "identity": "FROZEN_V7_BASELINE_OFFLINE_REPLAY_V1",
+  "observations": 900,
+  "physical_draws": 959,
+  "parser_mismatches": 0,
+  "score_mismatches": 0,
+  "unresolved": 0,
+  "local_exceptions": 0,
+  "new_model_calls": 0,
+  "main_process_network_attempts": 0,
+  "outgoing_sockets_blocked": true,
+  "historical_source_import_verified": true,
+  "wall_seconds": 60.844,
+  "synthetic_parser_fixtures": [
+    {
+      "synthetic_input": "The answer is (C)",
+      "valid": true,
+      "extracted": "(C)",
+      "reason": null
+    },
+    {
+      "synthetic_input": "C.",
+      "valid": false,
+      "extracted": "",
+      "reason": "MISSING_EXPLICIT_FINAL_ANSWER"
+    },
+    {
+      "synthetic_input": "\\boxed{C}",
+      "valid": true,
+      "extracted": "C",
+      "reason": null
+    },
+    {
+      "synthetic_input": "Final answer: C",
+      "valid": true,
+      "extracted": "C",
+      "reason": null
+    },
+    {
+      "synthetic_input": "Final answer: 42",
+      "valid": true,
+      "extracted": "42",
+      "reason": null
+    },
+    {
+      "synthetic_input": "The answer is 42",
+      "valid": true,
+      "extracted": "42",
+      "reason": null
+    },
+    {
+      "synthetic_input": "\\boxed{42}",
+      "valid": true,
+      "extracted": "42",
+      "reason": null
+    },
+    {
+      "synthetic_input": "Final answer: 2\nThe answer is 3",
+      "valid": false,
+      "extracted": "",
+      "reason": "CONFLICTING_FINAL_ANSWERS"
+    },
+    {
+      "synthetic_input": "work: 999\nFinal answer: 42",
+      "valid": true,
+      "extracted": "42",
+      "reason": null
+    },
+    {
+      "synthetic_input": "Final answer: \\frac{1}{2}",
+      "valid": true,
+      "extracted": "\\frac{1}{2}",
+      "reason": null
+    }
+  ]
+}

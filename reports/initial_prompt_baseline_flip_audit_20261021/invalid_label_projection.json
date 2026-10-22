@@ -1,0 +1,24 @@
+{
+  "identity": "LAST_LITERAL_LABEL_ISOLATION_DIAGNOSTIC_ONLY_V1",
+  "invalid_draws": 73,
+  "unique_invalid_observations": 27,
+  "unique_invalid_items": 15,
+  "isolated_label_valid": 33,
+  "isolated_label_correct": 32,
+  "terminal_invalid_draws": 14,
+  "terminal_isolated_label_valid": 5,
+  "terminal_isolated_label_correct": 5,
+  "recovered_correct_by_repeat": {
+    "1": 5,
+    "2": 5,
+    "3": 1
+  },
+  "per_repeat_terminal_defects": {
+    "1": 1,
+    "2": 3,
+    "3": 1
+  },
+  "original_results_modified": false,
+  "new_model_calls": 0,
+  "network_guard_attempts": 0
+}

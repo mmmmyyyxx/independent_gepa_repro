@@ -1,0 +1,32 @@
+{
+  "identity": "BASELINE_FLIP_REPORT_PUBLICATION_CHECKS_V1",
+  "status": "PASS",
+  "new_model_calls": 0,
+  "historical_files_rehashed_unchanged": 1939,
+  "correctness_flip_ids": 54,
+  "answer_string_difference_ids": 89,
+  "all_sample_rows": 300,
+  "readme_links_checked": 13,
+  "raw_prompt_problem_response_scan": "PASS",
+  "secret_and_absolute_host_path_scan": "PASS",
+  "new_files_whitespace_check": "PASS",
+  "git_diff_check": "PASS",
+  "existing_worktree_lf_warnings": true,
+  "report_file_sha256": {
+    "all300_sample_status.csv": "af7bac5f8656327f7a90461b6a12666678704c8a99de793d69012daaab96e2a3",
+    "answer_string_difference_ids.csv": "946cf0f178b10d209330ad7a706889531d363af8d2fc7adbcb294d80e01831e9",
+    "correctness_flip_ids.csv": "cd1280382c80131b1f9481da322aa49dd26e50986d7405d34d32f0e16386043b",
+    "fixture_checks.json": "274620cfea388a7d50b890a9bea56e7c32df50cba48234be2186a1d0598fb2c3",
+    "flip_evidence_index.json": "43f9a94f674f35311b4b1531b0008f99c88e6739b50d7788076d06958f13e54a",
+    "input_hashes.json": "21e8bb53969fdf5407e63a232f9ae006d437773c10bbfbf81d4834816ab62513",
+    "invalid_label_projection.json": "eef95b63dfaeb5c4af19683bb1ef52773c29b28625932c9623b349d01b0f12a1",
+    "manual_review.csv": "a5bf7bc1d601d6a4c21e61d1a1de09e8d9952155d1a38df80d3eff365f11314f",
+    "parser_replay.json": "f8a87ded1586794c43f19aee951812d0160225e02eef4b73f69317d06bb76ded",
+    "README.md": "a1bc1802a608ebe8185091d923840fa88c4a19c30cc2bc3091a8e54a984ba823",
+    "summary.json": "03c6dc183e94b79107b5a09b974de9ae3f04f998e83d839d0ac44872918364b2",
+    "verification.json": "a56e1d6b7d8f333f4a83878cc22ef561514f4d945f6a145a68b19bb2f656f2a6"
+  },
+  "private_check_script_sha256": "bb2af67e664c6d04bfbb8aef4be4a934bfc643e4b2eb05558c519be68dccf4d8",
+  "committed": false,
+  "pushed": false
+}

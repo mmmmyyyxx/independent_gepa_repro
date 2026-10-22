@@ -1,0 +1,278 @@
+{
+  "identity": "INITIAL_GPT4OMINI_BASELINE_FLIP_OFFLINE_AUDIT_V1",
+  "historical_source_sha": "df19bf84ddfe093f0b0c4475293d4fd7026f7cb9",
+  "scope": "original_initial_prompt_test300_repeat3",
+  "new_model_calls": 0,
+  "historical_results_unchanged": true,
+  "baseline_execution_identity": "7dd4c3eed642a517615ab07f448775e884b48c82a7acdb11b6a1e8ecc383fabb",
+  "test_membership_hash": "3d8af2d055316da986934025bcc4c6e2f3f39d1c25838a5f23e709b9b5da3c44",
+  "initial_prompt_hash": "533ac46a1fd8418e7e9ca3d8995fa82c16d0e5685aac57986b7b26e8a086a526",
+  "unique_system_message_hashes": [
+    "afc84acf743619c84af438b40b77400be332e814cbb3a844a0f316ac21f5f759"
+  ],
+  "same_messages_per_item_all_draws": true,
+  "message_roles": [
+    "system",
+    "user"
+  ],
+  "few_shot_examples": 0,
+  "request_parameter_counts": [
+    {
+      "parameters": {
+        "frequency_penalty": 0,
+        "max_tokens": 3600,
+        "model": "gpt-4o-mini",
+        "presence_penalty": 0,
+        "temperature": 0.2,
+        "top_p": 0.8
+      },
+      "physical_requests": 959
+    }
+  ],
+  "provider_seed_sent": false,
+  "per_repeat": {
+    "1": {
+      "physical_responses": 320,
+      "network_retry_attempts": 0,
+      "logical": 300,
+      "correct": 231,
+      "recovered": 5
+    },
+    "2": {
+      "physical_responses": 325,
+      "network_retry_attempts": 0,
+      "logical": 300,
+      "correct": 224,
+      "recovered": 6
+    },
+    "3": {
+      "physical_responses": 314,
+      "network_retry_attempts": 0,
+      "logical": 300,
+      "correct": 225,
+      "recovered": 2
+    }
+  },
+  "first_invalid": {
+    "1": 9,
+    "2": 12,
+    "3": 6
+  },
+  "terminal_invalid": {
+    "1": 4,
+    "2": 6,
+    "3": 4
+  },
+  "invalid_attempt_reasons": {
+    "MALFORMED_FINAL_BOUNDARY": 34,
+    "AMBIGUOUS_FINAL_PAYLOAD": 39
+  },
+  "correctness_flip_unique_items": 54,
+  "correctness_flip_with_invalid": 4,
+  "correctness_flip_all_valid": 50,
+  "correctness_flip_all_first_draw_valid": 48,
+  "pairwise": [
+    {
+      "before": 1,
+      "after": 2,
+      "denominator": 300,
+      "correctness_flip": 39,
+      "validity_flip": 4,
+      "C_to_nonC": 23,
+      "nonC_to_C": 16,
+      "valid_both": 293,
+      "answer_string_changed_both_valid": 65,
+      "raw_output_changed": 295,
+      "first_draw_text_changed": 295
+    },
+    {
+      "before": 1,
+      "after": 3,
+      "denominator": 300,
+      "correctness_flip": 36,
+      "validity_flip": 0,
+      "C_to_nonC": 21,
+      "nonC_to_C": 15,
+      "valid_both": 296,
+      "answer_string_changed_both_valid": 72,
+      "raw_output_changed": 295,
+      "first_draw_text_changed": 295
+    },
+    {
+      "before": 2,
+      "after": 3,
+      "denominator": 300,
+      "correctness_flip": 33,
+      "validity_flip": 4,
+      "C_to_nonC": 16,
+      "nonC_to_C": 17,
+      "valid_both": 293,
+      "answer_string_changed_both_valid": 63,
+      "raw_output_changed": 296,
+      "first_draw_text_changed": 296
+    }
+  ],
+  "provider_fingerprint_counts": [
+    {
+      "repeat": 1,
+      "fingerprint": "fp_99f88af1c5",
+      "count": 314
+    },
+    {
+      "repeat": 1,
+      "fingerprint": "fp_f424ae74df",
+      "count": 1
+    },
+    {
+      "repeat": 1,
+      "fingerprint": "fp_2851888338",
+      "count": 1
+    },
+    {
+      "repeat": 1,
+      "fingerprint": "fp_c44d37cc71",
+      "count": 1
+    },
+    {
+      "repeat": 1,
+      "fingerprint": "fp_01a55b9f25",
+      "count": 1
+    },
+    {
+      "repeat": 1,
+      "fingerprint": "fp_5c838cbcac",
+      "count": 1
+    },
+    {
+      "repeat": 1,
+      "fingerprint": "fp_01ca53b73a",
+      "count": 1
+    },
+    {
+      "repeat": 2,
+      "fingerprint": "fp_99f88af1c5",
+      "count": 325
+    },
+    {
+      "repeat": 3,
+      "fingerprint": "fp_99f88af1c5",
+      "count": 305
+    },
+    {
+      "repeat": 3,
+      "fingerprint": "fp_07d47c81e6",
+      "count": 1
+    },
+    {
+      "repeat": 3,
+      "fingerprint": "fp_acf70d9fcf",
+      "count": 4
+    },
+    {
+      "repeat": 3,
+      "fingerprint": "fp_0d55417811",
+      "count": 1
+    },
+    {
+      "repeat": 3,
+      "fingerprint": "fp_d932b185f7",
+      "count": 1
+    },
+    {
+      "repeat": 3,
+      "fingerprint": "fp_16c1774bc0",
+      "count": 1
+    },
+    {
+      "repeat": 3,
+      "fingerprint": "fp_3450a6e469",
+      "count": 1
+    }
+  ],
+  "provider_returned_model_counts": [
+    {
+      "repeat": 1,
+      "returned_model": "gpt-4o-mini-2024-07-18",
+      "count": 300
+    },
+    {
+      "repeat": 1,
+      "returned_model": "gpt-4o-mini",
+      "count": 20
+    },
+    {
+      "repeat": 2,
+      "returned_model": "gpt-4o-mini-2024-07-18",
+      "count": 310
+    },
+    {
+      "repeat": 2,
+      "returned_model": "gpt-4o-mini",
+      "count": 15
+    },
+    {
+      "repeat": 3,
+      "returned_model": "gpt-4o-mini-2024-07-18",
+      "count": 294
+    },
+    {
+      "repeat": 3,
+      "returned_model": "gpt-4o-mini",
+      "count": 20
+    }
+  ],
+  "response_binding_checks": {
+    "bound_terminal_observations": 900,
+    "bound_paid_responses": 959,
+    "receipt_hash_mismatches": 0,
+    "request_item_mismatches": 0,
+    "provider_body_text_mismatches": 0,
+    "prediction_chain_mismatches": 0
+  },
+  "reused_repeat2_byte_identical": true,
+  "network_retries_in_selected_chains": 0,
+  "same_item_multiple_draw_request_messages_identical": true,
+  "logical_request_identity_recomputations": 900,
+  "historical_sources": {
+    "repeat1_repeat3_baseline": "df19bf84ddfe093f0b0c4475293d4fd7026f7cb9",
+    "repeat2_parent_manifest_source": "61d42b82b87a4198764641e5b6875a44308b11e5",
+    "repeat2_v7_continuation_source": "00be3132b12e649b3ed43e3706b08ee0c7f520be",
+    "repeat2_v7_continuation_identity": "94d7f29041fbe3262d401751f117a3b3c93b58ee3d1bebbe80bcae83759ebaa2",
+    "repeat2_relevant_source_byte_identical_to_replay_source": true,
+    "relevant_source_sha256": {
+      "src/independent_gepa/single_prompt_math/prompt.py": "bca747e0c7e7dab097746ef8c54009f72cdb0eda31f7c9c456996bfed3e7d423",
+      "src/independent_gepa/single_prompt_math/runtime.py": "7e1464d2c4f983697fdc4f0429bf425c7fea8db1bd89c1522fc8825869101a6b",
+      "src/independent_gepa/single_prompt_math/math_flexible_answer.py": "1d26f2b0fc2a6434b7ebbd1c1d68ec3bc6581496b94eec5e0e458f85037d2eef",
+      "src/independent_gepa/single_prompt_math/math_prediction_validity.py": "c33bd0ec0ca783bf495a1dd1eb4f38813788029b63bbc57835291c1ce418371b",
+      "src/independent_gepa/single_prompt_math/scoring_v7.py": "df00aef29c77f19bb1fcaaf78995a5d8c97531547efc17c5533953d1cc48d6fc",
+      "src/independent_gepa/single_prompt_math/scoring_worker_v7.py": "221ac2159710ecabd97283f53daf89d1979bbb8516cdda9255e792ee46bfcffb",
+      "src/independent_gepa/single_prompt_math/continuation.py": "a7baaff00001b6cf272918805ebfe2a8b4cffe565d0fad5d2d9cf88f29bb75a7"
+    }
+  },
+  "manual_review_item_counts": {
+    "visible_reasoning_or_problem_interpretation_difference": 47,
+    "historical_boundary_extraction_defect": 4,
+    "visible_result_final_line_inconsistency": 2,
+    "matrix_serialization_scoring_sensitivity": 1
+  },
+  "unique_item_difference_counts": {
+    "correctness_flip": 54,
+    "validity_flip": 4,
+    "extracted_string_changed": 89,
+    "raw_output_changed": 298
+  },
+  "provider_response_ids": {
+    "physical_responses": 959,
+    "unique_ids": 959
+  },
+  "terminal_fingerprint_pair_counts": {
+    "same_fingerprint": {
+      "pairs": 870,
+      "correctness_flips": 107
+    },
+    "different_fingerprint": {
+      "pairs": 30,
+      "correctness_flips": 1
+    }
+  }
+}

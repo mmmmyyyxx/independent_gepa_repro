@@ -1,0 +1,56 @@
+{
+  "identity": "FROZEN_BASELINE_SYNTHETIC_FORMAT_PROBES_V1",
+  "passed": 6,
+  "cases": [
+    {
+      "synthetic_input": "The answer is (C)",
+      "synthetic_gold": "C",
+      "valid": true,
+      "score": true,
+      "extracted": "(C)",
+      "reason": null
+    },
+    {
+      "synthetic_input": "C.",
+      "synthetic_gold": "C",
+      "valid": false,
+      "score": false,
+      "extracted": "",
+      "reason": "MISSING_EXPLICIT_FINAL_ANSWER"
+    },
+    {
+      "synthetic_input": "\\boxed{C}",
+      "synthetic_gold": "C",
+      "valid": true,
+      "score": true,
+      "extracted": "C",
+      "reason": null
+    },
+    {
+      "synthetic_input": "Final answer: C",
+      "synthetic_gold": "C",
+      "valid": true,
+      "score": true,
+      "extracted": "C",
+      "reason": null
+    },
+    {
+      "synthetic_input": "Final answer: 42",
+      "synthetic_gold": "42",
+      "valid": true,
+      "score": true,
+      "extracted": "42",
+      "reason": null
+    },
+    {
+      "synthetic_input": "Thus, \\(1=1\\) is satisfied.\n\nFinal answer: 42",
+      "synthetic_gold": "42",
+      "valid": false,
+      "score": false,
+      "extracted": "",
+      "reason": "MALFORMED_FINAL_BOUNDARY"
+    }
+  ],
+  "new_model_calls": 0,
+  "network_attempts": 0
+}

@@ -1,0 +1,38 @@
+{
+  "identity": "BASELINE_FLIP_REPORT_VERIFICATION_V1",
+  "status": "PASS",
+  "new_api_calls": 0,
+  "production_changes": 0,
+  "historical_artifact_changes": 0,
+  "historical_input_files_rehashed": 1939,
+  "frozen_runner_sha_matches": true,
+  "historical_source_files_verified": 7,
+  "replay_observations": 900,
+  "replay_physical_draws": 959,
+  "unresolved": 0,
+  "parser_mismatches": 0,
+  "score_mismatches": 0,
+  "synthetic_fixture_checks_passed": 6,
+  "main_network_attempts": 0,
+  "outgoing_network_guard": true,
+  "unique_correctness_flips": 54,
+  "manual_reviewed_items": 54,
+  "classification_counts": {
+    "visible_reasoning_or_problem_interpretation_difference": 47,
+    "historical_boundary_extraction_defect": 4,
+    "visible_result_final_line_inconsistency": 2,
+    "matrix_serialization_scoring_sensitivity": 1
+  },
+  "pairwise_flip_sum": 108,
+  "pairwise_sum_equals_twice_union": true,
+  "prior_harness_failure": "TypeError from positional policy argument; corrected to keyword-only historical interface. Failed harness evidence retained privately, not counted as completed replay.",
+  "private_audit_scripts_sha256": {
+    "check_report.py": "5ec6ba54e91ee6ec85266f4f6b482dbe0c1eb0c6f7e527061e9b506f723cb868",
+    "collect.py": "bb759e30622e306b9a535cb56c2e458145bc67f15fc9519f4f7af7bc4b5de929",
+    "diagnose.py": "83572f26e86f0ebd58c3b4bb25222102f4d9120b8610e986fb907d29f1cb9e31",
+    "fixtures.py": "7aa594505e554f70caec6e9b8aeaf5a25e83d23b0d3cd6f1cfab9647a1b69792",
+    "publish.py": "5620091c0513a826b4c86b1648ceb4a46ca343be164dc0e9112b74554ce1bdcf",
+    "replay.py": "0d071f5d8e7e9ba8b7cc84d2e66a6fbd5a0a2c3427f7fdff695a8aa7c5fac3ab"
+  },
+  "scope": "report-only, frozen-code offline execution and diagnostics; no production compileall/full suite required"
+}

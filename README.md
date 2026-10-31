@@ -1,5 +1,8 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
+[Five-task GEPA formal preparation](docs/gepa_paper_formal_preparation_v1.md) retains OpenLux GPT-4.1 Mini Solver, Qwen3.7-Flash optimizer and the author native Pareto protocol. The [publication audit](reports/gepa_paper_publication_20261031/README.md) confirms local OpenLux configuration and environment injection without tracked secrets. Offline source/data/lifecycle checks pass; actual-model canary, retrieval index and exact API authorization remain pending. READY_TO_RUN=false.
+
+
 The sole current MATH scorer is [C-EVOLVE / Hendrycks V1](docs/math_scoring_cevolve_hendrycks_v1.md).
 It replaces all prior selectable scoring policies. The
 [earlier Unified V1 audit](reports/math_unified_scoring_v1_20261021/README.md)

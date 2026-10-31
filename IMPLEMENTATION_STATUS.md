@@ -1,5 +1,8 @@
 # Implementation status
 
+2026-10-31: [Paper preparation publication audit](reports/gepa_paper_publication_20261031/README.md) records explicit commit/push authorization and local OpenLux configuration discovery. Production/config/test bytes are unchanged from acceptance:main413,candidate407,focused42 passed;18 historical cases deselected. Local environment injection CheckOnly is network-free. Real API calls/tokens remain0; exact canary and formal execution are not authorized.
+
+
 Updated: 2026-10-21
 
 Current scoring is exclusively [C-EVOLVE / Hendrycks V1](docs/math_scoring_cevolve_hendrycks_v1.md). The following Unified V1 section records a prior audit, including its then-current test counts; it is not an executable policy choice. Original scores remain intact. See the migration report for current verification and readiness.

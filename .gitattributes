@@ -10,3 +10,7 @@ docs/archive/scoring/** -text whitespace=trailing-space,space-before-tab,cr-at-e
 
 # Verbatim upstream helper whitespace is part of its pinned source receipt.
 src/independent_gepa/math_scoring/_hendrycks.py whitespace=-blank-at-eol
+
+# Preserve byte-hashed paper preparation inputs across Git publication.
+configs/gepa_paper_five_tasks_openlux_windows_v1.json -text whitespace=cr-at-eol
+requirements/paper-suite-windows.lock.txt -text whitespace=cr-at-eol

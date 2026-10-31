@@ -1,0 +1,159 @@
+{
+  "schema_version": "gepa_paper_five_tasks_openlux_windows_v1",
+  "status": "PREPARATION_ONLY",
+  "READY_TO_RUN": false,
+  "real_api_allowed": false,
+  "authorization": null,
+  "paper": "https://arxiv.org/html/2507.19457v2",
+  "upstream": {
+    "artifact_repository": "https://github.com/gepa-ai/gepa-artifact",
+    "artifact_commit": "cbefbc1aa0f43dd39874ec4bf42211365dbda42e",
+    "dspy_repository": "https://github.com/gepa-ai/dspy",
+    "dspy_ref": "gepa_study",
+    "dspy_commit": "62dc3b634d7dc0c4889abcf905cb4c391ea6b396",
+    "execution_engine": "gepa_artifact.gepa.gepa.GEPA",
+    "existing_vendor_gepa": "unchanged; not the paper execution engine"
+  },
+  "seeds": [
+    0
+  ],
+  "repeats": 1,
+  "models": {
+    "provider_profile": "openlux",
+    "solver": "openai/gpt-4.1-mini-2025-04-14",
+    "reflection": "same_task_lm_author_default_teacher_lm_None",
+    "api_key_env": "OPENLUX_API_KEY",
+    "base_url_env": "OPENLUX_BASE_URL",
+    "temperature": 1.0,
+    "max_tokens": 16384,
+    "availability_verified": false,
+    "model_fallback": false,
+    "provider_deviation": "OpenLux replaces the paper's direct OpenAI deployment; backend equivalence unverified"
+  },
+  "optimizer": {
+    "run_linearized_gepa": false,
+    "use_merge": false,
+    "set_for_merge_minibatch": "val",
+    "track_scores_on": "val",
+    "num_dspy_examples_per_gepa_step": 3,
+    "skip_perfect_score": true,
+    "teacher_lm": null,
+    "knowledgebase_qe": null,
+    "num_iters": null,
+    "max_evals_per_trainval_instance": null,
+    "num_threads": null,
+    "threading_note": "native GEPA resolves None with os.cpu_count(); author launch script requests final-eval threads=32"
+  },
+  "tasks": [
+    {
+      "key": "hotpotqa",
+      "package": "hotpotQA",
+      "benchmark": "HotpotQABench",
+      "program": "HotpotMultiHop",
+      "sizes": [
+        150,
+        300,
+        300
+      ],
+      "budget": 6871,
+      "metric": "dspy_answer_exact_match",
+      "predictors": 4
+    },
+    {
+      "key": "ifbench",
+      "package": "IFBench",
+      "benchmark": "IFBench",
+      "program": "IFBenchCoT2StageProgram",
+      "sizes": [
+        150,
+        300,
+        294
+      ],
+      "budget": 3593,
+      "metric": "author_loose_fraction_of_constraints",
+      "predictors": 2
+    },
+    {
+      "key": "hover",
+      "package": "hover",
+      "benchmark": "hoverBench",
+      "program": "HoverMultiHop",
+      "sizes": [
+        150,
+        300,
+        300
+      ],
+      "budget": 7051,
+      "metric": "all_gold_titles_retrieved",
+      "predictors": 4
+    },
+    {
+      "key": "aime2025",
+      "package": "AIME",
+      "benchmark": "AIMEBench",
+      "program": "CoT",
+      "sizes": [
+        45,
+        45,
+        150
+      ],
+      "budget": 1839,
+      "metric": "author_integer_answer_field",
+      "predictors": 1
+    },
+    {
+      "key": "livebench_math",
+      "package": "livebench_math",
+      "benchmark": "LiveBenchMathBench",
+      "program": "CoT",
+      "sizes": [
+        121,
+        121,
+        126
+      ],
+      "budget": 1839,
+      "metric": "author_livebench_task_dispatch",
+      "predictors": 1
+    }
+  ],
+  "budget": {
+    "unit": "native_task_example_metric_evaluations",
+    "sum_search_thresholds": 21193,
+    "native_boundary": "check before iteration; may cross threshold during an indivisible iteration",
+    "counter_caveat": "author total_num_evals does not advance on all-perfect/failed-proposal skips; meter actual metric calls separately",
+    "iteration_cap": null,
+    "token_ceiling": null,
+    "report_tokens_not_cost": true,
+    "baseline_and_final_test": "separate from search accounting"
+  },
+  "data_policy": {
+    "train": "reflection and minibatch comparison",
+    "validation": "author native instance Pareto and final best aggregate selection",
+    "test": "no search/selection; only after final program is frozen",
+    "aime_test": "30 unique questions times 5, original DSPy request caching retained; not 150 unique questions or guaranteed independent draws",
+    "livebench_revision": "bb66571c8ccf32d3df9e6f48b920d3770ff4aacb",
+    "hover_train_validation_content_overlap": "one identical claim in author split; user explicitly chose preserve and disclose; never silently resplit"
+  },
+  "scoring_boundary": {
+    "authority": "pinned author per-benchmark code",
+    "existing_math_scoring": "unchanged; not imported by this protocol",
+    "historical_results": "read-only; not overwritten or relabeled"
+  },
+  "windows_amendment": {
+    "authorized_by_user": true,
+    "allowed": "spawn-safe transport for author's AMPS timeout helper only; unchanged scoring functions",
+    "required": "source parity, result+feedback differential tests, real timeout/crash/reaping tests"
+  },
+  "operational_adapter": {
+    "identity": "paper_author_engine_metered_transport_v1",
+    "transient_retries": 8,
+    "request_timeout_seconds": 120,
+    "backoff_seconds": "min(60, 2**attempt)",
+    "nontransient_failure": "OperationalHalt; never scored as wrong or swallowed by native except Exception",
+    "actual_task_example_attempts": "reserve at root program entry, including aborted attempts; native stopping counter unchanged",
+    "ceilings": "finite logical/physical/wall safety limits required in exact per-phase authorization; hitting one aborts, not completes",
+    "unknown_failed_attempt_tokens": "reported as unknown, never invented as zero usage",
+    "no_semantic_output_retries": true,
+    "scope": "source/config/data/environment/provider bound, single-use phase grant, original DSPy request cache scoped per task"
+  }
+}

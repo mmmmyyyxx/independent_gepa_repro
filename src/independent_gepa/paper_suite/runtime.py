@@ -19,6 +19,8 @@ from .data import canonical, decode_metadata, digest
 from .sources import audit, file_hash, git
 from .windows import install
 from .models import create_role_lms, physical_guard, role_route
+from .execution import (EXECUTION_BINDINGS, GRANT_SCHEMA, PhaseFutures,
+                        execution_binding, load_execution_policy)
 
 
 MODEL_BINDINGS = ("solver_model", "deployment_base_url_sha256", "reflection_model",
@@ -32,9 +34,38 @@ def within(path: Path, root: Path) -> Path:
     return resolved
 
 
+def validate_phase_dependencies(workspace: Path, grant: dict) -> None:
+    """Enforce the global search/Test barrier even for a direct phase command."""
+    required = []
+    if grant["phase"] in {"baseline", "final_test"}:
+        required.append(("search", "search_receipts"))
+    if grant["phase"] == "final_test":
+        required.append(("baseline", "baseline_receipts"))
+    for phase, field in required:
+        bindings = grant.get(field)
+        if not isinstance(bindings, dict) or set(bindings) != {t.key for t in TASKS}:
+            raise ValueError("COMPLETE_FIVE_TASK_PHASE_BARRIER_REQUIRED:" + phase)
+        for task, binding in bindings.items():
+            path = within(workspace / binding["path"], workspace)
+            if file_hash(path) != binding.get("sha256"):
+                raise ValueError("PHASE_DEPENDENCY_RECEIPT_HASH_MISMATCH")
+            previous = json.loads(path.read_text(encoding="utf-8"))
+            keys = ("source_sha", "config_sha256", "data_receipt_sha256", *MODEL_BINDINGS, *EXECUTION_BINDINGS)
+            if (previous.get("status") != "COMPLETE" or previous.get("phase") != phase
+                    or previous.get("task") != task or any(previous.get(k) != grant[k] for k in keys)
+                    or not previous.get("phase_futures", {}).get("drained")
+                    or previous["phase_futures"].get("pending") != 0):
+                raise ValueError("PHASE_DEPENDENCY_IDENTITY_OR_DRAIN_MISMATCH")
+            if task == grant.get("task") and previous.get("cache_namespace") != grant.get("cache_namespace"):
+                raise ValueError("TASK_SEARCH_BASELINE_TEST_CACHE_NAMESPACE_MUST_MATCH")
+            if phase == "search":
+                if file_hash(path.parent / "selected_program.json") != previous.get("selected_program_sha256"):
+                    raise ValueError("ALL_SELECTED_PROGRAMS_MUST_BE_FROZEN_BEFORE_TEST")
+
+
 def validate_grant(root: Path, workspace: Path, grant: dict) -> dict:
     """Validate before importing DSPy/LiteLLM or constructing any model client."""
-    if (grant.get("schema") != IDENTITY + "_authorization_v1" or grant.get("approved_by") != "user"
+    if (grant.get("schema") != GRANT_SCHEMA or grant.get("approved_by") != "user"
             or grant.get("READY_TO_RUN") is not True or grant.get("real_api_allowed") is not True):
         raise ValueError("FRESH_EXACT_PAPER_API_AUTHORIZATION_REQUIRED")
     if grant.get("phase") not in {"canary", "baseline", "search", "final_test"}:
@@ -72,6 +103,11 @@ def validate_grant(root: Path, workspace: Path, grant: dict) -> dict:
             raise ValueError("FINITE_OPERATIONAL_CEILINGS_REQUIRED:" + field)
     if grant["phase"] == "search" and grant["max_logical_evaluations"] < task.budget + task.sizes[1] + 6:
         raise ValueError("SAFETY_CEILING_CANNOT_TRUNCATE_NORMAL_NATIVE_ITERATION")
+    if grant["phase"] == "search" and grant.get("native_search_threshold") != task.budget:
+        raise ValueError("EXACT_NATIVE_SEARCH_THRESHOLD_REQUIRED")
+    expected_execution = execution_binding(root, os.cpu_count())
+    if any(grant.get(key) != value for key, value in expected_execution.items()):
+        raise ValueError("EXACT_EXECUTION_POLICY_AND_THREADS_REQUIRED")
     if grant.get("source_sha") != git(root, "rev-parse", "HEAD") or git(root, "status", "--porcelain"):
         raise ValueError("CLEAN_COMMITTED_PAPER_SOURCE_REQUIRED")
     if grant.get("config_sha256") != file_hash(root / CONFIG_PATH):
@@ -126,7 +162,7 @@ def validate_grant(root: Path, workspace: Path, grant: dict) -> dict:
         if (previous.get("phase") != "canary" or previous.get("status") != "COMPLETE"
                 or previous.get("source_sha") != grant["source_sha"]
                 or previous.get("config_sha256") != grant["config_sha256"]
-                or any(previous.get(key) != grant[key] for key in MODEL_BINDINGS)):
+                  or any(previous.get(key) != grant[key] for key in MODEL_BINDINGS + EXECUTION_BINDINGS)):
             raise ValueError("MODEL_CANARY_SCOPE_MISMATCH")
     if grant["phase"] == "final_test":
         selection = within(workspace / grant["selection_receipt"], workspace)
@@ -136,10 +172,11 @@ def validate_grant(root: Path, workspace: Path, grant: dict) -> dict:
         if (parent.get("phase") != "search" or parent.get("status") != "COMPLETE"
                 or parent.get("task") != task.key or parent.get("source_sha") != grant["source_sha"]
                 or parent.get("config_sha256") != grant["config_sha256"]
-                or any(parent.get(key) != grant[key] for key in MODEL_BINDINGS)
+                or any(parent.get(key) != grant[key] for key in MODEL_BINDINGS + EXECUTION_BINDINGS)
                 or parent.get("data_receipt_sha256") != grant["data_receipt_sha256"]
                 or parent.get("selected_program_sha256") != grant.get("selected_program_sha256")):
             raise ValueError("SELECTED_PROGRAM_PROVENANCE_MISMATCH")
+    validate_phase_dependencies(workspace, grant)
     return {"task": task, "bundle": bundle}
 
 
@@ -162,18 +199,22 @@ def execute(root: Path, workspace: Path, authorization: Path):
     ledger = Ledger(run / "ledger.jsonl", grant["max_logical_evaluations"], grant["max_physical_attempts"])
     ledger.wall_deadline = deadline
     result = {"scope_id": grant["scope_id"], "phase": phase, "source_sha": grant["source_sha"],
+              "cache_namespace": grant["cache_namespace"],
               "task": task.key, "config_sha256": grant["config_sha256"],
               "data_receipt_sha256": grant["data_receipt_sha256"],
-              **{key: grant[key] for key in MODEL_BINDINGS}, "status": "ABORTED"}
+              **{key: grant[key] for key in MODEL_BINDINGS + EXECUTION_BINDINGS}, "status": "ABORTED"}
     original = None
     restore_meter = None
+    futures = PhaseFutures(ledger)
     try:
+        policy = load_execution_policy(root)
         sys.path.insert(0, str(workspace / "upstream/dspy-study"))
         sys.path.insert(0, str(workspace / "upstream/gepa-artifact"))
         cache = workspace / "request_cache" / grant["cache_namespace"]
         cache.mkdir(parents=True, exist_ok=True)
         cache_identity = {k: grant[k] for k in ("source_sha", "config_sha256", "data_receipt_sha256",
-                          "environment_lock_sha256", "task", "seed", "repeat", *MODEL_BINDINGS)}
+                          "environment_lock_sha256", "task", "seed", "repeat", *MODEL_BINDINGS,
+                          *EXECUTION_BINDINGS)}
         marker = cache / "identity.json"
         if marker.exists():
             if json.loads(marker.read_text()) != cache_identity:
@@ -188,6 +229,8 @@ def execute(root: Path, workspace: Path, authorization: Path):
         import litellm
         if not Path(dspy.__file__).resolve().is_relative_to(workspace / "upstream/dspy-study"):
             raise ValueError("AUTHOR_DSPY_IMPORT_MISMATCH")
+        import dspy.utils.parallelizer as parallelizer
+        futures.install(parallelizer)
         from .offline import verify_nlp
         verify_nlp()
         if litellm.cache is not None:
@@ -217,7 +260,8 @@ def execute(root: Path, workspace: Path, authorization: Path):
                 import bm25s
                 import Stemmer
                 hover = importlib.import_module("gepa_artifact.benchmarks.hover.hover_program")
-                hover.retriever = bm25s.BM25.load(str(workspace / "retrieval/bm25s_retriever"))
+                hover.retriever = bm25s.BM25.load(str(workspace / "retrieval/bm25s_retriever"),
+                                                 mmap=policy["retrieval_mmap"])
                 hover.stemmer = Stemmer.Stemmer("english")
                 with (workspace / "retrieval/wiki.abstracts.2017.jsonl").open(encoding="utf-8") as stream:
                     hover.corpus = [f"{x['title']} | {' '.join(x['text'])}" for x in map(json.loads, stream)]
@@ -266,7 +310,7 @@ def execute(root: Path, workspace: Path, authorization: Path):
                         raise ValueError("FROZEN_SELECTED_PROGRAM_HASH_MISMATCH")
                     program.load(str(selected))
                     program.set_lm(lm)
-                evaluator = dspy.Evaluate(devset=load("test"), metric=metric, num_threads=32,
+                evaluator = dspy.Evaluate(devset=load("test"), metric=metric, num_threads=grant["final_eval_threads"],
                                           display_progress=False, max_errors=task.sizes[2] * 10,
                                           return_outputs=True, return_all_scores=True)
                 score, result_triples, scores = evaluator(program)
@@ -274,6 +318,7 @@ def execute(root: Path, workspace: Path, authorization: Path):
                 result.update(score=score, test_rows=len(scores))
                 (run / "test_profile.private.json").write_bytes(canonical({"scores": scores,
                     "predictions": [dict(x) for x in predictions]}) + b"\n")
+        futures.drain()
         check_time()
         validate_grant(root, workspace, grant)
         result["status"] = "COMPLETE"
@@ -283,12 +328,23 @@ def execute(root: Path, workspace: Path, authorization: Path):
             result["operational_halt"] = str(exc)
         raise
     finally:
-        if restore_meter is not None:
-            restore_meter()
-        if original is not None:
-            import litellm
-            litellm.completion = original
-        result.update(actual_logical_evaluations=ledger.logical, physical_attempts=ledger.physical,
-                      tokens=ledger.tokens, failed_attempts_with_unknown_usage=ledger.unknown_failed_usage)
-        (run / "receipt.json").write_bytes(canonical(result) + b"\n")
+        try:
+            if not futures.summary()["drained"]:
+                futures.drain()
+        except BaseException as exc:
+            result.update(status="ABORTED", failure_category=type(exc).__name__)
+            if isinstance(exc, OperationalHalt):
+                result["operational_halt"] = str(exc)
+            raise
+        finally:
+            futures.restore()
+            if restore_meter is not None:
+                restore_meter()
+            if original is not None:
+                import litellm
+                litellm.completion = original
+            result.update(actual_logical_evaluations=ledger.logical, physical_attempts=ledger.physical,
+                          tokens=ledger.tokens, failed_attempts_with_unknown_usage=ledger.unknown_failed_usage,
+                          phase_futures=futures.summary())
+            (run / "receipt.json").write_bytes(canonical(result) + b"\n")
     return result

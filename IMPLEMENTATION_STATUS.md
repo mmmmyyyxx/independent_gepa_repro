@@ -1,6 +1,6 @@
 # Implementation status
 
-2026-10-31: [BM25 and formal preparation completion](reports/gepa_paper_bm25_preparation_20261031/README.md):5,233,330 documents,131,822,459 postings,standard native BM25S format. Six differential layouts,full-index checks and48 author retrieval calls pass. Current isolated-source pytest:407 passed/18 deselected;4 historical modules excluded. Only production change clears stale index-deferral metadata once an index is verified. All16 phase templates remain unapproved;model API calls/tokens0;READY_TO_RUN=false.
+2026-10-31: [Concurrency and scheduling](reports/gepa_paper_concurrency_preparation_20261031/README.md) implemented and offline verified:two isolated process lanes with resource admission; LiveBench exclusive; mmap BM25; native slow-tail tasks drained before sealing accounting. Current tests:417 passed/18 deselected;4 historical modules excluded. All templates remain unapproved;no model API calls/tokens or new commit/push;fresh source freeze and API authorization required.
 
 
 Updated: 2026-10-21

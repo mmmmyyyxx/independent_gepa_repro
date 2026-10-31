@@ -42,7 +42,8 @@ def main():
                    "--workspace", str(args.workspace.resolve()), *rest]
     elif args.mode == "cli":
         allowed = {"prepare_gepa_paper_suite.py", "fetch_gepa_paper_sources.py", "setup_gepa_paper_environment.py",
-                   "prepare_gepa_paper_nlp.py", "prepare_gepa_paper_retriever.py", "run_gepa_paper_suite.py"}
+                   "prepare_gepa_paper_nlp.py", "prepare_gepa_paper_retriever.py", "run_gepa_paper_suite.py",
+                   "run_gepa_paper_schedule.py"}
         script = (ROOT / rest[0]).resolve() if rest else None
         if script is None or script.parent != ROOT / "scripts" or script.name not in allowed:
             raise ValueError("PAPER_VERIFICATION_CLI_NOT_ALLOWED")

@@ -1,6 +1,6 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
-[Five-task GEPA preparation](reports/gepa_paper_bm25_preparation_20261031/README.md) now includes the completed 5,233,330-document BM25 index shared by HotpotQA/HoVer. Native retrieval parity, author entrypoints, resource hashes and 407 current offline tests pass. OpenLux GPT-4.1 Mini Solver, Qwen3.7-Flash optimizer and native Pareto without Merge remain fixed. Model API calls/tokens:0. Exact-model canary and phase-specific API authorization remain pending; READY_TO_RUN=false.
+[Five-task concurrency preparation](reports/gepa_paper_concurrency_preparation_20261031/README.md) implements one retrieval plus one nonretrieval process, exclusive LiveBench, mmap retrieval and complete in-flight usage accounting. Native GEPA search/cache semantics are preserved. Current isolated-source tests:417 passed/18 deselected; real process and full-index parity checks pass. Model API calls/tokens:0; new source freeze and exact authorization remain pending; READY_TO_RUN=false.
 
 
 The sole current MATH scorer is [C-EVOLVE / Hendrycks V1](docs/math_scoring_cevolve_hendrycks_v1.md).

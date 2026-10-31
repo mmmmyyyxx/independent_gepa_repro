@@ -7,6 +7,7 @@ import pytest
 from independent_gepa.paper_suite.control import Ledger, OperationalHalt, Transport, install_logical_meter
 from independent_gepa.paper_suite.contract import draft, IDENTITY, CONFIG_PATH
 from independent_gepa.paper_suite.runtime import validate_grant
+from independent_gepa.paper_suite.execution import GRANT_SCHEMA
 
 
 def response():
@@ -106,7 +107,7 @@ def test_invalid_frozen_requests_fail_before_git_imports_or_provider_creation(tm
     base = "https://synthetic.invalid/v1"
     monkeypatch.setenv("OPENLUX_BASE_URL", base)
     monkeypatch.setenv("LWJ_DASHSCOPE_BASE_URL", base)
-    grant = dict(schema=IDENTITY + "_authorization_v1", approved_by="user", READY_TO_RUN=True,
+    grant = dict(schema=GRANT_SCHEMA, approved_by="user", READY_TO_RUN=True,
                  real_api_allowed=True, phase="search", roles=["solver", "reflection"], task="aime2025", seed=0, repeat=1,
                  solver_model=draft()["models"]["solver"], provider="openlux", scope_id="synthetic",
                  reflection_model=draft()["models"]["reflection"], reflection_provider="lwj",

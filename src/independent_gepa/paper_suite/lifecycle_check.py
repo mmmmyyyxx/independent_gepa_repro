@@ -17,6 +17,7 @@ from .control import request_role
 from .data import canonical, digest
 from .models import role_route
 from .sources import file_hash
+from .execution import POLICY_PATH, GRANT_SCHEMA, execution_policy, execution_binding
 
 
 def verify_lifecycle(workspace: Path, output: Path) -> dict:
@@ -26,6 +27,8 @@ def verify_lifecycle(workspace: Path, output: Path) -> dict:
     output.mkdir(parents=True, exist_ok=False)
     fake_root = output / "synthetic_source"
     (fake_root / "runs").mkdir(parents=True)
+    (fake_root / POLICY_PATH).parent.mkdir(parents=True)
+    (fake_root / POLICY_PATH).write_bytes(canonical(execution_policy()) + b"\n")
     bundle = output / "synthetic_data"
     fixture_task = replace(next(t for t in TASKS if t.key == "aime2025"),
                            budget=10, sizes=(6, 4, 2))
@@ -62,7 +65,7 @@ def verify_lifecycle(workspace: Path, output: Path) -> dict:
             usage={"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2})
 
     models = draft()["models"]
-    shared = dict(schema=IDENTITY + "_authorization_v1", approved_by="synthetic_offline_fixture",
+    shared = dict(schema=GRANT_SCHEMA, approved_by="synthetic_offline_fixture",
                   READY_TO_RUN=False, real_api_allowed=False, task=fixture_task.key, seed=0, repeat=1,
                   source_sha="0" * 40, config_sha256=digest(draft()), data_receipt_sha256=digest({"synthetic": True}),
                   environment_lock_sha256="0" * 64, cache_namespace=scope,
@@ -70,6 +73,7 @@ def verify_lifecycle(workspace: Path, output: Path) -> dict:
                   reflection_provider=models["reflection_provider_profile"], provider=models["provider_profile"],
                   deployment_base_url_sha256="1" * 64, reflection_deployment_base_url_sha256="2" * 64,
                   max_logical_evaluations=100, max_physical_attempts=200, max_elapsed_seconds=180)
+    shared.update(execution_binding(fake_root, os.cpu_count()))
     receipts = {}
     environment = dict(OPENLUX_API_KEY="synthetic-solver-key", OPENLUX_BASE_URL="https://solver.invalid/v1",
                        LWJ_DASHSCOPE_API_KEY="synthetic-reflection-key", LWJ_DASHSCOPE_BASE_URL="https://reflection.invalid/v1")
@@ -87,6 +91,8 @@ def verify_lifecycle(workspace: Path, output: Path) -> dict:
             receipts[phase] = runtime.execute(fake_root, workspace, grant_path)
             if receipts[phase]["status"] != "COMPLETE":
                 raise AssertionError("LIFECYCLE_PHASE_NOT_COMPLETE:" + phase)
+            if not receipts[phase]["phase_futures"]["drained"] or receipts[phase]["phase_futures"]["pending"]:
+                raise AssertionError("LIFECYCLE_FUTURES_NOT_DRAINED")
             events = [json.loads(line) for line in (workspace / "execution" / grant["scope_id"] / "ledger.jsonl")
                       .read_text(encoding="utf-8").splitlines()]
             splits = [e["split"] for e in events if e["event"] == "data_split_load"]

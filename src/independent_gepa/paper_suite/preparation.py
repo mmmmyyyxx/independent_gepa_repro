@@ -9,6 +9,7 @@ import subprocess
 from .contract import CONFIG_PATH, IDENTITY, PROTOCOL_PATH, TASKS, draft
 from .data import canonical
 from .sources import audit, file_hash, git
+from .execution import POLICY_PATH, GRANT_SCHEMA, execution_binding
 
 
 def safe_deployment_presence(value: dict | None) -> dict:
@@ -68,6 +69,7 @@ def write_run_pack(root: Path, workspace: Path, output: Path, environment_python
     if output.exists():
         raise ValueError("FRESH_LAUNCH_PACK_REQUIRED")
     presence = safe_deployment_presence(deployment_presence)
+    execution = execution_binding(root, os.cpu_count())
     protocol = root / PROTOCOL_PATH
     manifest = json.loads((protocol / "manifest.json").read_text())
     if canonical(json.loads((root / CONFIG_PATH).read_text())) != canonical(draft()):
@@ -116,7 +118,7 @@ def write_run_pack(root: Path, workspace: Path, output: Path, environment_python
     paths = [*sorted((root / "src/independent_gepa/paper_suite").glob("*.py")),
              *sorted((root / "scripts").glob("*gepa_paper*.py")),
              *sorted((root / "tests").glob("test_gepa_paper*.py")),
-             root / "tests/paper_zero_network/sitecustomize.py", root / CONFIG_PATH,
+             root / "tests/paper_zero_network/sitecustomize.py", root / CONFIG_PATH, root / POLICY_PATH,
              root / "requirements/paper-suite-windows.lock.txt"]
     files = {p.relative_to(root).as_posix(): file_hash(p) for p in paths}
     summary = dict(schema="gepa_paper_launch_preparation_v1", protocol=IDENTITY,
@@ -129,6 +131,7 @@ def write_run_pack(root: Path, workspace: Path, output: Path, environment_python
                    corpus_verified=True, index_ready=index_ready, bm25_build_deferred_by_user=not index_ready,
                    effective_native_search_threads=os.cpu_count(), final_eval_threads=32,
                    deployment_presence=presence,
+                   execution_bindings=execution, authorization_schema=GRANT_SCHEMA,
                    exact_model_canary_complete=False, formal_authorization=False,
                    model_api_calls=0, model_tokens=0,
                    remaining=["clean committed source freeze", "OpenLux deployment variables and dual-model canary",
@@ -141,5 +144,5 @@ def write_run_pack(root: Path, workspace: Path, output: Path, environment_python
         "order": "canary -> all five searches and selection freezes -> baseline and selected Test; no Test feedback into search",
         "native_thresholds_total": 21193, "test_rows_total_including_baselines": 2340,
         "ceilings": "proposed safety caps only; hitting a cap aborts, never completes a scientific run",
-        "cells": phase_plan()}) + b"\n")
+        "cells": [{**cell, **execution, "schema": GRANT_SCHEMA} for cell in phase_plan()]}) + b"\n")
     return summary

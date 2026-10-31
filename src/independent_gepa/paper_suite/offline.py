@@ -308,6 +308,7 @@ def main():
     parser.add_argument("--data-only", action="store_true")
     parser.add_argument("--program-only", action="store_true")
     parser.add_argument("--lifecycle-only", action="store_true")
+    parser.add_argument("--concurrency-only", action="store_true")
     args = parser.parse_args()
     workspace = args.workspace.resolve()
     artifact = workspace / "upstream/gepa-artifact"
@@ -317,6 +318,12 @@ def main():
     import dspy
     if not Path(dspy.__file__).resolve().is_relative_to(workspace / "upstream/dspy-study"):
         raise ValueError("AUTHOR_DSPY_IMPORT_MISMATCH")
+    if args.concurrency_only:
+        from .concurrency_check import verify_concurrency
+        receipt["concurrency"] = verify_concurrency(workspace, args.output.parent / (args.output.stem + "_fixture"))
+        args.output.write_bytes(canonical(receipt) + b"\n")
+        print(json.dumps({"status": "OFFLINE_CONCURRENCY_PASS", "API_CALLS": 0}))
+        return
     if args.lifecycle_only:
         from .lifecycle_check import verify_lifecycle
         receipt["synthetic_lifecycle"] = verify_lifecycle(workspace, args.output.parent / (args.output.stem + "_fixture"))

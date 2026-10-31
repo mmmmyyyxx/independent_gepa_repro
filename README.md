@@ -1,6 +1,6 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
-[Five-task GEPA formal preparation](docs/gepa_paper_formal_preparation_v1.md) retains OpenLux GPT-4.1 Mini Solver, Qwen3.7-Flash optimizer and the author native Pareto protocol. The [publication audit](reports/gepa_paper_publication_20261031/README.md) confirms local OpenLux configuration and environment injection without tracked secrets. Offline source/data/lifecycle checks pass; actual-model canary, retrieval index and exact API authorization remain pending. READY_TO_RUN=false.
+[Five-task GEPA preparation](reports/gepa_paper_bm25_preparation_20261031/README.md) now includes the completed 5,233,330-document BM25 index shared by HotpotQA/HoVer. Native retrieval parity, author entrypoints, resource hashes and 407 current offline tests pass. OpenLux GPT-4.1 Mini Solver, Qwen3.7-Flash optimizer and native Pareto without Merge remain fixed. Model API calls/tokens:0. Exact-model canary and phase-specific API authorization remain pending; READY_TO_RUN=false.
 
 
 The sole current MATH scorer is [C-EVOLVE / Hendrycks V1](docs/math_scoring_cevolve_hendrycks_v1.md).

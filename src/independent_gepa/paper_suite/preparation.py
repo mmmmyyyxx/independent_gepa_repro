@@ -126,7 +126,7 @@ def write_run_pack(root: Path, workspace: Path, output: Path, environment_python
                    source_candidate_files=files, manifest_sha256=file_hash(protocol / "manifest.json"),
                    exact_author_sources_verified=True, data=data,
                    nlp_files_verified=len(nlp["files"]), installed_dependencies_verified=len(versions),
-                   corpus_verified=True, index_ready=index_ready, bm25_build_deferred_by_user=True,
+                   corpus_verified=True, index_ready=index_ready, bm25_build_deferred_by_user=not index_ready,
                    effective_native_search_threads=os.cpu_count(), final_eval_threads=32,
                    deployment_presence=presence,
                    exact_model_canary_complete=False, formal_authorization=False,

@@ -97,3 +97,18 @@ def test_preparation_cli_has_no_execute_or_model_client_branch():
     tree = ast.parse((root / "scripts/prepare_gepa_paper_suite.py").read_text())
     assert not any(isinstance(n, ast.Attribute) and n.attr in {"LM", "OpenAI", "compile"}
                    for n in ast.walk(tree))
+
+
+def test_openlux_alias_amendment_changes_only_identity_and_solver_name():
+    from independent_gepa.paper_suite.contract import IDENTITY
+    root = Path(__file__).resolve().parents[1]
+    old = json.loads((root / "configs/gepa_paper_five_tasks_openlux_qwen37_windows_v2.json").read_text())
+    current = json.loads(json.dumps(draft()))
+    assert current["models"]["solver"] == "openai/gpt-4.1-mini"
+    current["schema_version"] = old["schema_version"]
+    current["models"]["solver"] = old["models"]["solver"]
+    assert current == old
+    parent = root / "experiments/protocols/gepa_paper_five_tasks_openlux_qwen37_windows_v2"
+    amended = root / "experiments/protocols" / IDENTITY
+    for name in ("source", "data", "program", "environment", "nlp"):
+        assert (parent / (name + "_inventory.json")).read_bytes() == (amended / (name + "_inventory.json")).read_bytes()

@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 import types
 
-from .contract import TASKS
+from .contract import TASKS, draft
 from .data import author_splits, canonical, decode_metadata, digest, load_asset_rows
 from .sources import audit, syntax_node, file_hash
 from .windows import install, load_livebench_sources
@@ -198,7 +198,7 @@ def native_failure_smoke(output, dspy):
         raise Failure("synthetic unauthorized provider response")
     litellm.completion = fail
     install_transport(litellm, meter, output / "synthetic_responses")
-    lm = dspy.LM("openai/gpt-4.1-mini-2025-04-14", api_key="offline-failure", temperature=1.0, max_tokens=16384, num_retries=0)
+    lm = dspy.LM(draft()["models"]["solver"], api_key="offline-failure", temperature=1.0, max_tokens=16384, num_retries=0)
     dspy.configure(lm=lm, adapter=dspy.ChatAdapter())
     class Log:
         def log(self, *items):

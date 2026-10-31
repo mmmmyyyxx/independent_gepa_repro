@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
-IDENTITY = "gepa_paper_five_tasks_openlux_qwen37_windows_v2"
+IDENTITY = "gepa_paper_five_tasks_openlux_qwen37_alias_windows_v3"
 CONFIG_PATH = "configs/" + IDENTITY + ".json"
 PROTOCOL_PATH = "experiments/protocols/" + IDENTITY
 ARTIFACT_COMMIT = "cbefbc1aa0f43dd39874ec4bf42211365dbda42e"
@@ -54,7 +54,7 @@ def draft() -> dict:
         "seeds": [0], "repeats": 1,
         "models": {
             "provider_profile": "openlux",
-            "solver": "openai/gpt-4.1-mini-2025-04-14",
+            "solver": "openai/gpt-4.1-mini",
             "reflection": "openai/qwen3.7-flash",
             "reflection_provider_profile": "lwj",
             "reflection_api_key_env": "LWJ_DASHSCOPE_API_KEY",

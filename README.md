@@ -1,6 +1,6 @@
 # Independent-GEPA under a matched prompt-team evaluation protocol
 
-[Five-task concurrency preparation](reports/gepa_paper_concurrency_preparation_20261031/README.md) implements one retrieval plus one nonretrieval process, exclusive LiveBench, mmap retrieval and complete in-flight usage accounting. Native GEPA search/cache semantics are preserved. Current isolated-source tests:417 passed/18 deselected; real process and full-index parity checks pass. Model API calls/tokens:0; new source freeze and exact authorization remain pending; READY_TO_RUN=false.
+[OpenLux Solver alias V3](docs/gepa_paper_openlux_alias_v3.md) uses `gpt-4.1-mini` as requested after the earlier dated-name Canary failed. All other paper GEPA settings and the verified concurrency policy remain unchanged. Fresh-source offline checks and a new lightweight Canary are being prepared; formal search/Test remain unauthorized.
 
 
 The sole current MATH scorer is [C-EVOLVE / Hendrycks V1](docs/math_scoring_cevolve_hendrycks_v1.md).

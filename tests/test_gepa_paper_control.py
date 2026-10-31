@@ -17,7 +17,7 @@ def response():
 
 
 def request():
-    return {"model": "openai/gpt-4.1-mini-2025-04-14", "temperature": 1.0, "max_tokens": 16384,
+    return {"model": draft()["models"]["solver"], "temperature": 1.0, "max_tokens": 16384,
             "messages": [{"role": "system", "content": "Synthetic"}, {"role": "user", "content": "Synthetic"}]}
 
 

@@ -1,6 +1,6 @@
 # Implementation status
 
-2026-10-31: [Concurrency and scheduling](reports/gepa_paper_concurrency_preparation_20261031/README.md) implemented and offline verified:two isolated process lanes with resource admission; LiveBench exclusive; mmap BM25; native slow-tail tasks drained before sealing accounting. Current tests:417 passed/18 deselected;4 historical modules excluded. All templates remain unapproved;no model API calls/tokens or new commit/push;fresh source freeze and API authorization required.
+[OpenLux Solver alias V3](docs/gepa_paper_openlux_alias_v3.md) uses `gpt-4.1-mini` as requested after the earlier dated-name Canary failed. All other paper GEPA settings and the verified concurrency policy remain unchanged. Fresh-source offline checks and a new lightweight Canary are being prepared; formal search/Test remain unauthorized.
 
 
 Updated: 2026-10-21

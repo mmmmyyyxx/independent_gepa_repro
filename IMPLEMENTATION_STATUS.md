@@ -1,6 +1,6 @@
 # Implementation status
 
-[Recovery V4 retry](reports/gepa_paper_hotpot_ifbench_retry_20261101/README.md): user authorized publication and fresh HotpotQA/IFBench searches after source freeze and dual-model Canary. Offline repair verified: 459 current tests passed. Test remains disabled.
+[Recovery V4 run status](reports/gepa_paper_hotpot_ifbench_retry_outcome_20261101/README.md): Canary passed; IFBench halted on confirmed HTTP 400 content_filter. HotpotQA queued with its unused authorized scope. Execution remains frozen at 987c1f8; Test disabled.
 
 
 Updated: 2026-10-21

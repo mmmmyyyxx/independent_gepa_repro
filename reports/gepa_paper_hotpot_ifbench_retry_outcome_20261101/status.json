@@ -1,0 +1,57 @@
+{
+  "canary": {
+    "physical_attempts": 2,
+    "status": "COMPLETE",
+    "tokens": 700
+  },
+  "captured_at_utc": "2026-11-01T09:26:39.848788+00:00",
+  "execution_source_unchanged": true,
+  "failed_attempt_tokens_unknown": 2,
+  "hotpot_handoff_amendment": "Separate coordinator for the previously authorized, still-unconsumed HotpotQA phase; prior pair stage remains aborted. No failed IFBench scope reused, scientific setting or per-task budget changed.",
+  "hotpotqa": {
+    "active_tasks": [],
+    "available_memory_gib_at_capture": 3.597,
+    "coordinator_active": true,
+    "monitor_interval_seconds": 7200,
+    "pending": [
+      "hotpotqa"
+    ],
+    "phase_scope_consumed": false,
+    "physical_attempts": 0,
+    "required_available_memory_gib": 6,
+    "source_sha": "987c1f85e96f94437acd02f62b7114d44c0dde7e",
+    "status": "WAITING_FOR_MEMORY"
+  },
+  "ifbench": {
+    "actual_logical_evaluations": 20,
+    "drained": true,
+    "error_code": "content_filter",
+    "error_param": "prompt",
+    "failed_attempts_with_unknown_usage": 2,
+    "http_status": 400,
+    "optimizer_updates": 0,
+    "pending_at_exit": 0,
+    "physical_attempts": 26,
+    "queued_items": 300,
+    "reported_tokens": 13596,
+    "saved_paid_responses": 24,
+    "status": "ABORTED",
+    "test_loaded": false
+  },
+  "known_reported_tokens_total": 14296,
+  "old_45_error_root_cause": "UNCONFIRMED: old actual status and body absent",
+  "old_failed_records_unchanged": true,
+  "provenance_sha256": {
+    "aborted_pair_controller_receipt": "6f9e1c5cf75ab245cb75018f0e3a408c1f7f74a6f7f30991270f6c9781b528ad",
+    "canary_receipt": "818f67f8d12cbdea3ac2e98bc0ec495c19ccf5faefcb36789fc76e87b3e58b47",
+    "hotpot_handoff": "7843478512c2d0e3f053631fb4a29333d8cb6149d8479ce899d1f7b1af38b740",
+    "ifbench_ledger": "ad909ccf9f763b9eb08ed21d5fd6c0e8c3ae3d228c61a2c72b617c8e1ec26aac",
+    "ifbench_receipt": "b735d032460a969ea216181772da2292a5479a255a7d6d5fd81dda98acb2d743"
+  },
+  "pushed_main_sha": "987c1f85e96f94437acd02f62b7114d44c0dde7e",
+  "reason": "OpenLux HTTP 400 content_filter on IFBench prompt; no network retry applied",
+  "schema": "paper_hotpot_ifbench_recovery_v4_attempt_status_v1",
+  "source_sha": "987c1f85e96f94437acd02f62b7114d44c0dde7e",
+  "status": "PARTIAL: IFBENCH_ABORTED; HOTPOT_WAITING_FOR_MEMORY",
+  "test_allowed": false
+}

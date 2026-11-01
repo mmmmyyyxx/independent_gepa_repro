@@ -177,6 +177,8 @@ class ProcessJob:
     def __init__(self, cell: Cell, root: Path, workspace: Path, output: Path):
         self.cell = cell
         root, workspace, output = root.resolve(), workspace.resolve(), output.resolve()
+        if not output.is_relative_to(workspace):
+            raise ValueError("DISPATCH_OUTPUT_MUST_BE_IN_WORKSPACE")
         self.started = time.monotonic()
         self._group = None
         self._stream = (output / (cell.task + ".stdout_stderr.private.log")).open("xb")
@@ -197,6 +199,9 @@ class ProcessJob:
             deadline = time.monotonic() + 30
             while not requested.exists() and self.process.poll() is None and time.monotonic() < deadline:
                 time.sleep(.02)
+            if not requested.exists():
+                reason = "CHILD_EXITED" if self.process.poll() is not None else "TIMEOUT"
+                raise OperationalHalt("DISPATCH_HANDSHAKE_MISSING:" + reason)
             request = json.loads(requested.read_text(encoding="utf-8"))
             allowed = {self.process.pid, *(p.pid for p in psutil.Process(self.process.pid).children(recursive=True))}
             if request.get("pid") not in allowed or request.get("authorization_sha256") != file_hash(cell.authorization):

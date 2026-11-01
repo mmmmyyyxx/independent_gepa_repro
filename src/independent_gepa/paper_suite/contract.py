@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
-IDENTITY = "gepa_paper_five_tasks_openlux_qwen37_alias_windows_v3"
+IDENTITY = "gepa_paper_five_tasks_openlux_qwen37_recovery_windows_v4"
 CONFIG_PATH = "configs/" + IDENTITY + ".json"
 PROTOCOL_PATH = "experiments/protocols/" + IDENTITY
 ARTIFACT_COMMIT = "cbefbc1aa0f43dd39874ec4bf42211365dbda42e"
@@ -103,10 +103,11 @@ def draft() -> dict:
             "required": "source parity, result+feedback differential tests, real timeout/crash/reaping tests",
         },
         "operational_adapter": {
-            "identity": "paper_author_engine_metered_transport_v1",
+            "identity": "paper_author_engine_metered_transport_v2",
+            "recovery_policy": "paper_provider_http_recovery_v2",
             "transient_retries": 8, "request_timeout_seconds": 120,
-            "backoff_seconds": "min(60, 2**attempt)",
-            "nontransient_failure": "OperationalHalt; never scored as wrong or swallowed by native except Exception",
+            "backoff_seconds": "max(min(60, 2**attempt), valid Retry-After); bounded by phase deadline",
+            "nontransient_failure": "OperationalHalt after private HTTP diagnostics; block new dispatch and cancel queued futures; drain paid responses",
             "actual_task_example_attempts": "reserve at root program entry, including aborted attempts; native stopping counter unchanged",
             "ceilings": "finite logical/physical/wall safety limits required in exact per-phase authorization; hitting one aborts, not completes",
             "unknown_failed_attempt_tokens": "reported as unknown, never invented as zero usage",

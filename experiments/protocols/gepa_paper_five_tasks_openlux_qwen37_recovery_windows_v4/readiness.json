@@ -1,0 +1,14 @@
+{
+  "READY_TO_RUN": false,
+  "formal_authorization": false,
+  "new_model_api_calls": 0,
+  "offline_evidence": "reports/gepa_paper_provider_recovery_20261101/checks.json",
+  "offline_verified": true,
+  "old_failed_IFBench_scope_reusable": false,
+  "pending": [
+    "new clean committed source freeze",
+    "fresh Canary and exact phase authorization"
+  ],
+  "real_api_allowed": false,
+  "source_sha": null
+}

@@ -1,6 +1,6 @@
 # Implementation status
 
-[OpenLux Solver alias V3](docs/gepa_paper_openlux_alias_v3.md) uses `gpt-4.1-mini` as requested after the earlier dated-name Canary failed. All other paper GEPA settings and the verified concurrency policy remain unchanged. Fresh-source offline checks and a new lightweight Canary are being prepared; formal search/Test remain unauthorized.
+[Recovery V4 retry](reports/gepa_paper_hotpot_ifbench_retry_20261101/README.md): user authorized publication and fresh HotpotQA/IFBench searches after source freeze and dual-model Canary. Offline repair verified: 459 current tests passed. Test remains disabled.
 
 
 Updated: 2026-10-21

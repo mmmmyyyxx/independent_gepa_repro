@@ -12,6 +12,7 @@ import time
 from typing import Callable
 
 from .data import canonical
+from .provider_errors import describe, private_record, public_details
 
 
 class OperationalHalt(BaseException):
@@ -29,6 +30,8 @@ class Ledger:
         role: {"prompt": 0, "completion": 0} for role in ("solver", "reflection")})
     unknown_failed_usage: int = 0
     wall_deadline: float | None = None
+    abort_event: threading.Event = field(default_factory=threading.Event, repr=False)
+    abort_reason: str | None = None
     _lock: threading.RLock = field(default_factory=threading.RLock, repr=False)
 
     def event(self, kind, **values):
@@ -54,15 +57,25 @@ class Ledger:
             self.logical += 1
             self.event("logical_evaluation", ordinal=self.logical)
 
-    def reserve_physical(self, role, request_hash):
+    def reserve_physical(self, role, request_hash) -> int:
         with self._lock:
             self.check_deadline()
             if self.physical >= self.physical_ceiling:
                 raise OperationalHalt("PHYSICAL_SAFETY_CEILING")
             self.physical += 1
             self.event("physical_attempt", ordinal=self.physical, role=role, request_sha256=request_hash)
+            return self.physical
+
+    def stop_dispatch(self, reason: str) -> None:
+        with self._lock:
+            if not self.abort_event.is_set():
+                self.abort_reason = reason
+                self.abort_event.set()
+                self.event("phase_dispatch_halted", reason=reason)
 
     def check_deadline(self):
+        if self.abort_event.is_set():
+            raise OperationalHalt("PHASE_DISPATCH_CANCELLED:" + str(self.abort_reason))
         if self.wall_deadline is not None and time.monotonic() >= self.wall_deadline:
             raise OperationalHalt("PHASE_WALL_TIME_SAFETY_LIMIT")
 
@@ -85,12 +98,7 @@ class Ledger:
 
 
 def transient(exc: Exception) -> bool:
-    status = getattr(exc, "status_code", None)
-    if status is not None:
-        return status in {408, 429, 500, 502, 503, 504}
-    return isinstance(exc, (TimeoutError, ConnectionError)) or type(exc).__name__ in {
-        "Timeout", "ReadTimeout", "ConnectTimeout", "WriteTimeout", "PoolTimeout", "APITimeoutError",
-        "APIConnectionError", "ConnectError", "ConnectionError", "ReadError", "WriteError", "RemoteProtocolError"}
+    return describe(exc)["recoverable"]
 
 
 def request_role(messages) -> str:
@@ -102,9 +110,10 @@ def request_role(messages) -> str:
 class Transport:
     """Wrap LiteLLM's physical completion call beneath DSPy's original cache."""
     def __init__(self, original: Callable, ledger: Ledger, *, retries=8, sleep=time.sleep,
-                 persist_response: Callable | None = None):
+                 persist_response: Callable | None = None, persist_error: Callable | None = None):
         self.original, self.ledger, self.retries, self.sleep = original, ledger, retries, sleep
         self.persist_response = persist_response
+        self.persist_error = persist_error
 
     def __call__(self, *args, **kwargs):
         messages = kwargs.get("messages")
@@ -117,7 +126,7 @@ class Transport:
         except (TypeError, ValueError) as exc:
             raise OperationalHalt("UNHASHABLE_PROVIDER_REQUEST") from exc
         for attempt in range(self.retries + 1):
-            self.ledger.reserve_physical(role, identity)
+            ordinal = self.ledger.reserve_physical(role, identity)
             try:
                 options = dict(kwargs)
                 if self.ledger.wall_deadline is not None:
@@ -127,15 +136,36 @@ class Transport:
             except Exception as exc:
                 with self.ledger._lock:
                     self.ledger.unknown_failed_usage += 1
-                retry = transient(exc) and attempt < self.retries
+                details = describe(exc)
+                record = private_record(details, kwargs, ordinal=ordinal, identity=identity, role=role)
+                evidence_hash = hashlib.sha256(canonical(record) + b"\n").hexdigest()
+                try:
+                    if self.persist_error is not None:
+                        self.persist_error(ordinal, identity, record)
+                except Exception:
+                    self.ledger.stop_dispatch("PROVIDER_ERROR_EVIDENCE_PERSISTENCE_FAILED")
+                    raise OperationalHalt("PROVIDER_ERROR_EVIDENCE_PERSISTENCE_FAILED") from None
+                retry = details["recoverable"] and attempt < self.retries
                 self.ledger.event("transport_failure", role=role, category=type(exc).__name__, retry=retry,
-                                  token_usage="unknown")
+                                  token_usage="unknown", physical_ordinal=ordinal,
+                                  evidence_sha256=evidence_hash, **public_details(record["details"]))
                 if not retry:
-                    raise OperationalHalt("PROVIDER_FAILURE:" + type(exc).__name__) from None
-                delay = min(60, 2 ** attempt)
-                if self.ledger.wall_deadline is not None:
-                    delay = min(delay, max(0, self.ledger.wall_deadline - time.monotonic()))
-                self.sleep(delay)
+                    reason = "PROVIDER_RETRY_EXHAUSTED:" if details["recoverable"] else "PROVIDER_FAILURE:"
+                    self.ledger.stop_dispatch(reason + type(exc).__name__)
+                    raise OperationalHalt(reason + type(exc).__name__) from None
+                delay = max(min(60, 2 ** attempt), details["retry_after_seconds"])
+                if self.ledger.wall_deadline is not None and delay >= self.ledger.wall_deadline - time.monotonic():
+                    self.ledger.stop_dispatch("RETRY_DELAY_EXCEEDS_PHASE_DEADLINE")
+                    raise OperationalHalt("RETRY_DELAY_EXCEEDS_PHASE_DEADLINE") from None
+                self.ledger.event("retry_wait", physical_ordinal=ordinal, role=role, delay_seconds=delay)
+                # At most one second between shared fatal/deadline checks;
+                # injected test sleeps need not advance the real wall clock.
+                remaining = delay
+                while remaining > 0:
+                    self.ledger.check_deadline()
+                    step = min(1., remaining)
+                    self.sleep(step)
+                    remaining -= step
                 continue
             # Persist successful paid bodies BEFORE domain parsing/scoring. The
             # private body store is not a new cache or semantic retry policy.
@@ -143,7 +173,12 @@ class Transport:
                 if self.persist_response:
                     self.persist_response(identity, response)
                 self.ledger.record_response(role, response)
-            except Exception:
+            except BaseException as exc:
+                self.ledger.stop_dispatch("PAID_RESPONSE_PERSISTENCE_OR_USAGE_FAILED")
+                with self.ledger._lock:
+                    self.ledger.unknown_failed_usage += 1
+                if isinstance(exc, OperationalHalt):
+                    raise
                 raise OperationalHalt("PAID_RESPONSE_PERSISTENCE_FAILED") from None
             return response
         raise AssertionError("unreachable")
@@ -154,6 +189,8 @@ def install_transport(litellm, ledger: Ledger, response_directory: Path):
     response_directory.mkdir()
     counter = [0]
     lock = threading.Lock()
+    errors = response_directory.parent / "provider_errors"
+    errors.mkdir()
     def persist(identity, response):
         with lock:
             counter[0] += 1
@@ -166,7 +203,15 @@ def install_transport(litellm, ledger: Ledger, response_directory: Path):
             stream.flush()
             os.fsync(stream.fileno())
         temporary.replace(path)
-    litellm.completion = Transport(original, ledger, persist_response=persist)
+    def persist_error(ordinal, identity, value):
+        path = errors / f"{ordinal:07d}_{identity}.json"
+        temporary = path.with_suffix(".partial")
+        with temporary.open("xb") as stream:
+            stream.write(canonical(value) + b"\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        temporary.replace(path)
+    litellm.completion = Transport(original, ledger, persist_response=persist, persist_error=persist_error)
     return original
 
 

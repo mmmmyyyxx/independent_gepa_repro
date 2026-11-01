@@ -1,0 +1,99 @@
+{
+  "READY_TO_RUN": false,
+  "commit_created": false,
+  "current_pytest": {
+    "deselected": 18,
+    "existing_warnings": "preserved Hendrycks helper invalid escape sequences",
+    "passed": 459,
+    "retired_modules_not_collected": 4,
+    "scope": "complete current suite; historical scoring exclusions in tests/conftest.py unchanged",
+    "seconds": 319.5,
+    "warnings": 3
+  },
+  "fake_native_lifecycle": "PASS",
+  "focused_pytest": {
+    "included_in_full_current_suite": true,
+    "passed": 89,
+    "seconds": 1.14
+  },
+  "fresh_v4_manifest_preflight": "PASS",
+  "logs": {
+    "compile.log": {
+      "guard": {
+        "credentials_removed": true,
+        "model_api_calls": 0,
+        "network_attempt_count_all_children": 0,
+        "returncode": 0
+      },
+      "sha256": "279134385f2d360a3f807de6af2a436acd413fae5401c738eea76e9b9b8df232"
+    },
+    "concurrency.log": {
+      "guard": {
+        "credentials_removed": true,
+        "model_api_calls": 0,
+        "network_attempt_count_all_children": 0,
+        "returncode": 0
+      },
+      "sha256": "163c781d2c7475b773a724c69a66c200c2801528bd4b2597fcce1e54390aaf4d"
+    },
+    "focused_corrected.log": {
+      "guard": {
+        "credentials_removed": true,
+        "model_api_calls": 0,
+        "network_attempt_count_all_children": 0,
+        "returncode": 0
+      },
+      "sha256": "bde9139c75ad1c93b401cc6b3ab53f2f23113fcbbef119a56f664a5ead3a67ee"
+    },
+    "full_current.log": {
+      "guard": {
+        "credentials_removed": true,
+        "model_api_calls": 0,
+        "network_attempt_count_all_children": 0,
+        "returncode": 0
+      },
+      "sha256": "9ff4748eab71ba92045da43f12fbd5f1b7309c535538140dc83e4100efe9d792"
+    },
+    "lifecycle.log": {
+      "guard": {
+        "credentials_removed": true,
+        "model_api_calls": 0,
+        "network_attempt_count_all_children": 0,
+        "returncode": 0
+      },
+      "sha256": "2193c5c8bbab73d6a05907b550520f7c9f4e80fcc0b8255cd3e6dce26309e2fe"
+    },
+    "preflight.log": {
+      "guard": {
+        "credentials_removed": true,
+        "model_api_calls": 0,
+        "network_attempt_count_all_children": 0,
+        "returncode": 0
+      },
+      "sha256": "e1bd6f3f97c0be766a563f401ce8563e44b9013b9af3beffcc0eb56f7b94a207"
+    }
+  },
+  "main_sync_integrity": {
+    "git_commit_created": false,
+    "git_push_performed": false,
+    "historical_records_modified": false,
+    "json_links_whitespace_sanitization": "PASS",
+    "main_review_runtime_hash_parity": true,
+    "model_api_calls": 0,
+    "published_source_files_preserved": 75,
+    "status_bodies_preserved": true,
+    "task_files_synced": 27,
+    "unrelated_user_files_preserved": 85,
+    "vendor_pinned_clean": true
+  },
+  "model_api_calls": 0,
+  "model_tokens": 0,
+  "native_concurrency_process_and_full_index_parity": "PASS",
+  "production_compileall": "PASS",
+  "push_performed": false,
+  "schema": "paper_provider_recovery_offline_checks_v1",
+  "source_parent_sha": "ba8d1d9ffb545792d3b16f66591dafdb80357b00",
+  "tracked_changes_uncommitted": true,
+  "verification_scope_note": "459 tests were run in the isolated repair worktree; relevant paper-suite source/config/test hashes match main. The unrelated 85-file user work was preserved, not retested or certified.",
+  "verification_worktree": "isolated worktree at source_parent_sha plus this repair"
+}

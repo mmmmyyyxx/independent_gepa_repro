@@ -1,0 +1,18 @@
+{
+  "confirmed_rules": [
+    "400 denotes bad request or validation failure",
+    "NewApiError exposes error.message and error.type",
+    "public V1 spec contains no x-error-playbook and no blanket 400 retry instruction"
+  ],
+  "downloaded_openapi_sha256": "24ee797fd1079da38537f0cb2064d1cf7c53240fec2263de6ffb8348a014f754",
+  "historical_error_status_and_body_recoverable": false,
+  "official_chat_reference": "https://doc.openlux.ai/en/reference/v1?leaf=232421919&op=post-v1-chat-completions",
+  "official_intro": "https://doc.openlux.ai/en",
+  "official_public_openapi": "https://doc.openlux.ai/api/docs/public/specs/platform/v1?locale=en",
+  "retrieved_date": "2026-11-01",
+  "retry_policy_scope": "explicit bounded local engineering policy; not a claim that OpenLux documents every transient status",
+  "sdk_evidence": {
+    "fact": "HTTP 400 and 422 can both map to BadRequestError",
+    "implementation": "pinned litellm/litellm_core_utils/exception_mapping_utils.py"
+  }
+}

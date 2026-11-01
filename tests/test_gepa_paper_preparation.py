@@ -103,12 +103,12 @@ def test_openlux_alias_amendment_changes_only_identity_and_solver_name():
     from independent_gepa.paper_suite.contract import IDENTITY
     root = Path(__file__).resolve().parents[1]
     old = json.loads((root / "configs/gepa_paper_five_tasks_openlux_qwen37_windows_v2.json").read_text())
-    current = json.loads(json.dumps(draft()))
+    current = json.loads((root / "configs/gepa_paper_five_tasks_openlux_qwen37_alias_windows_v3.json").read_text())
     assert current["models"]["solver"] == "openai/gpt-4.1-mini"
     current["schema_version"] = old["schema_version"]
     current["models"]["solver"] = old["models"]["solver"]
     assert current == old
     parent = root / "experiments/protocols/gepa_paper_five_tasks_openlux_qwen37_windows_v2"
-    amended = root / "experiments/protocols" / IDENTITY
+    amended = root / "experiments/protocols/gepa_paper_five_tasks_openlux_qwen37_alias_windows_v3"
     for name in ("source", "data", "program", "environment", "nlp"):
         assert (parent / (name + "_inventory.json")).read_bytes() == (amended / (name + "_inventory.json")).read_bytes()

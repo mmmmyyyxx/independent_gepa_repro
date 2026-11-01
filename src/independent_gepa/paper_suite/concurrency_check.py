@@ -8,7 +8,7 @@ import threading
 import time
 from types import SimpleNamespace
 
-from .control import Ledger, Transport
+from .control import Ledger, Transport, OperationalHalt
 from .data import canonical
 from .execution import PhaseFutures, execution_policy
 from .scheduling import Cell, ProcessJob, _run_queue
@@ -116,6 +116,7 @@ def verify_concurrency(workspace: Path, output: Path) -> dict:
     (source / "scripts/run_gepa_paper_suite.py").write_text(
         "import argparse,hashlib,json,os,subprocess,sys,time\nfrom pathlib import Path\n"
         "p=argparse.ArgumentParser();p.add_argument('--workspace',type=Path);p.add_argument('--authorization',type=Path);p.add_argument('--dispatch-ready',type=Path);a=p.parse_args()\n"
+        "if json.loads(a.authorization.read_text()).get('no_handshake'):sys.exit(7)\n"
         "temp=a.dispatch_ready.with_suffix('.request.partial');temp.write_text(json.dumps({'pid':os.getpid(),'authorization_sha256':hashlib.sha256(a.authorization.read_bytes()).hexdigest()}));temp.replace(a.dispatch_ready.with_suffix('.request.json'))\n"
         "deadline=time.monotonic()+10\n"
         "while not a.dispatch_ready.exists() and time.monotonic()<deadline:time.sleep(.01)\n"
@@ -127,6 +128,14 @@ def verify_concurrency(workspace: Path, output: Path) -> dict:
         "else:\n"
         " time.sleep(.05);(a.workspace/(g['task']+'.json')).write_text(json.dumps({'pid':os.getpid(),'score':0}))\n",
         encoding="utf-8")
+    absent = private / "missing_handshake.grant.json"
+    absent.write_bytes(canonical({"no_handshake": True, "real_api_allowed": False}))
+    try:
+        ProcessJob(Cell("missing_handshake", absent, {}), source, private, private)
+    except OperationalHalt as exc:
+        assert str(exc) == "DISPATCH_HANDSHAKE_MISSING:CHILD_EXITED"
+    else:
+        raise AssertionError("MISSING_HANDSHAKE_NOT_REPORTED")
     settings = {**execution_policy()["scheduler"], "poll_seconds": .01}
     cells, jobs = [], []
     for key in settings["task_order"]:
@@ -135,7 +144,7 @@ def verify_concurrency(workspace: Path, output: Path) -> dict:
         path.write_bytes(canonical(grant))
         cells.append(Cell(key, path, grant))
     def start(cell):
-        job = ProcessJob(cell, source, private, output)
+        job = ProcessJob(cell, source, private, private)
         jobs.append(job)
         return job
     def verify(cell):
@@ -146,7 +155,7 @@ def verify_concurrency(workspace: Path, output: Path) -> dict:
     assert all(x["score"] == 0 for x in completed) and all(job.poll() == 0 for job in jobs)
     path = private / "tree.grant.json"
     path.write_bytes(canonical({"tree": True, "pidfile": "child.pid", "real_api_allowed": False}))
-    tree_job = ProcessJob(Cell("tree", path, {}), source, private, output)
+    tree_job = ProcessJob(Cell("tree", path, {}), source, private, private)
     try:
         until = time.monotonic()+10
         while not (private / "child.pid").exists() and time.monotonic() < until:
@@ -158,7 +167,7 @@ def verify_concurrency(workspace: Path, output: Path) -> dict:
     assert tree_job.poll() is not None and not psutil.pid_exists(child)
     orphan_path = private / "orphan.grant.json"
     orphan_path.write_bytes(canonical({"tree": True, "orphan": True, "pidfile": "orphan.pid", "real_api_allowed": False}))
-    orphan_job = ProcessJob(Cell("orphan", orphan_path, {}), source, private, output)
+    orphan_job = ProcessJob(Cell("orphan", orphan_path, {}), source, private, private)
     try:
         until = time.monotonic()+10
         while orphan_job.poll() is None and time.monotonic() < until:
@@ -174,7 +183,8 @@ def verify_concurrency(workspace: Path, output: Path) -> dict:
             "actual_fake_logical_and_physical_attempts": 3, "late_usage_preserved": True,
             "phase_futures": registry.summary(), "native_concurrent_cache_misses_dispatches": 2,
             "separate_phase_processes_completed": 5, "zero_scores_do_not_change_schedule": True,
-            "real_parent_and_descendant_cleanup": True, "model_api_calls": 0,
+            "real_parent_and_descendant_cleanup": True,
+            "missing_handshake_reports_child_exit": True, "model_api_calls": 0,
             "descendant_cleanup_after_parent_exit": True,
             "retrieval_mmap": verify_retrieval_mmap(workspace),
             "test_clock_accelerated_only": True,

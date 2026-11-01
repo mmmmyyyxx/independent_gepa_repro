@@ -8,18 +8,20 @@ import threading
 import time
 
 from .contract import IDENTITY
+from .provider_errors import recovery_policy
 from .control import OperationalHalt
 from .data import canonical
 from .sources import file_hash
 
 
-POLICY_PATH = "configs/gepa_paper_execution_concurrency_v1.json"
+POLICY_PATH = "configs/gepa_paper_execution_concurrency_v2.json"
 GRANT_SCHEMA = IDENTITY + "_authorization_v2"
 
 
 def execution_policy() -> dict:
     return {
-        "schema": "gepa_paper_execution_concurrency_v1",
+        "schema": "gepa_paper_execution_concurrency_v2",
+        "transport_recovery": recovery_policy(),
         "native_search_threads": "os.cpu_count; exact resolved count bound by grant",
         "final_eval_threads": 32,
         "retrieval_mmap": True,
@@ -76,6 +78,7 @@ class PhaseFutures:
         self._module = None
         self._closed = False
         self._drained = False
+        self._cancelling = False
 
     def install(self, module) -> None:
         if self._module is not None:
@@ -91,7 +94,7 @@ class PhaseFutures:
 
             def submit(self, fn, /, *args, **kwargs):
                 with owner._lock:
-                    if owner._closed:
+                    if owner._closed or owner.ledger.abort_event.is_set():
                         raise OperationalHalt("PHASE_EXECUTOR_ALREADY_CLOSED")
                     future = super().submit(fn, *args, **kwargs)
                     owner._pending.add(future)
@@ -109,6 +112,16 @@ class PhaseFutures:
                 self._fatal = error
             self.completed += 1
             self._pending.discard(future)
+            cancel = error is not None and not self._cancelling
+            if cancel:
+                self._cancelling = True
+            queued = list(self._pending) if cancel else []
+        if error is not None:
+            self.ledger.stop_dispatch("REGISTERED_WORKER_FAILED:" + type(error).__name__)
+        # Cancel outside the lock: Future.cancel invokes this callback inline.
+        # Only the first fatal callback traverses the queue, avoiding recursion.
+        for candidate in queued:
+            candidate.cancel()
 
     def drain(self) -> None:
         """Finish even losing futures; a late failure invalidates the phase.
@@ -123,8 +136,10 @@ class PhaseFutures:
                 pending = list(self._pending)
             if not pending:
                 break
-            if self.ledger.wall_deadline is not None and time.monotonic() >= self.ledger.wall_deadline:
+            expired = self.ledger.wall_deadline is not None and time.monotonic() >= self.ledger.wall_deadline
+            if expired:
                 deadline_hit = True
+            if expired or self.ledger.abort_event.is_set():
                 for future in pending:
                     future.cancel()
             wait(pending, timeout=.1)
@@ -154,4 +169,6 @@ class PhaseFutures:
         with self._lock:
             return {"submitted": self.submitted, "completed": self.completed,
                     "pending": len(self._pending), "drained": self._drained,
-                    "late_error_category": type(self._fatal).__name__ if self._fatal else None}
+                    "late_error_category": type(self._fatal).__name__ if self._fatal else None,
+                    "dispatch_halted": self.ledger.abort_event.is_set(),
+                    "dispatch_halt_reason": self.ledger.abort_reason}
